@@ -4,11 +4,9 @@ import "./globals.css";
 import Header from "@/components/header";
 import bg from "../../public/assets/bg.png";
 import { Providers } from "./provider";
-import { Web3Provider } from "@/contexts/web3context";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/toast/toaster";
 import HeaderSelector from "@/components/headerSelector";
-import { Provider } from "@radix-ui/react-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,15 +34,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} ${myFont.variable}`}>
-        <Web3Provider>
-
+        <Providers>
           <div className="bg-gradient-bg min-h-screen min-w-screen relative">
             <div className="bg-donut-pattern  bg-center bg-cover bg-no-repeat">
               <HeaderSelector>{children}</HeaderSelector>
             </div>
           </div>
           <Toaster />
-        </Web3Provider>
+        </Providers>
       </body>
     </html>
   );

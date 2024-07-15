@@ -23,6 +23,7 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { WagmiProvider, http } from "wagmi";
 import { mainnet, merlin } from "wagmi/chains";
 import { createConfig } from "wagmi";
+import { Web3Provider } from "@/contexts/web3context";
 
 // const projectId = "7e778a0cc9adc4e4434bf73bff51f07c"; //default projectId
 const projectId = "57826bfdbc6cd9752e192a296fbbd40d"
@@ -57,6 +58,19 @@ const b2Network = {
     default: { http: ["https://rpc.bsquared.network"] },
   },
 };
+
+const b2TestNetwork = {
+  id: 1123,
+  name: "B2 Testnet",
+  nativeCurrency: {
+    name: "BTC",
+    symbol: "BTC",
+    decimals: 18,
+  },
+  rpcUrls: {
+    default: { http: ["https://b2-testnet.alt.technology"] }
+  }
+}
 
 const AllLayer = {
   id: 2649,
@@ -109,6 +123,10 @@ const chains: readonly [Chain, ...Chain[]] = [
     iconUrl: "/assets/icons/b2.svg",
   },
   {
+    ...b2TestNetwork,
+    iconUrl: "/assets/icons/b2.svg",
+  },
+  {
     ...AllLayer,
     iconUrl: "/assets/icons/ailayer.svg",
   },
@@ -123,6 +141,7 @@ export const config = createConfig({
     [merlin.id]: http(),
     [bitLayer.id]: http(),
     [b2Network.id]: http(),
+    [b2TestNetwork.id]: http(),
     [AllLayer.id]: http(),
   },
 });
@@ -133,7 +152,11 @@ const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>{children}</RainbowKitProvider>
+        <RainbowKitProvider>
+          <Web3Provider>
+            {children}
+          </Web3Provider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

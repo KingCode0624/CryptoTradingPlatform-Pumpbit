@@ -113,11 +113,11 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       }
     };
 
-    const interval = setInterval(() => {
-      fetchData();
-    }, 1000);
+    // const interval = setInterval(() => {
+    //   fetchData();
+    // }, 1000);
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, [selectedPair.market, tickData]);
 
   return (
