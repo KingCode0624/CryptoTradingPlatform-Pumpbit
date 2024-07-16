@@ -38,6 +38,7 @@ import EstokkYamContractAbi from '@/contracts/EstokkYam.json';
 import Web3 from 'web3';
 import { ethers, Contract, ContractRunner } from 'ethers';
 import { b2testnetAddress } from '@/constants';
+import { access } from 'fs';
 
 // const projectId = "7e778a0cc9adc4e4434bf73bff51f07c"; //default projectId
 const projectId = "57826bfdbc6cd9752e192a296fbbd40d"
@@ -164,8 +165,11 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
     const chainId = useChainId();
     const signer = useEthersSigner();
     const ethersProvider = useEthersProvider();
+    let web3: any
     const defaultProvider = new ethers.JsonRpcProvider('https://ethereum-sepolia-rpc.publicnode.com');
-    const web3 = new Web3(window.ethereum);
+    if (typeof window !== "undefined") {
+        web3 = new Web3(window.ethereum);
+    }
 
     const [provider, setProvider] = useState<ContractRunner>(defaultProvider);
     const [estokkYamContract, setEstokkYamContract] = useState<Contract>({} as Contract);
@@ -194,12 +198,14 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (err) {
             // console.log(err);
         }
-    }, [isConnected, ethersProvider, provider]);
+    }, [isConnected, ethersProvider, provider, address, chainId]);
 
     useEffect(() => {
         init();
 
     }, [init]);
+
+
 
     const value = useMemo(
         () => ({
@@ -222,7 +228,7 @@ export const Web3Provider: React.FC<{ children: React.ReactNode }> = ({ children
             properties,
         ]
     );
-    
+
     return (
         <Web3Context.Provider value={value}>
             {children}

@@ -93,6 +93,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
               });
             }
           };
+          
           window.addEventListener("resize", handleResize);
           return () => {
             window.removeEventListener("resize", handleResize);
