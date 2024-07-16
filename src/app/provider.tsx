@@ -132,6 +132,7 @@ const chains: readonly [Chain, ...Chain[]] = [
   },
 ];
 
+
 export const config = createConfig({
   connectors,
   // chains: [mainnet, merlin, bitLayer, b2Network, AllLayer],
