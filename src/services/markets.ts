@@ -23,10 +23,15 @@ export async function getMarketInfo(market: string) {
   }
 }
 
-export async function getMarketTicks(market: string, interval: string) {
+export async function getMarketTicks(market: string, chain: string, interval: string, countBack: Number) {
   try {
     const response = await client.get(`/public/market/ticks`, {
-      params: { market, interval },
+      params: {
+        market: market,
+        interval: interval,
+        chain: chain,
+        count_back: countBack
+      },
     });
     return response.data.data;
   } catch (error) {

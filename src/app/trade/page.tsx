@@ -4,7 +4,7 @@ import CandleStickChart from "@/components/candlestickChart";
 import Tabs from "@/components/table/tabs";
 import TradeHeader from "@/components/tradeHeader";
 import { useEffect } from "react";
-import useWeb3 from "@/hooks";
+import { useWeb3 } from "@/hooks";
 
 interface OrderDiagramProps {
   selectedPair: {
@@ -20,6 +20,9 @@ export default function Trade() {
     console.log("Account =>>", account)
   }, [chainId])
 
+  const market: string = "btcusdt"
+
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-28 px-1 md:px-10 min-h-screen">
       <div className="col-span-2 flex flex-col gap-3">
@@ -29,7 +32,7 @@ export default function Trade() {
         <div>
           <CandleStickChart
             selectedPair={{
-              market: "SOLUSDT",
+              market: market,
               base: "SOL",
               quote: "USDT",
             }}

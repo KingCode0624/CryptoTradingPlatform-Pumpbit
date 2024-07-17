@@ -13,15 +13,21 @@ interface PriceDiagramProps {
   selectedPair: TPairInfo;
 }
 
+
 interface MarketTick {
-  timestamp: number;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
+  t: number;
+  o: string;
+  h: string;
+  l: string;
+  c: string;
 }
 
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
+
+  const chain: string = "b_square_testnet"
+  const [chartInterval, setChartInterval] = useState<string>("1m")
+  const [countBack, setCountBack] = useState<Number>(100)
+
   const [tickData, setTickData] = useState<TTick[]>([
     {
       time: 0,
@@ -43,15 +49,17 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         console.error("Selected pair market is not defined.");
         return;
       }
-      const response = await getMarketTicks(selectedPair.market, "1h");
+      const response = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
+
       const data = response ? response.data : tickData;
       const formattedTicks = data.map((tick: MarketTick) => ({
-        time: tick.timestamp / 1000,
-        open: Number(tick.open),
-        high: Number(tick.high),
-        low: Number(tick.low),
-        close: Number(tick.close),
+        time: tick.t / 1000,
+        open: Number(tick.o),
+        high: Number(tick.h),
+        low: Number(tick.l),
+        close: Number(tick.c),
       }));
+
       setTickData(formattedTicks);
       if (candlestickSeriesRef.current === null) {
         if (chartContainerRef.current) {
@@ -93,7 +101,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
               });
             }
           };
-          
+
           window.addEventListener("resize", handleResize);
           return () => {
             window.removeEventListener("resize", handleResize);
@@ -103,7 +111,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       } else {
         if (tickData.length > 1) {
           if (!setted) {
-            console.log(tickData, "tickData");
+            // console.log(tickData, "tickData");
 
             candlestickSeriesRef.current.setData(tickData);
             setted = true;
@@ -121,6 +129,10 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
     return () => clearInterval(interval);
   }, [selectedPair.market, tickData]);
 
+
+  const setIntervalValue = (e: any) => {
+    setChartInterval(e.target.value)
+  }
   return (
     <div className="flex flex-col rounded-3xl border border-border bg-card backdrop-blur-lg/2">
       <div className="my-5 flex flex-row gap-x-10 px-5 text-lg font-bold">
@@ -132,25 +144,53 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         <div className="flex flex-wrap ">
           <div className="flex gap-3 flex-wrap   items-center">
             {" "}
-            <button className="bg-button-tab hover:bg-primary px-4 rounded-lg">
+            <button className="bg-button-tab hover:bg-primary px-4 rounded-lg" value="1m"
+              onClick={(e) => {
+                setIntervalValue(e)
+              }}
+            >
               1m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg">
+            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="5m"
+              onClick={(e) => {
+                setIntervalValue(e)
+              }}
+            >
               5m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg">
+            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="15m"
+              onClick={(e) => {
+                setIntervalValue(e)
+              }}
+            >
               15m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg">
+            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="20m"
+              onClick={(e) => {
+                setIntervalValue(e)
+              }}
+            >
               20m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg">
+            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="1h"
+              onClick={(e) => {
+                setIntervalValue(e)
+              }}
+            >
               1H
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg">
+            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="4h"
+              onClick={(e) => {
+                setIntervalValue(e)
+              }}
+            >
               4H
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg">
+            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="1d"
+              onClick={(e) => {
+                setIntervalValue(e)
+              }}
+            >
               1D
             </button>
             <ButtonsDropDown />
@@ -175,15 +215,11 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       <div className="mt-5 flex flex-col gap-y-5 px-6">
         <div className="flex flex-row gap-x-10">
           <p>{selectedPair.market}</p>
-          <div>{`O: ${
-            tickData.length > 0 ? tickData[tickData.length - 1].open : ""
-          }, H: ${
-            tickData.length > 0 ? tickData[tickData.length - 1].high : ""
-          }, L: ${
-            tickData.length > 0 ? tickData[tickData.length - 1].low : ""
-          }, C: ${
-            tickData.length > 0 ? tickData[tickData.length - 1].close : ""
-          }`}</div>
+          <div>{`O: ${tickData.length > 0 ? tickData[tickData.length - 1].open : ""
+            }, H: ${tickData.length > 0 ? tickData[tickData.length - 1].high : ""
+            }, L: ${tickData.length > 0 ? tickData[tickData.length - 1].low : ""
+            }, C: ${tickData.length > 0 ? tickData[tickData.length - 1].close : ""
+            }`}</div>
         </div>
         <div
           ref={chartContainerRef}

@@ -14,3 +14,8 @@ export type Web3ContextType = {
 export type OfferContextType = {
   offerContents: any;
 }
+
+
+export type UtilContextType = {
+  accessToken:String;
+}

@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 
 import Web3Context from '../contexts/web3context';
-
-const useWeb3 = () => {
+import UtilContext from "@/contexts/utilcontext"
+export const useWeb3 = () => {
   const context = useContext(Web3Context);
 
   if (!context) throw new Error('context must be use inside provider');
@@ -10,4 +10,10 @@ const useWeb3 = () => {
   return context;
 };
 
-export default useWeb3;
+
+export const useUtilContext = () => {
+  const context = useContext(UtilContext);
+  if (!context) throw new Error("context must be use inside provider");
+  return context
+}
+
