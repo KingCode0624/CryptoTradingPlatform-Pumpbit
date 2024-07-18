@@ -1,11 +1,33 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PositionsCard from "./positionsCard";
 import OrdersCard from "./ordersCard";
 import HistoryCard from "./historyCard";
 import { TabsList, Tabs, TabsTrigger, TabsContent } from "../ui/tabs";
-
+import { getPosition } from '@/services/markets'
+import { chain, market } from "@/constants/index"
+import { useUtilContext } from "@/hooks";
 const TradeTabs = () => {
+  const init = async () => {
+
+    let accessToken: string = localStorage.getItem("accessToken") as string
+    if (accessToken === "") return
+
+    const result = await getPosition(accessToken, market, chain)
+    console.log("Result => ", result)
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      init()
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+
+
+
   return (
     <div>
       <div className="rounded-3xl backdrop-blur-lg/2 bg-card border border-border ">

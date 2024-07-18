@@ -2,12 +2,30 @@
 import Image from "next/image";
 import { MagicMenu } from "./ui/dropdown";
 import { useUtilContext } from "@/hooks";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { getMarketInfo } from "@/services/markets";
+import { chain, market } from "@/constants/index"
+import { cookieStorage } from "wagmi";
 export default function TradeHeader() {
 
   const { ethPrice } = useUtilContext()
 
+  const [changeDay, setChangeDay] = useState<string>("0%")
+
+  const init = async () => {
+    const result = await getMarketInfo(market, chain)
+    const _changeDay = String(Number(result.change_in_24h).toFixed(2)) + "%"
+    setChangeDay(_changeDay)
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      init();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [])
+  
   return (
     <div className="flex flex-col justify-around xl:flex-row py-4 backdrop-blur-lg/2 px-2 bg-card border border-border rounded-3xl">
       <div className="flex justify-between items-center sm:gap-12 gap-2">
@@ -31,7 +49,7 @@ export default function TradeHeader() {
             <span className="text-text-secondary hidden lg:block">
               24h change
             </span>{" "}
-            <span className="block  text-semantic-success text-lg">+3.83%</span>
+            <span className="block  text-semantic-success text-lg">{changeDay}</span>
           </p>
         </div>
       </div>

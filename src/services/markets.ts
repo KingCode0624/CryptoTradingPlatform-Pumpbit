@@ -10,10 +10,10 @@ export async function getMarketLists() {
   }
 }
 
-export async function getMarketInfo(market: string) {
+export async function getMarketInfo(market: string, chain: string) {
   try {
     const response = await client.get("/public/market", {
-      params: { market },
+      params: { market, chain },
     });
     const { data } = response.data;
     return data;
@@ -37,5 +37,29 @@ export async function getMarketTicks(market: string, chain: string, interval: st
   } catch (error) {
     console.error("Failed to fetch market ticks:", error);
     return null;
+  }
+}
+
+
+export async function getPosition(accessToken: string, market: string, chain: string) {
+
+  console.log("Axi Token => ", accessToken)
+
+  try {
+    const Position = await client.get(`/positions/`, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}` // Use the provided accessToken
+      },
+      params: {
+        chain: chain,
+        market: market
+      }
+    })
+
+    console.log("Postion => ", Position)
+    return Position
+    
+  } catch (err) {
+    console.log("Error => ", err)
   }
 }

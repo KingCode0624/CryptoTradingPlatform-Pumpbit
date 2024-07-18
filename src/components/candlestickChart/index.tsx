@@ -46,6 +46,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
 
   useEffect(() => {
     let setted = false;
+
     const fetchData = async () => {
       if (!selectedPair.market) {
         console.error("Selected pair market is not defined.");
@@ -63,7 +64,6 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       }));
 
       setEthPrice(formattedTicks[formattedTicks.length - 1])
-
       setTickData(formattedTicks);
 
       if (candlestickSeriesRef.current === null) {
@@ -133,10 +133,10 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
     return () => clearInterval(interval);
   }, [selectedPair.market, tickData]);
 
-
   const setIntervalValue = (e: any) => {
     setChartInterval(e.target.value)
   }
+  
   return (
     <div className="flex flex-col rounded-3xl border border-border bg-card backdrop-blur-lg/2">
       <div className="my-5 flex flex-row gap-x-10 px-5 text-lg font-bold">

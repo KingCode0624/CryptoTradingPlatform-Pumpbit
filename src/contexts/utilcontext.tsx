@@ -14,7 +14,6 @@ const UtilContext = createContext<UtilContextType | null>(null)
 
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-    const [accessToken, setAccessToken] = useState<string>("")
     const [ethPrice, setEthPrice] = useState<EthPriceType>({
         open: 0,
         close: 0,
@@ -25,14 +24,15 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const init = async () => {
         const result = await Authorization()
         const _accessToken = result.data.access_token
-        setAccessToken(_accessToken)
+        localStorage.setItem("accessToken", _accessToken)
+
     }
 
     const value = useMemo(() => ({
-        accessToken: accessToken,
-        ethPrice: ethPrice,
+        ethPrice: ethPrice, 
         setEthPrice: setEthPrice,
-    }), [accessToken, ethPrice, setEthPrice])
+
+    }), [ethPrice, setEthPrice])
 
     useEffect(() => {
         init();

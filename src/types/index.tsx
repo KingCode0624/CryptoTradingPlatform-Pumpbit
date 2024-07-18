@@ -12,7 +12,6 @@ export type Web3ContextType = {
 };
 
 export type UtilContextType = {
-  accessToken: string;
   ethPrice: EthPriceType;
   setEthPrice: (price: EthPriceType) => void;
 }
