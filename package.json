@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:backend": "node index.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -24,7 +25,9 @@
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "ethers": "^6.13.1",
+    "express": "^4.19.2",
     "lightweight-charts": "^4.1.4",
     "lucide-react": "^0.395.0",
     "next": "14.2.3",
@@ -48,5 +51,5 @@
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
-  "proxy":"http://127.0.0.1:8000"
+  "proxy": "http://127.0.0.1:8000"
 }

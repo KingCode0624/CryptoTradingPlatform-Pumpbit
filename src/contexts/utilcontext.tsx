@@ -24,12 +24,13 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const init = async () => {
         const result = await Authorization()
         const _accessToken = result.data.access_token
+        console.log("Token => ", _accessToken)
         localStorage.setItem("accessToken", _accessToken)
 
     }
 
     const value = useMemo(() => ({
-        ethPrice: ethPrice, 
+        ethPrice: ethPrice,
         setEthPrice: setEthPrice,
 
     }), [ethPrice, setEthPrice])

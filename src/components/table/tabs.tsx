@@ -4,47 +4,37 @@ import PositionsCard from "./positionsCard";
 import OrdersCard from "./ordersCard";
 import HistoryCard from "./historyCard";
 import { TabsList, Tabs, TabsTrigger, TabsContent } from "../ui/tabs";
-import { getPosition, getMarketInfo } from '@/services/markets'
+import {
+  getPosition,
+  getMarketInfo,
+  getOrders,
+  getHistories
+} from '@/services/markets'
 import { chain, market } from "@/constants/index"
-import { useUtilContext } from "@/hooks";
-import axios from "axios";
-
 const TradeTabs = () => {
 
-  // const init = async () => {
-  //   console.log("Hello")
-  //   if (accessToken === "") return
-  //   let accessToken: string = localStorage.getItem("accessToken") as string
-
-  //   const result = await getPosition(accessToken, market, chain)
-  //   console.log("Result => ", result)
-  // }
+  const [positions, setPositions] = useState<any>([])
+  const [orders, setOrders] = useState<any>([])
+  const [histories, setHistorys] = useState<any>([])
 
   const init = async () => {
-    console.log("Heqwe")
-    let accessToken = localStorage.getItem("accessToken");
-    try {
-      const response = await axios.get('https://api.inftytrade.xyz/v1/api/position-history', {
-        headers: {
-          'Authorization': accessToken
-        }
-      });
-      console.log("Result => ", response.data);
-    } catch (error) {
-      console.error("Error fetching position history:", error);
-    }
-  };
+    let accessToken: string = localStorage.getItem("accessToken") as string
+    const _positions = await getPosition(accessToken, market, chain)
+    const _orders = await getOrders(accessToken, market, chain)
+    const _histories = await getHistories(accessToken, market, chain)
+
+    setPositions(_positions.data.positions)
+    setOrders(_orders.data.orders)
+    setOrders(_histories.data.histories)
+  }
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // init()
-    }, 5000)
+      init()
+    }, 1000)
 
     return () => clearInterval(interval)
   }, [])
-
-
-
 
   return (
     <div>
@@ -57,27 +47,30 @@ const TradeTabs = () => {
           </TabsList>
           <TabsContent value="positions">
             <div className="divide-y divide-dashed divide-border">
-              <PositionsCard />
-              <PositionsCard />
-              <PositionsCard />
-              <button
-                onClick={() => {
-                  init()
-                }}
-              >
-                Hello
-              </button>
+              {
+                positions.map((item: any, idx: any) => (
+                  <PositionsCard />
+                ))
+              }
             </div>
           </TabsContent>
           <TabsContent value="orders">
             <div>
-              <OrdersCard />
+              {
+                orders.map((item: any, idx: any) => (
+                  <OrdersCard />
+                ))
+              }
             </div>
           </TabsContent>
           <TabsContent value="history">
             {" "}
             <div className="">
-              <HistoryCard />
+              {
+                histories.map((item: any, idx: any) => (
+                  <HistoryCard />
+                ))
+              }
             </div>
           </TabsContent>
         </Tabs>

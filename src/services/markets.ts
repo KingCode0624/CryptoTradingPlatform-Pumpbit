@@ -43,10 +43,8 @@ export async function getMarketTicks(market: string, chain: string, interval: st
 
 export async function getPosition(accessToken: string, market: string, chain: string) {
 
-  console.log("Axi Token => ", accessToken)
-
   try {
-    const Position = await client.get(`/positions/`, {
+    const positions = await client.get(`/positions/`, {
       headers: {
         'Authorization': `${accessToken}` // Use the provided accessToken
       },
@@ -56,7 +54,48 @@ export async function getPosition(accessToken: string, market: string, chain: st
       }
     })
 
-    return Position
+    return positions.data
+
+  } catch (err) {
+    console.log("Error => ", err)
+  }
+}
+
+export async function getOrders(accessToken: string, market: string, chain: string) {
+
+  try {
+    const orders = await client.get(`/orders/`, {
+      headers: {
+        'Authorization': `${accessToken}` // Use the provided accessToken
+      },
+      params: {
+        chain: chain,
+        market: market
+      }
+    })
+
+    return orders.data
+
+  } catch (err) {
+    console.log("Error => ", err)
+  }
+}
+
+
+export async function getHistories(accessToken: string, market: string, chain: string) {
+
+  try {
+    const histories = await client.get(`/position/histories`, {
+      headers: {
+        'Authorization': `${accessToken}` // Use the provided accessToken
+      },
+      params: {
+        chain: chain,
+        market: market
+      }
+    })
+
+    return histories.data
 
   } catch (err) {
     console.log("Error => ", err)
