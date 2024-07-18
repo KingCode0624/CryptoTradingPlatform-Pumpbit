@@ -48,7 +48,7 @@ export async function getPosition(accessToken: string, market: string, chain: st
   try {
     const Position = await client.get(`/positions/`, {
       headers: {
-        'Authorization': `Bearer ${accessToken}` // Use the provided accessToken
+        'Authorization': `${accessToken}` // Use the provided accessToken
       },
       params: {
         chain: chain,
@@ -56,9 +56,8 @@ export async function getPosition(accessToken: string, market: string, chain: st
       }
     })
 
-    console.log("Postion => ", Position)
     return Position
-    
+
   } catch (err) {
     console.log("Error => ", err)
   }

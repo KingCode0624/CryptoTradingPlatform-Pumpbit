@@ -4,23 +4,41 @@ import PositionsCard from "./positionsCard";
 import OrdersCard from "./ordersCard";
 import HistoryCard from "./historyCard";
 import { TabsList, Tabs, TabsTrigger, TabsContent } from "../ui/tabs";
-import { getPosition } from '@/services/markets'
+import { getPosition, getMarketInfo } from '@/services/markets'
 import { chain, market } from "@/constants/index"
 import { useUtilContext } from "@/hooks";
+import axios from "axios";
+
 const TradeTabs = () => {
+
+  // const init = async () => {
+  //   console.log("Hello")
+  //   if (accessToken === "") return
+  //   let accessToken: string = localStorage.getItem("accessToken") as string
+
+  //   const result = await getPosition(accessToken, market, chain)
+  //   console.log("Result => ", result)
+  // }
+
   const init = async () => {
-
-    let accessToken: string = localStorage.getItem("accessToken") as string
-    if (accessToken === "") return
-
-    const result = await getPosition(accessToken, market, chain)
-    console.log("Result => ", result)
-  }
+    console.log("Heqwe")
+    let accessToken = localStorage.getItem("accessToken");
+    try {
+      const response = await axios.get('https://api.inftytrade.xyz/v1/api/position-history', {
+        headers: {
+          'Authorization': accessToken
+        }
+      });
+      console.log("Result => ", response.data);
+    } catch (error) {
+      console.error("Error fetching position history:", error);
+    }
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
-      init()
-    }, 1000)
+      // init()
+    }, 5000)
 
     return () => clearInterval(interval)
   }, [])
@@ -42,6 +60,13 @@ const TradeTabs = () => {
               <PositionsCard />
               <PositionsCard />
               <PositionsCard />
+              <button
+                onClick={() => {
+                  init()
+                }}
+              >
+                Hello
+              </button>
             </div>
           </TabsContent>
           <TabsContent value="orders">

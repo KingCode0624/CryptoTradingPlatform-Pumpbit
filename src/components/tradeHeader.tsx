@@ -20,7 +20,7 @@ export default function TradeHeader() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      init();
+      // init();
     }, 1000);
 
     return () => clearInterval(interval);

@@ -127,7 +127,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
     };
 
     const interval = setInterval(() => {
-      fetchData();
+      // fetchData();
     }, 1000);
 
     return () => clearInterval(interval);
