@@ -17,8 +17,8 @@ export type UtilContextType = {
 }
 
 export type EthPriceType = {
-  open: Number,
-  close: Number,
-  high: Number,
-  low: Number
+  open: number,
+  close: number,
+  high: number,
+  low: number
 }

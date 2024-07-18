@@ -52,6 +52,7 @@ const TradeTabs = () => {
                   <PositionsCard key={idx} />
                 ))
               }
+              <PositionsCard />
             </div>
           </TabsContent>
           <TabsContent value="orders">
