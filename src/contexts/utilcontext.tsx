@@ -7,15 +7,15 @@ import {
     useState,
     useMemo,
 } from "react"
-import { UtilContextType } from "@/types"
+import { UtilContextType, EthPriceType } from "@/types"
 import { Authorization } from "@/authorization"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 
-    const [accessToken, setAccessToken] = useState<String>()
-
+    const [accessToken, setAccessToken] = useState<string>()
+    const [ethPrice, setEthPrice] = useState<EthPriceType>()
     const init = async () => {
         const result = await Authorization()
         const _accessToken = result.data.access_token
@@ -23,8 +23,10 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     const value = useMemo(() => ({
-        accessToken: accessToken
-    }), [accessToken])
+        accessToken: accessToken,
+        ethPrice: ethPrice,
+        setEthPrice: setEthPrice,
+    }), [accessToken, ethPrice, setEthPrice])
 
     useEffect(() => {
         init();

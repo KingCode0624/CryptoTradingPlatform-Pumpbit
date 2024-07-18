@@ -1,7 +1,12 @@
 import Image from "next/image";
 import { MagicMenu } from "./ui/dropdown";
+import { useUtilContext } from "@/hooks";
+import { useEffect } from "react";
 
 export default function TradeHeader() {
+
+  const { ethPrice } = useUtilContext()
+
   return (
     <div className="flex flex-col justify-around xl:flex-row py-4 backdrop-blur-lg/2 px-2 bg-card border border-border rounded-3xl">
       <div className="flex justify-between items-center sm:gap-12 gap-2">
@@ -17,7 +22,7 @@ export default function TradeHeader() {
         </div>
         <div>
           <p className="text-semantic-success font-bold sm:text-4xl text-sm ">
-            41030.29
+            {ethPrice ? String(Number(ethPrice.close).toFixed(2)) : "0"}
           </p>
         </div>
         <div>

@@ -15,7 +15,15 @@ export type OfferContextType = {
   offerContents: any;
 }
 
-
 export type UtilContextType = {
-  accessToken:String;
+  accessToken: string;
+  ethPrice: EthPriceType;
+  setEthPrice: (price: EthPriceType) => void;
+}
+
+export type EthPriceType = {
+  open: Number,
+  close: Number,
+  high: Number,
+  low: Number
 }

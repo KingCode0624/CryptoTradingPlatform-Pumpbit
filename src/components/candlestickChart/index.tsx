@@ -8,6 +8,7 @@ import { TPairInfo, TTick } from "@/lib/types";
 import ButtonsDropDown from "./buttonsPopover";
 import Image from "next/image";
 import { FaCamera } from "react-icons/fa";
+import { useUtilContext } from "@/hooks";
 
 interface PriceDiagramProps {
   selectedPair: TPairInfo;
@@ -23,10 +24,11 @@ interface MarketTick {
 }
 
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
+  const { setEthPrice } = useUtilContext()
 
   const chain: string = "b_square_testnet"
   const [chartInterval, setChartInterval] = useState<string>("1m")
-  const [countBack, setCountBack] = useState<Number>(100)
+  const [countBack, setCountBack] = useState<Number>(400)
 
   const [tickData, setTickData] = useState<TTick[]>([
     {
@@ -60,7 +62,10 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         close: Number(tick.c),
       }));
 
+      setEthPrice(formattedTicks[formattedTicks.length - 1])
+
       setTickData(formattedTicks);
+
       if (candlestickSeriesRef.current === null) {
         if (chartContainerRef.current) {
           const chart = createChart(chartContainerRef.current, {
@@ -111,11 +116,10 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       } else {
         if (tickData.length > 1) {
           if (!setted) {
-            // console.log(tickData, "tickData");
-
             candlestickSeriesRef.current.setData(tickData);
             setted = true;
-          } else {
+          }
+          else {
             candlestickSeriesRef.current.update(tickData[tickData.length - 1]);
           }
         }
