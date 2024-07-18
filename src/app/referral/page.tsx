@@ -40,20 +40,6 @@ const Data = [
     recruited: "0x5EfGh9012IjKl34",
     points: 1000,
   },
-  {
-    ranking: 6,
-    name: "0x1Ae1234BcDe56789F0123456789AbCdEF0123456",
-    multiplier: 1.6,
-    recruited: "0x5EfGh9012IjKl34",
-    points: 1000,
-  },
-  {
-    ranking: 7,
-    name: "0x1Ae1234BcDe56789F0123456789AbCdEF0123456",
-    multiplier: 1.6,
-    recruited: "0x5EfGh9012IjKl34",
-    points: 1000,
-  },
 ];
 
 export default function Referral() {

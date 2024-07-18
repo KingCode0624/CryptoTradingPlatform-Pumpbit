@@ -1,19 +1,15 @@
-import { ContractRunner } from "ethers";
+import { ContractRunner, Contract, JsonRpcSigner } from "ethers";
 import { Address } from "viem";
 
 export type Web3ContextType = {
   account?: Address;
   chainId?: number;
   isConnected?: boolean;
-  library?: ContractRunner;
+  library?: ContractRunner | Promise<JsonRpcSigner>;
   estokkYamContract: any;
   tokens: any;
   properties: any;
 };
-
-export type OfferContextType = {
-  offerContents: any;
-}
 
 export type UtilContextType = {
   accessToken: string;

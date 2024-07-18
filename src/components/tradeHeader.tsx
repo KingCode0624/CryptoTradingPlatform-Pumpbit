@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import { MagicMenu } from "./ui/dropdown";
 import { useUtilContext } from "@/hooks";

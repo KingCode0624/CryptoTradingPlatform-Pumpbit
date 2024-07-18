@@ -28,7 +28,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
 
   const chain: string = "b_square_testnet"
   const [chartInterval, setChartInterval] = useState<string>("1m")
-  const [countBack, setCountBack] = useState<Number>(400)
+  const [countBack, setCountBack] = useState<Number>(100)
 
   const [tickData, setTickData] = useState<TTick[]>([
     {

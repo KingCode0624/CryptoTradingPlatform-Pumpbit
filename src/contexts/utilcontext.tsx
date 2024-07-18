@@ -11,11 +11,17 @@ import { UtilContextType, EthPriceType } from "@/types"
 import { Authorization } from "@/authorization"
 
 const UtilContext = createContext<UtilContextType | null>(null)
+
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
+    const [accessToken, setAccessToken] = useState<string>("")
+    const [ethPrice, setEthPrice] = useState<EthPriceType>({
+        open: 0,
+        close: 0,
+        high: 0,
+        low: 0
+    })
 
-    const [accessToken, setAccessToken] = useState<string>()
-    const [ethPrice, setEthPrice] = useState<EthPriceType>()
     const init = async () => {
         const result = await Authorization()
         const _accessToken = result.data.access_token

@@ -32,7 +32,7 @@ import LeverageSlider from "../ui-custom/leverage-slider";
 // import { type InftyDex, IDL } from "@/idl/infty_dex";
 // import * as InftyDexJson from "@/idl/infty_dex.json";
 // import type { PairInfo } from "@/lib/types";
-import { getMarketInfo } from "@/services/markets";
+// import { getMarketInfo } from "@/services/markets";
 
 interface OrderDiagramProps {
   selectedPair: any;
