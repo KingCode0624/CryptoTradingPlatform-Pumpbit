@@ -49,7 +49,7 @@ const TradeTabs = () => {
             <div className="divide-y divide-dashed divide-border">
               {
                 positions.map((item: any, idx: any) => (
-                  <PositionsCard />
+                  <PositionsCard key={idx} />
                 ))
               }
             </div>
@@ -58,7 +58,7 @@ const TradeTabs = () => {
             <div>
               {
                 orders.map((item: any, idx: any) => (
-                  <OrdersCard />
+                  <OrdersCard key={idx} />
                 ))
               }
             </div>
@@ -68,7 +68,7 @@ const TradeTabs = () => {
             <div className="">
               {
                 histories.map((item: any, idx: any) => (
-                  <HistoryCard />
+                  <HistoryCard key={idx}/>
                 ))
               }
             </div>
