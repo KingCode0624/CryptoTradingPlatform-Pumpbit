@@ -1,5 +1,5 @@
 interface TPSLInputProps {
-  value?: string;
+  value?: number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: () => void;
   placeholder: string;

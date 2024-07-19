@@ -1,3 +1,5 @@
+"use client"
+import { useState } from "react";
 import { BsThreeDots } from "react-icons/bs";
 import {
   Popover,
@@ -11,6 +13,9 @@ import { Dialog, DialogTrigger } from "../models";
 import SlippageSettingModal from "../models/slippageSettingsModal";
 import Link from "next/link";
 export const MenuMore = () => {
+
+  const [isSlippageModalOpen, setIsSlippageModalOpen] = useState<boolean>(false);
+
   return (
     <Popover>
       <PopoverTrigger>
@@ -32,14 +37,15 @@ export const MenuMore = () => {
             <div>
               <Dialog>
                 <DialogTrigger asChild>
-                  <Link href="#">
+                  <Link href="" onClick={() => setIsSlippageModalOpen(true)}
+                  >
                     <div className="flex flex-row gap-x-2 w-full hover:bg-[#18191F] text-white  hover:text-primary py-2 ">
                       <ConversationIcon />
                       Slippage Settings
                     </div>
                   </Link>
                 </DialogTrigger>
-                {<SlippageSettingModal />}
+                {isSlippageModalOpen && <SlippageSettingModal onClose={() => setIsSlippageModalOpen(false)} />}
               </Dialog>
             </div>
 

@@ -7,7 +7,7 @@ import {
     useState,
     useMemo,
 } from "react"
-import { UtilContextType, EthPriceType } from "@/types"
+import { UtilContextType, EthPriceType, TradeHeaderType } from "@/types"
 import { Authorization } from "@/authorization"
 
 const UtilContext = createContext<UtilContextType | null>(null)
@@ -20,17 +20,22 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         high: 0,
         low: 0
     })
+    const [headerPrice, setHeaderPrice] = useState<TradeHeaderType>({
+        price24High: 0,
+        price24Low: 0
+    })
+
 
     const init = async () => {
         const result = await Authorization()
         const _accessToken = result.data.access_token
-        console.log("Token => ", _accessToken)
         localStorage.setItem("accessToken", _accessToken)
-
     }
 
     const value = useMemo(() => ({
         ethPrice: ethPrice,
+        headerPrice: headerPrice,
+        setHeaderPrice: setHeaderPrice,
         setEthPrice: setEthPrice,
 
     }), [ethPrice, setEthPrice])

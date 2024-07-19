@@ -1,7 +1,11 @@
 import React from "react";
 import { DialogContent, DialogTitle } from ".";
+import { Dialog, DialogTrigger } from "../models";
 
-export default function SlippageSettingModal() {
+interface SlippageSettingModalProps {
+  onClose: any
+}
+export default function SlippageSettingModal({ onClose }: SlippageSettingModalProps) {
   return (
     <div>
       <DialogContent className=" bg-gradient-bg  flex flex-col gap-y-3 text-white  max-w-md">
@@ -34,7 +38,9 @@ export default function SlippageSettingModal() {
         </div>
 
         <div className="mt-5 ">
-          <button className="py-1.5 w-full rounded-full text-lg bg-primary font-bold">
+          <button className="py-1.5 w-full rounded-full text-lg bg-primary font-bold"
+            onClick={() => onClose()}
+          >
             Confrim
           </button>
         </div>

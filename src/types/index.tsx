@@ -6,16 +6,21 @@ export type Web3ContextType = {
   chainId?: number;
   isConnected?: boolean;
   library?: ContractRunner | Promise<JsonRpcSigner>;
-  estokkYamContract: any;
-  tokens: any;
-  properties: any;
+  orderBookContract: any;
+  marketDescriptorDeployerContract: any;
 };
 
 export type UtilContextType = {
   ethPrice: EthPriceType;
+  headerPrice: TradeHeaderType;
+  setHeaderPrice: (price: TradeHeaderType) => void;
   setEthPrice: (price: EthPriceType) => void;
 }
 
+export type TradeHeaderType = {
+  price24High: number;
+  price24Low: number;
+}
 export type EthPriceType = {
   open: number,
   close: number,

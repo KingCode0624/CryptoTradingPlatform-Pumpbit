@@ -12,9 +12,15 @@ import { useAccount, useChainId } from 'wagmi';
 
 import { useEthersProvider, useEthersSigner } from '@/utils/wagmi-ethers';
 import { Web3ContextType } from '../types';
-import { b2testnetAddress } from '@/constants';
-import EstokkYamContractAbi from '@/contracts/EstokkYam.json';
+import {
+    b2testnet_OrderBook_Address,
+    b2testnet_PositionRoute_Address,
+    b2testnet_MarketManager_Address,
+    b2testnet_MarketDescriptorDeployer_Address
+} from '@/constants';
 
+import orderBookAbi from "@/contracts/OrderBook.json"
+import marketDescriptorDeployerAbi from "@/contracts/MarketDescriptorDeployer.json"
 declare let window: any;
 const Web3Context = createContext<Web3ContextType | null>(null);
 
@@ -31,9 +37,10 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     }
 
     const [provider, setProvider] = useState<ContractRunner>(defaultProvider);
-    const [estokkYamContract, setEstokkYamContract] = useState<Contract>({} as Contract);
-    const [tokens, setTokens] = useState<any>()
-    const [properties, setProperties] = useState<any>()
+
+    const [marketManagerContract, setMarketManagerContract] = useState<Contract>({} as Contract);
+    const [orderBookContract, setOrderBookContract] = useState<Contract>({} as Contract);
+    const [marketDescriptorDeployerContract, setMarketDescriptorDeployerContract] = useState<Contract>({} as Contract)
 
     const init = useCallback(async () => {
         try {
@@ -44,16 +51,17 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
                 console.log('Connected wallet');
             }
 
-            let _estokkYamContract: any;
-            if (chainId === 10200) {
-                _estokkYamContract = new web3.eth.Contract(
-                    EstokkYamContractAbi,
-                    b2testnetAddress
-                );
+            let _orderBookContract: any;
+            let _marketDescriptorDeployerContract: any
+
+            if (chainId === 1123) {
+                _orderBookContract = new web3.eth.Contract(orderBookAbi, b2testnet_OrderBook_Address);
+                _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, b2testnet_MarketDescriptorDeployer_Address)
             }
 
-            setEstokkYamContract(_estokkYamContract);
-
+            setOrderBookContract(_orderBookContract);
+            setMarketDescriptorDeployerContract(_marketDescriptorDeployerContract)
+            
         } catch (err) {
             // console.log(err);
         }
@@ -72,9 +80,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             chainId,
             isConnected,
             library: provider ?? signer,
-            estokkYamContract,
-            tokens,
-            properties,
+            orderBookContract,
+            marketDescriptorDeployerContract
         }),
         [
             address,
@@ -82,9 +89,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             isConnected,
             provider,
             signer,
-            estokkYamContract,
-            tokens,
-            properties,
+            orderBookContract,
+            marketDescriptorDeployerContract
         ]
     );
     return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;

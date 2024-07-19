@@ -8,7 +8,7 @@ import { chain, market } from "@/constants/index"
 import { cookieStorage } from "wagmi";
 export default function TradeHeader() {
 
-  const { ethPrice } = useUtilContext()
+  const { ethPrice, headerPrice } = useUtilContext()
 
   const [changeDay, setChangeDay] = useState<string>("0%")
 
@@ -25,7 +25,7 @@ export default function TradeHeader() {
 
     return () => clearInterval(interval);
   }, [])
-  
+
   return (
     <div className="flex flex-col justify-around xl:flex-row py-4 backdrop-blur-lg/2 px-2 bg-card border border-border rounded-3xl">
       <div className="flex justify-between items-center sm:gap-12 gap-2">
@@ -56,12 +56,12 @@ export default function TradeHeader() {
       <div className="flex justify-between sm:gap-12 gap-2">
         <div>
           <p className="text-text-secondary">
-            24h High <span className="block text-white text-lg">41130.00</span>
+            24h High <span className="block text-white text-lg">{Number(headerPrice.price24High).toFixed(2)}</span>
           </p>
         </div>
         <div>
           <p className="text-text-secondary">
-            24h low <span className="block text-white text-lg">40810.00</span>
+            24h low <span className="block text-white text-lg">{Number(headerPrice.price24Low).toFixed(2)}</span>
           </p>
         </div>
         <div>

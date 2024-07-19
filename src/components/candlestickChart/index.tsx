@@ -23,8 +23,18 @@ interface MarketTick {
   c: string;
 }
 
+export const GetMaxandMinPrice = (priceList: any) => {
+  const maxValue = Math.max(...priceList.map((item: any) => item.close))
+  const minValue = Math.min(...priceList.map((item: any) => item.close))
+  return ({
+    price24High: maxValue,
+    price24Low: minValue
+  })
+}
+
+
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
-  const { setEthPrice } = useUtilContext()
+  const { setEthPrice, setHeaderPrice } = useUtilContext()
 
   const chain: string = "b_square_testnet"
   const [chartInterval, setChartInterval] = useState<string>("1m")
@@ -41,7 +51,6 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
   ]);
 
   const chartContainerRef = useRef<HTMLDivElement>(null);
-  //eslint-disable-next-line
   const candlestickSeriesRef = useRef<any>(null);
 
   useEffect(() => {
@@ -62,7 +71,9 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         low: Number(tick.l),
         close: Number(tick.c),
       }));
+      const result = GetMaxandMinPrice(formattedTicks)
 
+      setHeaderPrice(result)
       setEthPrice(formattedTicks[formattedTicks.length - 1])
       setTickData(formattedTicks);
 
@@ -136,7 +147,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
   const setIntervalValue = (e: any) => {
     setChartInterval(e.target.value)
   }
-  
+
   return (
     <div className="flex flex-col rounded-3xl border border-border bg-card backdrop-blur-lg/2">
       <div className="my-5 flex flex-row gap-x-10 px-5 text-lg font-bold">

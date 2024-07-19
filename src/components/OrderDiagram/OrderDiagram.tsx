@@ -1,18 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
-// import * as anchor from "@coral-xyz/anchor";
-// import { BN } from "@coral-xyz/anchor";
-// import Checkbox from "@mui/material/Checkbox";
-
-// import {
-//   ASSOCIATED_TOKEN_PROGRAM_ID,
-//   TOKEN_PROGRAM_ID,
-//   getAssociatedTokenAddressSync,
-// } from "@solana/spl-token";
-// import { useConnection, useAnchorWallet } from "@solana/wallet-adapter-react";
-// import { PublicKey, SystemProgram } from "@solana/web3.js";
-
 import ArrowDownIcon from "/public/assets/arrow-trending-down.svg";
 import ArrowUpIcon from "/public/assets/arrow-trending-up.svg";
 import {
@@ -25,35 +12,41 @@ import TPSLInput from "./TPSLInput";
 import { Checkbox } from "../ui/checkbox";
 import LeverageSlider from "../ui-custom/leverage-slider";
 import { useUtilContext } from "@/hooks";
+import { useWeb3 } from "@/hooks";
+import { RxValue } from "react-icons/rx";
+import { decimalBtc } from "@/constants";
+
 interface OrderDiagramProps {
   selectedPair: any;
+}
+
+const toWei = (value: number) => {
+  return Math.round((value * Math.pow(10, decimalBtc)))
 }
 
 export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { ethPrice } = useUtilContext()
+  const { orderBookContract, marketDescriptorDeployerContract, account } = useWeb3()
 
   const [selectedSide, setSelectedSide] = useState("Long");
   const [selectedOrderType, setSelectedOrderType] = useState("Market");
 
   const [leverage, setLeverage] = useState<number>(1);
+  const [orderInitPay, setOrderInitPay] = useState<number>(0)
   const [orderPay, setOrderPay] = useState<number>(0)
   const [estimatedEth, setEstimatedEth] = useState<number>(0)
   const [currentEthPrice, setCurrentEthPrice] = useState<number>(0)
   const [entryPrice, setEntryPrice] = useState<number>(0)
   const [liquidityPrice, setLiquidityPrice] = useState<number>(0)
-
-
-  useEffect(() => {
-    setCurrentEthPrice(ethPrice.close)
-  }, [ethPrice])
+  const [checked, setChecked] = useState(false);
+  const [tpPrice, setTpPrice] = useState<number>(0)
+  const [slPrice, setSlPrice] = useState<number>(0)
 
   const handleLeverageChange = (value: number) => {
     setLeverage(value);
   };
 
-
-  const [checked, setChecked] = useState(false);
   const handleCheckboxChange = (event: any) => {
     setChecked(!checked);
   };
@@ -71,13 +64,62 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }
 
   useEffect(() => {
-    setEstimatedEth(orderPay * leverage / currentEthPrice)
+    setEstimatedEth(orderPay / currentEthPrice)
 
     if (selectedOrderType === "Market")
       setEntryPriceInMarket(currentEthPrice)
-  }, [leverage, currentEthPrice, orderPay,])
+
+  }, [currentEthPrice, orderPay,])
+
+  useEffect(() => {
+    setOrderPay(orderInitPay * leverage)
+  }, [leverage])
+
+  useEffect(() => {
+    setCurrentEthPrice(ethPrice.close)
+  }, [ethPrice])
+
+  const OpenOrderBook = async () => {
+    // const result = await orderBookContract.methods.createIncreaseOrder()
+    const acceptabelRate = 10 // this means 10%
+    const market = await marketDescriptorDeployerContract.methods.descriptors("btc").call()
+    let minExecuteFee = await orderBookContract.methods.minExecutionFee().call();
+    minExecuteFee = Number(minExecuteFee) / Math.pow(10, 18)
+    console.log("Fee => ", minExecuteFee)
+
+    // console.log("Balance => ", await )
+    const side: number = selectedSide === "Long" ? 1 : 2
+    const marginDelta = 100
+    const sizeDelta = 1
+    const triggerMarketPrice = entryPrice
+    const triggerAbove = true
+    const acceptablePrice = currentEthPrice * (1 + acceptabelRate / 100)
+
+    // const createIncreaseOrder = await orderBookContract.methods.createIncreaseOrder(
+    //   market,
+    //   side,
+    //   marginDelta,
+    //   sizeDelta,
+    //   toWei(triggerMarketPrice),
+    //   triggerAbove,
+    //   toWei(acceptablePrice),
+    //   { value: minExecuteFee }
+    // ).send({ from: account })
+    const createIncreaseOrder = await orderBookContract.methods.createIncreaseOrder(
+      market,
+      side,
+      100,
+      1,
+      1000,
+      true,
+      1100,
+      { value: 2000 }
+    ).send({ from: account })
 
 
+    console.log("Result => ", createIncreaseOrder)
+
+  }
 
 
   return (
@@ -167,7 +209,8 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
                   placeholder="Quote Amount"
                   step="0.01"
                   onChange={(e: any) => {
-                    setOrderPay(e.target.value)
+                    setOrderInitPay(e.target.value)
+                    setOrderPay(Number(e.target.value) * leverage)
                   }}
                 />
                 <p className="text-lg font-bold">{selectedPair.quote}</p>
@@ -224,7 +267,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
           <div className="flex flex-row">
             <p className="mr-auto text-p-light">Est. Margin</p>
             <div className="flex flex-row gap-x-1">
-              <p>{orderPay}</p>
+              <p>{orderInitPay}</p>
               <p>{selectedPair.quote}</p>
             </div>
           </div>
@@ -232,11 +275,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             <p className="mr-auto text-p-light">Fees</p>
             <div className="flex flex-row gap-x-1">
               <p>
-                {/* {(
-                (Number(quoteAmount) / marketPrice) *
-                selectedLeverage *
-                0.0005
-              ).toFixed(6)} */}
               </p>
               <p>{selectedPair.quote}</p>
             </div>
@@ -244,42 +282,25 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
         </div>
         <div className="flex flex-col">
           <div className="flex flex-row gap-x-2">
-            {/* <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  sx={{
-                    color: "white",
-                  }}
-                />
-              }
-              onChange={handleCheckboxChange}
-              label="TP/SL"
-            />
-          </FormGroup> */}
             <Checkbox
               className="bg-inherit rounded"
               onClick={handleCheckboxChange}
               name="TP/SL"
             />
             <label> TP/SL</label>
-            {/* <button className="ml-auto flex flex-row items-center gap-x-1 text-s-light">
-            <ChipIcon className="h-6 w-6" />
-            <p>RiskGuard AI</p>
-          </button> */}
           </div>
 
           {checked && (
             <div className="mt-5 flex flex-row items-center justify-center gap-x-3">
               <TPSLInput
-                //  value={tpPrice}
-                //  onChange={handleTpPriceChange}
+                value={tpPrice}
+                onChange={(e: any) => setTpPrice(e.target.value)}
                 // onBlur={handleTpPriceBlur}
                 placeholder="TP Price"
               />
               <TPSLInput
-                //  value={slPrice}
-                //  onChange={handleSlPriceChange}
+                value={slPrice}
+                onChange={(e: any) => setSlPrice(e.target.value)}
                 // onBlur={handleSlPriceBlur}
                 placeholder="SL Price"
               />
@@ -291,7 +312,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             ? "bg-semantic-success"
             : "bg-semantic-danger"
             } py-3`}
-        // onClick={selectedSide === "Long" ? openLong : openShort}
+          onClick={() => { OpenOrderBook() }}
         >
           {selectedSide === "Long" ? "Open Long" : "Open Short"}
         </button>

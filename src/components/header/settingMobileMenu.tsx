@@ -51,7 +51,7 @@ export default function SettingMobileMenu() {
                   </div>
                 </button>
               </DialogTrigger>
-              {<SlippageSettingModal />}
+              {<SlippageSettingModal onClose={() => setOpen(false)} />}
             </Dialog>
           </div>
           <Link
