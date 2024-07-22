@@ -83,7 +83,7 @@ const EarnTabs = () => {
               <TabsTrigger value="Liquidity Mining">
                 Liquidity Mining
               </TabsTrigger>
-              <TabsTrigger value="Pump Flier">Pump Flier</TabsTrigger>
+              {/* <TabsTrigger value="Pump Flier">Pump Flier</TabsTrigger> */}
             </div>
             <div>
               <div className="hidden lg:flex justify-end  items-center w-full font-bold text-xl">

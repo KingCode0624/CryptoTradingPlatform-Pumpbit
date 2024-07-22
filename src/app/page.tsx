@@ -6,6 +6,7 @@ import CardText from "@/components/card";
 import CartNft from "@/components/cardNft";
 import { ButtonMint } from "@/components/button";
 
+
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [open, setOpen] = useState<boolean>(false);

@@ -31,10 +31,10 @@ export const TableRow = (props: TableRowProps) => {
           <p>{props.maxAPR}%</p>
         </td>
         <td align="center">{props.feeIncome}</td>
-        <td align="center">{props.dailyEmission} PBT</td>
+        {/* <td align="center">{props.dailyEmission} PBT</td> */}
         <td align="center">{props.totalLiquidity} M</td>
         <td align="center">{props.myLiquidity} USDC</td>
-        <td align="center">{props.claimableRewards} PBT</td>
+        {/* <td align="center">{props.claimableRewards} PBT</td> */}
 
         <td align="center">
           <button className="px-2 py-1" onClick={() => setExpanded(!expanded)}>
@@ -89,10 +89,10 @@ export const TableTitles = (props: TableTitleProps) => {
       <th>{props.title1}</th>
       <th>{props.title2}</th>
       <th>{props.title3}</th>
-      <th>{props.title4}</th>
+      {/* <th>{props.title4}</th> */}
       <th>{props.title5}</th>
       <th>{props.title6}</th>
-      <th>{props.title7}</th>
+      {/* <th>{props.title7}</th> */}
     </tr>
   );
 };

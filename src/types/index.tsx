@@ -8,6 +8,8 @@ export type Web3ContextType = {
   library?: ContractRunner | Promise<JsonRpcSigner>;
   orderBookContract: any;
   marketDescriptorDeployerContract: any;
+  usdtTokenContract: any;
+  routerContract: any;
 };
 
 export type UtilContextType = {

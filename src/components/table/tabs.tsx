@@ -11,7 +11,11 @@ import {
   getHistories
 } from '@/services/markets'
 import { chain, market } from "@/constants/index"
+import { useWeb3 } from "@/hooks";
+
+
 const TradeTabs = () => {
+  const { routerContract, account, orderBookContract } = useWeb3()
 
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
@@ -35,6 +39,11 @@ const TradeTabs = () => {
 
     return () => clearInterval(interval)
   }, [])
+
+  const setOrder = async () => {
+    const orders = await orderBookContract.methods.increaseOrders(1).call()
+    console.log("Orders => ", orders)
+  }
 
   return (
     <div>
@@ -62,6 +71,7 @@ const TradeTabs = () => {
                   <OrdersCard key={idx} />
                 ))
               }
+              <OrdersCard />
             </div>
           </TabsContent>
           <TabsContent value="history">
@@ -69,13 +79,21 @@ const TradeTabs = () => {
             <div className="">
               {
                 histories.map((item: any, idx: any) => (
-                  <HistoryCard key={idx}/>
+                  <HistoryCard key={idx} />
                 ))
               }
             </div>
           </TabsContent>
         </Tabs>
       </div>
+
+      <button
+        onClick={() => {
+          setOrder()
+        }}
+      >
+        Hllo
+      </button>
     </div>
   );
 };

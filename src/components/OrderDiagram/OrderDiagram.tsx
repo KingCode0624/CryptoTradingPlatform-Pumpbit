@@ -14,20 +14,33 @@ import LeverageSlider from "../ui-custom/leverage-slider";
 import { useUtilContext } from "@/hooks";
 import { useWeb3 } from "@/hooks";
 import { RxValue } from "react-icons/rx";
-import { decimalBtc } from "@/constants";
+import { ethers } from "ethers";
+import {
+  b2testnet_Router_Address,
+  b2testnet_OrderBook_Address
+} from "@/constants";
+import { useToast } from "../ui/toast/use-toast";
 
 interface OrderDiagramProps {
   selectedPair: any;
 }
 
-const toWei = (value: number) => {
-  return Math.round((value * Math.pow(10, decimalBtc)))
+export const toWei = (price: number) => {
+  return Math.round(price * Math.pow(10, 18))
 }
 
 export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
+  const { toast } = useToast()
+
   const { ethPrice } = useUtilContext()
-  const { orderBookContract, marketDescriptorDeployerContract, account } = useWeb3()
+  const {
+    orderBookContract,
+    marketDescriptorDeployerContract,
+    routerContract,
+    account,
+    usdtTokenContract
+  } = useWeb3()
 
   const [selectedSide, setSelectedSide] = useState("Long");
   const [selectedOrderType, setSelectedOrderType] = useState("Market");
@@ -79,50 +92,57 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     setCurrentEthPrice(ethPrice.close)
   }, [ethPrice])
 
-  const OpenOrderBook = async () => {
-    // const result = await orderBookContract.methods.createIncreaseOrder()
+
+  const CreateIncreateOrderBook = async () => {
     const acceptabelRate = 10 // this means 10%
-    const market = await marketDescriptorDeployerContract.methods.descriptors("btc").call()
-    let minExecuteFee = await orderBookContract.methods.minExecutionFee().call();
-    minExecuteFee = Number(minExecuteFee) / Math.pow(10, 18)
-    console.log("Fee => ", minExecuteFee)
+    // const market = await marketDescriptorDeployerContract.methods.descriptors("ETH").call()
+    const market = "0xC8dD5FBBF01392ade733b2F3db36dD87d0FAAA49"
 
-    // console.log("Balance => ", await )
+    // let minExecuteFee = await orderBookContract.methods.minExecutionFee().call();
+    let minExecuteFee = ethers.parseEther("0.005");
+
     const side: number = selectedSide === "Long" ? 1 : 2
-    const marginDelta = 100
-    const sizeDelta = 1
-    const triggerMarketPrice = entryPrice
+    const marginDelta = BigInt(toWei(orderInitPay))
+    const sizeDelta = BigInt(toWei(estimatedEth))
+    const triggerMarketPrice = BigInt(toWei(entryPrice))
     const triggerAbove = true
-    const acceptablePrice = currentEthPrice * (1 + acceptabelRate / 100)
+    const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100))
 
-    // const createIncreaseOrder = await orderBookContract.methods.createIncreaseOrder(
-    //   market,
-    //   side,
-    //   marginDelta,
-    //   sizeDelta,
-    //   toWei(triggerMarketPrice),
-    //   triggerAbove,
-    //   toWei(acceptablePrice),
-    //   { value: minExecuteFee }
-    // ).send({ from: account })
-    const createIncreaseOrder = await orderBookContract.methods.createIncreaseOrder(
+    if (marginDelta == BigInt(0)) {
+      const { id, dismiss } = toast({
+        title: " Margin rice is 0!",
+        description: "Please input margin price."
+      })
+      console.log("Price is not enogugh")
+      return
+    }
+
+    console.log("margin_delt => ", marginDelta)
+    await orderBookContract.methods.createIncreaseOrder(
       market,
       side,
-      100,
-      1,
-      1000,
-      true,
-      1100,
-      { value: 2000 }
-    ).send({ from: account })
+      marginDelta,
+      sizeDelta,
+      triggerMarketPrice,
+      triggerAbove,
+      acceptablePrice,
 
+    ).send({ from: account, value: minExecuteFee })
+  }
 
-    console.log("Result => ", createIncreaseOrder)
+  const IsTransactionAvailable = async () => {
+    await usdtTokenContract.methods.approve(b2testnet_Router_Address, 1000 * Math.pow(10, 18)).send({ from: account })
 
+  }
+
+  const OpenOrderBook = async () => {
+    IsTransactionAvailable()
+    await CreateIncreateOrderBook()
   }
 
 
   return (
+
     <div className="">
       <div className="flex flex-col gap-y-6 rounded-3xl border border-border bg-card backdrop-blur-lg/2  p-5 ">
         <div className="flex w-full flex-row text-xl font-bold border border-secondary rounded-full">
