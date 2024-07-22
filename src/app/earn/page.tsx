@@ -19,12 +19,15 @@ export default function Earn() {
         </div>
       </div>
       <div className="lg:px-10 px-3 ">
-        <div className="pt-7 ">
+
+        {/* <div className="pt-7 ">
           <StatisticsCard />
         </div>
+        
         <div className="pt-7">
           <DashboardCard />
-        </div>
+        </div> */}
+
         <div className="pt-7">
           <EarnTabs />
         </div>

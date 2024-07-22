@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from ".";
 import {
   SliderRange,
@@ -6,8 +6,23 @@ import {
   SliderThumb,
   SliderTrack,
 } from "../ui/slider";
+import { useWeb3 } from "@/hooks";
+
 
 export default function AddLiquidityFirstTimeModal() {
+  const { account, usdtTokenContract } = useWeb3()
+
+  const [accountBalance, setAccountBalance] = useState<number>(0)
+
+  useEffect(() => {
+
+    const init = async () => {
+      const _accountBalance = await usdtTokenContract.methods.balanceOf(account).call()
+      setAccountBalance(_accountBalance)
+    }
+
+    init()
+  }, [])
   return (
     <div>
       <Dialog>
@@ -45,7 +60,7 @@ export default function AddLiquidityFirstTimeModal() {
             <div className="flex flex-col gap-y-6">
               <div className="flex  justify-between">
                 <p>Pay</p>
-                <p className="ml-auto text-sm">Balance:1600:00</p>
+                <p className="ml-auto text-sm"> Balance :{accountBalance}</p>
               </div>
               <div className="flex w-full items-center  justify-between gap-x-5">
                 <div>

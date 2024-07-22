@@ -13,7 +13,8 @@ import Link from "next/link";
 import OverviewCard from "./overviewCard";
 import StakeCard from "./stakeCard";
 import StakePbtCard from "./stakePbtCard";
-import PositionMiningCard from "./positionMiningCard";
+import PositionMiningCardRe from "./positionMiningCard";
+import { PositionMiningCard } from "./positionMiningCardRe";
 import { LMiningAndPFiler } from "./liquidityMining";
 import { Dialog, DialogTrigger } from "../models";
 import ClaimModal from "../models/claimModal";
@@ -71,14 +72,32 @@ const TitlesPumpFiler = [
   },
 ];
 
+const PositionMiningTitle = [
+  {
+    title1: "Market",
+    title2: "Max APR",
+    title3: "Total Position",
+    title4: "My Position",
+  },
+]
+
+const PositionMiningData = [
+  {
+    pool: "BTC/USDC",
+    maxApr: 294.12,
+    totalPosition: 103,
+    myPosition: "Comming soon",
+  }
+]
+
 const EarnTabs = () => {
   return (
     <div>
       <div className="rounded-3xl backdrop-blur-lg/2 bg-card border border-border ">
-        <Tabs defaultValue="Staking">
+        <Tabs defaultValue="Position Mining">
           <TabsList className="py-5 lg:px-7  px-3 lg:overflow-hidden overflow-x-scroll flex justify-between items-center border-b border-border rounded-none">
             <div className="flex justify-center items-center gap-x-3 lg:gap-x-5">
-              <TabsTrigger value="Staking">Staking</TabsTrigger>
+              {/* <TabsTrigger value="Staking">Staking</TabsTrigger> */}
               <TabsTrigger value="Position Mining">Position Mining</TabsTrigger>
               <TabsTrigger value="Liquidity Mining">
                 Liquidity Mining
@@ -87,7 +106,8 @@ const EarnTabs = () => {
             </div>
             <div>
               <div className="hidden lg:flex justify-end  items-center w-full font-bold text-xl">
-                <div className="flex justify-center gap-x-3 items-center">
+
+                {/* <div className="flex justify-center gap-x-3 items-center">
                   <div className="w-full flex justify-center items-center gap-x-3">
                     <p>My Multiplier</p>
                     <p>10x</p>
@@ -100,11 +120,13 @@ const EarnTabs = () => {
                     </DialogTrigger>
                     {<ClaimModal />}
                   </Dialog>
-                </div>
+                </div> */}
+                
               </div>
             </div>
           </TabsList>
-          <TabsContent value="Staking">
+
+          {/* <TabsContent value="Staking">
             <div className="md:px-7 px-3 py-5 ">
               <div className="flex justify-start items-center text-2xl font-bold gap-x-3 w-32 py-1 border-b-2 border-primary">
                 <Image
@@ -147,16 +169,27 @@ const EarnTabs = () => {
                 </div>
               </div>
             </div>
-          </TabsContent>
+          </TabsContent> */}
+
           <TabsContent value="Position Mining">
             <div>
-              <PositionMiningCard />
+              {
+                PositionMiningTitle.map((it, idx) => (
+                  <PositionMiningCard
+                    key={idx}
+                    title={PositionMiningTitle}
+                    data={PositionMiningData} />
+                ))
+              }
             </div>
           </TabsContent>
           <TabsContent value="Liquidity Mining">
-            <div className="">{}</div>
+            <div className="">{ }</div>
             {Titles.map((item, index) => (
-              <LMiningAndPFiler key={index} title={Titles} data={Data} />
+              <LMiningAndPFiler
+                key={index}
+                title={Titles}
+                data={Data} />
             ))}
           </TabsContent>
           <TabsContent value="Pump Flier">

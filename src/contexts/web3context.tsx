@@ -63,6 +63,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             let _marketDescriptorDeployerContract: any
             let _usdtTokenContract: any
             let _routerContract: any
+            
             if (chainId === 1123) {
                 _orderBookContract = new web3.eth.Contract(orderBookAbi, b2testnet_OrderBook_Address);
                 _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, b2testnet_MarketDescriptorDeployer_Address)

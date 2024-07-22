@@ -61,7 +61,6 @@ const TradeTabs = () => {
                   <PositionsCard key={idx} />
                 ))
               }
-              <PositionsCard />
             </div>
           </TabsContent>
           <TabsContent value="orders">
@@ -71,7 +70,6 @@ const TradeTabs = () => {
                   <OrdersCard key={idx} />
                 ))
               }
-              <OrdersCard />
             </div>
           </TabsContent>
           <TabsContent value="history">
@@ -87,13 +85,7 @@ const TradeTabs = () => {
         </Tabs>
       </div>
 
-      <button
-        onClick={() => {
-          setOrder()
-        }}
-      >
-        Hllo
-      </button>
+
     </div>
   );
 };

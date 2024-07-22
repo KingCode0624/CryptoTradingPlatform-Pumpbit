@@ -14,14 +14,8 @@ interface OrderDiagramProps {
 }
 
 export default function Trade() {
-  const { account, chainId } = useWeb3()
-  useEffect(() => {
-    console.log("ChainId =>>>", chainId)
-    console.log("Account =>>", account)
-  }, [chainId])
-
+  const { account, chainId, } = useWeb3()
   const market: string = "btcusdt"
-
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-28 px-1 md:px-10 min-h-screen">

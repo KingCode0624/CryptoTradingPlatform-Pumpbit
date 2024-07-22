@@ -108,14 +108,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     const triggerAbove = true
     const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100))
 
-    if (marginDelta == BigInt(0)) {
-      const { id, dismiss } = toast({
-        title: " Margin rice is 0!",
-        description: "Please input margin price."
-      })
-      console.log("Price is not enogugh")
-      return
-    }
+
 
     console.log("margin_delt => ", marginDelta)
     await orderBookContract.methods.createIncreaseOrder(
@@ -132,11 +125,20 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const IsTransactionAvailable = async () => {
     await usdtTokenContract.methods.approve(b2testnet_Router_Address, 1000 * Math.pow(10, 18)).send({ from: account })
-
+    await routerContract.methods.approvePlugin(b2testnet_OrderBook_Address).send({ from: account })
   }
 
   const OpenOrderBook = async () => {
-    IsTransactionAvailable()
+    if (toWei(orderInitPay) == 0) {
+      const { id, dismiss } = toast({
+        title: " Margin rice is 0!",
+        description: "Please input margin price."
+      })
+      console.log("Price is not enogugh")
+      return
+    }
+
+    await IsTransactionAvailable()
     await CreateIncreateOrderBook()
   }
 

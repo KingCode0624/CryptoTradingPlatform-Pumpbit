@@ -54,6 +54,12 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
       },
       label: <strong>100x</strong>,
     },
+    200: {
+      style: {
+        color: "#eee",
+      },
+      label: <strong>200x</strong>,
+    },
   };
 
   const handleChange = (value: any) => {
@@ -64,7 +70,7 @@ const LeverageSlider: React.FC<LeverageSliderProps> = ({
     <div className="p-4">
       <Slider
         min={1}
-        max={100}
+        max={200}
         marks={marks}
         defaultValue={1}
         trackStyle={{ backgroundColor: "#ffffff" }}
