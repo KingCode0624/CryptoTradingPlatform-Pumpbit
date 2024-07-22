@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Dialog, DialogTrigger } from "../models";
 import AddLiquidityModal from "../models/addLiquidityModal";
 import PositionHistoryCard from "./positionHistoryCard";
 import { cn } from "@/lib/utils";
+import { useUtilContext } from "@/hooks";
+import { Lang_Add } from "@/constants/language";
 
 type TableRowProps = {
   pool: string;
@@ -21,7 +23,20 @@ type TableRowProps = {
 };
 
 export const TableRow = (props: TableRowProps) => {
+  const { language } = useUtilContext()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [expanded, setExpanded] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsLoading(false)
+  }, [language])
+
+  if (isLoading)
+    return (
+      <div>
+        Loading ....
+      </div>
+    )
   return (
     <>
       {" "}
@@ -50,7 +65,7 @@ export const TableRow = (props: TableRowProps) => {
           <Dialog>
             <DialogTrigger asChild>
               <button className="lg:rounded-lg rounded-md bg-button-primary px-2 py-1">
-                Add
+                {language === "EN" ? Lang_Add.en : Lang_Add.ch}
               </button>
             </DialogTrigger>
             <AddLiquidityModal />
@@ -79,8 +94,6 @@ type TableTitleProps = {
   title3: string;
   title4: string;
   title5: string;
-  title6: string;
-  title7: string;
 };
 
 export const TableTitles = (props: TableTitleProps) => {
@@ -89,10 +102,8 @@ export const TableTitles = (props: TableTitleProps) => {
       <th>{props.title1}</th>
       <th>{props.title2}</th>
       <th>{props.title3}</th>
-      {/* <th>{props.title4}</th> */}
+      <th>{props.title4}</th>
       <th>{props.title5}</th>
-      <th>{props.title6}</th>
-      {/* <th>{props.title7}</th> */}
     </tr>
   );
 };

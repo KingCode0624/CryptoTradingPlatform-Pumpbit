@@ -1,5 +1,17 @@
 import client from "./client";
 
+export async function getPublicMarket(market: string, chain: string) {
+  try {
+    const response = await client.get("/public/market", {
+      params: { market, chain },
+    });
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to fetch market lists:", error);
+    return null;
+  }
+}
+
 export async function getMarketLists() {
   try {
     const response = await client.get("/public/market/list");

@@ -12,8 +12,14 @@ import ConversationIcon from "@/icons/conversation";
 import { Dialog, DialogTrigger } from "../models";
 import SlippageSettingModal from "../models/slippageSettingsModal";
 import Link from "next/link";
+import {
+  Lang_Referrals,
+  Lang_Docs,
+  Lang_SlipPageSettings
+} from "@/constants/language"
+import { useUtilContext } from "@/hooks";
 export const MenuMore = () => {
-
+  const { language } = useUtilContext()
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useState<boolean>(false);
 
   return (
@@ -30,7 +36,9 @@ export const MenuMore = () => {
             <Link href="/referral">
               <div className="flex flex-row gap-x-2 w-full hover:bg-[#18191F] text-white hover:text-primary py-2">
                 <DiversityIcon />
-                Referrals
+                {
+                  language === "EN" ? Lang_Referrals.en : Lang_Referrals.ch
+                }
               </div>
             </Link>
 
@@ -41,7 +49,9 @@ export const MenuMore = () => {
                   >
                     <div className="flex flex-row gap-x-2 w-full hover:bg-[#18191F] text-white  hover:text-primary py-2 ">
                       <ConversationIcon />
-                      Slippage Settings
+                      {
+                        language === "EN" ? Lang_SlipPageSettings.en : Lang_SlipPageSettings.ch
+                      }
                     </div>
                   </Link>
                 </DialogTrigger>
@@ -55,7 +65,9 @@ export const MenuMore = () => {
             >
               <div className="flex flex-row gap-x-2 w-full hover:bg-[#18191F] hover:text-primary py-2 ">
                 <DescriptionIcon />
-                Docs
+                {
+                  language === "EN" ? Lang_Docs.en : Lang_Docs.ch
+                }
               </div>
             </Link>
           </div>

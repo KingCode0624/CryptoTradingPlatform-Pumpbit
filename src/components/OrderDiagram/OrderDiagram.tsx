@@ -20,7 +20,28 @@ import {
   b2testnet_OrderBook_Address
 } from "@/constants";
 import { useToast } from "../ui/toast/use-toast";
-
+import { getPublicMarket } from "@/services/markets";
+import { chain, market } from "@/constants/index"
+import {
+  Lang_Market,
+  Lang_Limit,
+  Lang_Short,
+  Lang_Long,
+  Lang_Price,
+  Lang_Pay,
+  Lang_Max,
+  Lang_Size,
+  Lang_LeverageSlider,
+  Lang_EntryPrice,
+  Lang_PricImpact,
+  Lang_LiqPrice,
+  Lang_EstMargin,
+  Lang_Fees,
+  Lang_MarketPrice,
+  Lang_QuoteAmount,
+  Lang_OpenLong,
+  Lang_OpenShort
+} from "@/constants/language"
 interface OrderDiagramProps {
   selectedPair: any;
 }
@@ -33,7 +54,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { toast } = useToast()
 
-  const { ethPrice } = useUtilContext()
+  const { ethPrice, language } = useUtilContext()
   const {
     orderBookContract,
     marketDescriptorDeployerContract,
@@ -42,9 +63,10 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     usdtTokenContract
   } = useWeb3()
 
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedSide, setSelectedSide] = useState("Long");
   const [selectedOrderType, setSelectedOrderType] = useState("Market");
-
+  const [indexPrice, setIndexPrice] = useState<number>(0)
   const [leverage, setLeverage] = useState<number>(1);
   const [orderInitPay, setOrderInitPay] = useState<number>(0)
   const [orderPay, setOrderPay] = useState<number>(0)
@@ -142,6 +164,28 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     await CreateIncreateOrderBook()
   }
 
+  const init = async () => {
+    const result = await getPublicMarket(market, chain)
+    setIndexPrice(result.index_price)
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      init();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [])
+
+  useEffect(() => {
+    setIsLoading(false)
+  }, [language])
+
+  if (isLoading) return (
+    <div>
+      Loading
+    </div>
+  )
 
   return (
 
@@ -156,7 +200,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             onClick={() => handleSideSelection("Long")}
           >
             <div className="flex flex-row items-center justify-center gap-x-1 font-bold">
-              Long
+              {language === "EN" ? Lang_Long.en : Lang_Long.ch}
             </div>
           </button>
           <button
@@ -169,7 +213,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             <div className="flex flex-row items-center justify-center gap-x-1 font-bold"
               onClick={() => { handleTypeSelection("Limit") }}
             >
-              Short
+              {language === "EN" ? Lang_Short.en : Lang_Short.ch}
             </div>
           </button>
         </div>
@@ -184,7 +228,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
               setEntryPrice(currentEthPrice)
             }}
           >
-            Market
+            {language === "EN" ? Lang_Market.en : Lang_Market.ch}
           </button>
           <button
             className={`text-lg font-bold ${selectedOrderType === "Limit"
@@ -196,7 +240,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
               setEntryPrice(0)
             }}
           >
-            Limit
+            {language === "EN" ? Lang_Limit.en : Lang_Limit.ch}
           </button>
         </div>
         <div className="flex flex-col gap-y-3">
@@ -204,12 +248,14 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             <div className="rounded-3xl border border-p-light bg-secondary p-5">
               <div className="flex flex-col gap-y-6">
                 <div className="flex flex-row">
-                  <p>Price</p>
+                  <p>
+                    {language === "EN" ? Lang_Price.en : Lang_Price.ch}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between gap-x-5">
                   <input
                     className=" bg-inherit text-lg font-bold w-full"
-                    placeholder="Market Price"
+                    placeholder={`${language === "EN" ? Lang_MarketPrice.en : Lang_MarketPrice.ch}`}
                     step="0.01"
                     onChange={(e: any) => {
                       setEntryPrice(e.target.value)
@@ -223,12 +269,14 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
           <div className="rounded-3xl border border-p-light bg-secondary p-5">
             <div className="flex flex-col gap-y-6">
               <div className="flex flex-row">
-                <p>Pay</p>
+                <p>
+                  {language === "EN" ? Lang_Pay.en : Lang_Pay.ch}
+                </p>
               </div>
               <div className="flex w-full flex-row items-center gap-x-5">
                 <input
                   className="w-full bg-inherit text-lg font-bold "
-                  placeholder="Quote Amount"
+                  placeholder={`${language === "EN" ? Lang_QuoteAmount.en : Lang_QuoteAmount.ch}`}
                   step="0.01"
                   onChange={(e: any) => {
                     setOrderInitPay(e.target.value)
@@ -239,7 +287,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
                 <button
                   className="rounded-3xl border border-p-light bg-button-primary px-3 py-1 text-lg font-normal"
                 >
-                  Max
+                  {language === "EN" ? Lang_Max.en : Lang_Max.ch}
                 </button>
               </div>
             </div>
@@ -247,7 +295,9 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
           <div className="rounded-3xl border border-p-light bg-secondary p-5">
             <div className="flex flex-col gap-y-6">
               <div className="flex flex-row">
-                <p>Size</p>
+                <p>
+                  {language === "EN" ? Lang_Size.en : Lang_Size.ch}
+                </p>
               </div>
               <div className="flex flex-row items-center gap-x-5">
                 <p className="mr-auto text-lg font-bold">
@@ -260,7 +310,9 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
         </div>
         <div className="flex flex-col gap-y-5">
           <div className="flex flex-row">
-            <p className="mr-auto leading-relaxed">Leverage Slider</p>
+            <p className="mr-auto leading-relaxed">
+              {language === "EN" ? Lang_LeverageSlider.en : Lang_LeverageSlider.ch}
+            </p>
             <p className="text-lg font-bold">{leverage}X</p>
           </div>
           <LeverageSlider
@@ -273,30 +325,43 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
         <div className="flex flex-col gap-y-3">
           <div className="flex flex-row">
-            <p className="mr-auto text-p-light">Entry Price</p>
+            <p className="mr-auto text-p-light">
+              {language === "EN" ? Lang_EntryPrice.en : Lang_EntryPrice.ch}
+            </p>
             <p>{entryPrice}</p>
           </div>
           <div className="flex flex-row">
-            <p className="mr-auto text-p-light">Pric Impact</p>
+            <p className="mr-auto text-p-light">
+              {language === "EN" ? Lang_PricImpact.en : Lang_PricImpact.ch}
+            </p>
             <p className={`${liquidityPrice >= 0 ? "text-p-light" : "text-red-600"}`}>{liquidityPrice + "%"}</p>
           </div>
           <div className="flex flex-row">
-            <p className="mr-auto text-p-light">Liq. Price</p>
+            <p className="mr-auto text-p-light">
+              {language === "EN" ? Lang_LiqPrice.en : Lang_LiqPrice.ch}
+            </p>
             <div className="flex flex-row gap-x-1">
-              <p>{selectedPair.quote}</p>
+              <p>
+                {selectedPair.quote}
+              </p>
             </div>
           </div>
           <div className="flex flex-row">
-            <p className="mr-auto text-p-light">Est. Margin</p>
+            <p className="mr-auto text-p-light">
+              {language === 'EN' ? Lang_EstMargin.en : Lang_EstMargin.ch}
+            </p>
             <div className="flex flex-row gap-x-1">
               <p>{orderInitPay}</p>
               <p>{selectedPair.quote}</p>
             </div>
           </div>
           <div className="flex flex-row">
-            <p className="mr-auto text-p-light">Fees</p>
+            <p className="mr-auto text-p-light">
+              {language === "EN" ? Lang_Fees.en : Lang_Fees.ch}
+            </p>
             <div className="flex flex-row gap-x-1">
               <p>
+                {Number(0.0005 * currentEthPrice).toFixed(2)}
               </p>
               <p>{selectedPair.quote}</p>
             </div>
@@ -336,7 +401,10 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             } py-3`}
           onClick={() => { OpenOrderBook() }}
         >
-          {selectedSide === "Long" ? "Open Long" : "Open Short"}
+          {selectedSide === "Long" ?
+            `${language === "EN" ? Lang_OpenLong.en : Lang_OpenLong.ch}` :
+            `${language === "EN" ? Lang_OpenShort.en : Lang_OpenShort.ch}`
+          }
         </button>
       </div>
     </div>

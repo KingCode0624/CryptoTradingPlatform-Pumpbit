@@ -15,8 +15,12 @@ export type Web3ContextType = {
 export type UtilContextType = {
   ethPrice: EthPriceType;
   headerPrice: TradeHeaderType;
+  sliprate: number;
+  language: string;
+  setSlipRate: (rate: number) => void;
   setHeaderPrice: (price: TradeHeaderType) => void;
   setEthPrice: (price: EthPriceType) => void;
+  setLanguage: (language: string) => void;
 }
 
 export type TradeHeaderType = {

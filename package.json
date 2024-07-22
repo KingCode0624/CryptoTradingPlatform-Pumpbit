@@ -28,6 +28,8 @@
     "cors": "^2.8.5",
     "ethers": "^6.13.1",
     "express": "^4.19.2",
+    "highcharts": "^11.4.6",
+    "highcharts-react-official": "^3.2.1",
     "lightweight-charts": "^4.1.4",
     "lucide-react": "^0.395.0",
     "next": "14.2.3",

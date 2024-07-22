@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -19,7 +19,8 @@ import { LMiningAndPFiler } from "./liquidityMining";
 import { Dialog, DialogTrigger } from "../models";
 import ClaimModal from "../models/claimModal";
 import PositionHistoryCard from "./positionHistoryCard";
-
+import { useUtilContext } from "@/hooks";
+import { Lang_24hFee_Income, Lang_LiquidityMining, Lang_MaxAPR, Lang_MyLiquidity, Lang_MyPosition, Lang_Pool, Lang_PositionMining, Lang_TotalLiquidity, Lang_TotalPosition } from "@/constants/language";
 const Data = [
   {
     pool: "ETH/USDC",
@@ -49,17 +50,7 @@ const Data = [
     claimableRewards: 1000,
   },
 ];
-const Titles = [
-  {
-    title1: "Pool",
-    title2: "Max APR",
-    title3: "24h Fee Income",
-    title4: "Daily Emission",
-    title5: "Total Liquidity",
-    title6: "My Liquidity",
-    title7: "Claimable Rewards",
-  },
-];
+
 const TitlesPumpFiler = [
   {
     title1: "Pool",
@@ -72,14 +63,6 @@ const TitlesPumpFiler = [
   },
 ];
 
-const PositionMiningTitle = [
-  {
-    title1: "Market",
-    title2: "Max APR",
-    title3: "Total Position",
-    title4: "My Position",
-  },
-]
 
 const PositionMiningData = [
   {
@@ -91,6 +74,38 @@ const PositionMiningData = [
 ]
 
 const EarnTabs = () => {
+
+  const { language } = useUtilContext()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    setIsLoading(false)
+  }, [language])
+
+  if (isLoading) return (
+    <div>
+      Loading ...
+    </div>
+  )
+
+  const PositionMiningTitle = [
+    {
+      title1: `${language === 'EN' ? Lang_Pool.en : Lang_Pool.ch}`,
+      title2: `${language === "EN" ? Lang_MaxAPR.en : Lang_MaxAPR.ch}`,
+      title3: `${language === "EN" ? Lang_TotalPosition.en : Lang_TotalPosition.ch}`,
+      title4: `${language === "EN" ? Lang_MyPosition.en : Lang_MyPosition.ch}`,
+    },
+  ];
+
+  const Titles = [
+    {
+      title1: `${language === 'EN' ? Lang_Pool.en : Lang_Pool.ch}`,
+      title2: `${language === "EN" ? Lang_MaxAPR.en : Lang_MaxAPR.ch}`,
+      title3: `${language === "EN" ? Lang_24hFee_Income.en : Lang_24hFee_Income.ch}`,
+      title4: `${language === "EN" ? Lang_TotalLiquidity.en : Lang_TotalLiquidity.ch}`,
+      title5: `${language === "EN" ? Lang_MyLiquidity.en : Lang_MyLiquidity.ch}`,
+    },
+  ];
   return (
     <div>
       <div className="rounded-3xl backdrop-blur-lg/2 bg-card border border-border ">
@@ -98,9 +113,13 @@ const EarnTabs = () => {
           <TabsList className="py-5 lg:px-7  px-3 lg:overflow-hidden overflow-x-scroll flex justify-between items-center border-b border-border rounded-none">
             <div className="flex justify-center items-center gap-x-3 lg:gap-x-5">
               {/* <TabsTrigger value="Staking">Staking</TabsTrigger> */}
-              <TabsTrigger value="Position Mining">Position Mining</TabsTrigger>
+              <TabsTrigger value="Position Mining">
+                {language === 'EN' ? Lang_PositionMining.en : Lang_PositionMining.ch}
+              </TabsTrigger>
               <TabsTrigger value="Liquidity Mining">
-                Liquidity Mining
+                {
+                  language === "EN" ? Lang_LiquidityMining.en : Lang_LiquidityMining.ch
+                }
               </TabsTrigger>
               {/* <TabsTrigger value="Pump Flier">Pump Flier</TabsTrigger> */}
             </div>
@@ -121,7 +140,7 @@ const EarnTabs = () => {
                     {<ClaimModal />}
                   </Dialog>
                 </div> */}
-                
+
               </div>
             </div>
           </TabsList>

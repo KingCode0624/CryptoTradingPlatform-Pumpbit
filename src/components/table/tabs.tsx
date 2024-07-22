@@ -11,12 +11,17 @@ import {
   getHistories
 } from '@/services/markets'
 import { chain, market } from "@/constants/index"
-import { useWeb3 } from "@/hooks";
-
+import { useWeb3, useUtilContext } from "@/hooks";
+import {
+  Lang_Orders,
+  Lang_Positions,
+  Lang_History
+} from "@/constants/language";
 
 const TradeTabs = () => {
   const { routerContract, account, orderBookContract } = useWeb3()
-
+  const { language } = useUtilContext()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
   const [histories, setHistorys] = useState<any>([])
@@ -45,14 +50,32 @@ const TradeTabs = () => {
     console.log("Orders => ", orders)
   }
 
+  useEffect(() => {
+    setIsLoading(false)
+  }, [language])
+
+  if (isLoading) return (<></>)
+
   return (
     <div>
       <div className="rounded-3xl backdrop-blur-lg/2 bg-card border border-border ">
         <Tabs defaultValue="positions">
           <TabsList className="py-5 px-7 border-b border-border rounded-none">
-            <TabsTrigger value="positions">Positions</TabsTrigger>
-            <TabsTrigger value="orders">Orders</TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
+            <TabsTrigger value="positions">
+              {
+                language === "EN" ? Lang_Positions.en : Lang_Positions.ch
+              }
+            </TabsTrigger>
+            <TabsTrigger value="orders">
+              {
+                language === "EN" ? Lang_Orders.en : Lang_Orders.ch
+              }
+            </TabsTrigger>
+            <TabsTrigger value="history">
+              {
+                language === "EN" ? Lang_History.en : Lang_History.ch
+              }
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="positions">
             <div className="divide-y divide-dashed divide-border">

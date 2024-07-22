@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GiHamburgerMenu } from "react-icons/gi";
 import WalletButton from "@/components/walletButton";
 import { RxCross1 } from "react-icons/rx";
@@ -11,7 +11,6 @@ import { MenuMore } from "./menuMore";
 import { LanguageMenu } from "./language";
 import { ChainMenu } from "./chainMenu";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-
 import {
   Popover,
   PopoverClose,
@@ -19,12 +18,32 @@ import {
   PopoverTrigger,
 } from "../ui/popover";
 import { usePathname } from "next/navigation";
+import { useUtilContext } from "@/hooks";
+import {
+  Lang_trade,
+  Lang_earn
+} from "@/constants/language";
+
+
 export default function Header() {
   const pathname = usePathname();
-  let paths = [
-    { name: "Trade", link: "/trade" },
-    { name: "Earn", link: "/earn" },
-  ];
+  const { language } = useUtilContext()
+
+  const [paths, setPaths] = useState<any>([
+    { name: "", link: "/trade" },
+    { name: "", link: "/earn" },
+  ])
+
+  useEffect(() => {
+
+    console.log("Language => ", language)
+
+    setPaths([
+      { name: language === "EN" ? Lang_trade.en : Lang_trade.ch, link: "/trade" },
+      { name: language === "EN" ? Lang_earn.en : Lang_earn.ch, link: "/earn" },
+    ])
+  }, [language])
+
   const [open, setOpen] = useState(false);
 
   return (
@@ -43,15 +62,14 @@ export default function Header() {
           />
 
           <div className=" py-6 md:flex md:pl-4 lg:pl-48 hidden   ">
-            {paths.map((path) => (
+            {paths.map((path: any) => (
               <div key={path.name}>
                 <div className="  text-[#b1b6be] active:text-white   visited:text-white  flex justify-between  gap-y-2 px-3 text-xl   ">
                   {" "}
                   <a
                     href={path.link}
-                    className={`${
-                      pathname === path.link ? "text-white" : "text-[#b1b6be]"
-                    }`}
+                    className={`${pathname === path.link ? "text-white" : "text-[#b1b6be]"
+                      }`}
                   >
                     {path.name}
                   </a>
@@ -83,17 +101,16 @@ export default function Header() {
               </div>
               <hr className=" mt-6" />
               <div className=" my-8 flex flex-col md:flex-row gap-y-4">
-                {paths.map((path) => (
+                {paths.map((path: any) => (
                   <div key={path.name}>
                     <div className=" flex justify-between gap-y-2 px-3 text-xl  ">
                       {" "}
                       <a
                         href={path.link}
-                        className={`${
-                          pathname === path.link
-                            ? "text-white"
-                            : "text-[#b1b6be]"
-                        }`}
+                        className={`${pathname === path.link
+                          ? "text-white"
+                          : "text-[#b1b6be]"
+                          }`}
                       >
                         {path.name}
                       </a>

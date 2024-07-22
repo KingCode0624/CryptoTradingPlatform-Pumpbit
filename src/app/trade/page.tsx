@@ -38,7 +38,7 @@ export default function Trade() {
       </div>
       <div className="col-span-1">
         <OrderDiagram
-          selectedPair={{ market: "SOLUSDT", base: "ETH", quote: "USDT" }}
+          selectedPair={{ market: "BTCUSDT", base: "BTC", quote: "USDT" }}
         />
       </div>
     </div>

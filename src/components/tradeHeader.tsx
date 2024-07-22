@@ -6,10 +6,18 @@ import { useEffect, useState } from "react";
 import { getMarketInfo } from "@/services/markets";
 import { chain, market } from "@/constants/index"
 import { cookieStorage } from "wagmi";
+import {
+  Lang_24HHigh,
+  Lang_24Low,
+  Lang_24hChange,
+  Lang_FundingCountdown
+} from "@/constants/language"
+
 export default function TradeHeader() {
 
-  const { ethPrice, headerPrice } = useUtilContext()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
+  const { ethPrice, headerPrice, language } = useUtilContext()
   const [changeDay, setChangeDay] = useState<string>("0%")
 
   const init = async () => {
@@ -25,6 +33,14 @@ export default function TradeHeader() {
 
     return () => clearInterval(interval);
   }, [])
+
+  useEffect(() => {
+    setIsLoading(false)
+  }, [language])
+
+  if (isLoading) return (
+    <div>Loading</div>
+  )
 
   return (
     <div className="flex flex-col justify-around xl:flex-row py-4 backdrop-blur-lg/2 px-2 bg-card border border-border rounded-3xl">
@@ -47,7 +63,9 @@ export default function TradeHeader() {
         <div>
           <p className="">
             <span className="text-text-secondary hidden lg:block">
-              24h change
+              {
+                language === "EN" ? Lang_24hChange.en : Lang_24hChange.ch
+              }
             </span>{" "}
             <span className="block  text-semantic-success text-lg">{changeDay}</span>
           </p>
@@ -56,16 +74,26 @@ export default function TradeHeader() {
       <div className="flex justify-between sm:gap-12 gap-2">
         <div>
           <p className="text-text-secondary">
-            24h High <span className="block text-white text-lg">{Number(headerPrice.price24High).toFixed(2)}</span>
+            {
+              language === "EN" ? Lang_24HHigh.en : Lang_24HHigh.ch
+            }
+            <span className="block text-white text-lg">{Number(headerPrice.price24High).toFixed(2)}</span>
           </p>
         </div>
         <div>
           <p className="text-text-secondary">
-            24h low <span className="block text-white text-lg">{Number(headerPrice.price24Low).toFixed(2)}</span>
+            {
+              language === "EN" ? Lang_24Low.en : Lang_24Low.ch
+            }
+            <span className="block text-white text-lg">{Number(headerPrice.price24Low).toFixed(2)}</span>
           </p>
         </div>
         <div>
-          <p className="text-text-secondary">Funding/Countdown </p>
+          <p className="text-text-secondary">
+            {
+              language === "EN" ? Lang_FundingCountdown.en : Lang_FundingCountdown.ch
+            }
+          </p>
           <p>
             {" "}
             <span className=" text-semantic-warning">0.00081% </span>

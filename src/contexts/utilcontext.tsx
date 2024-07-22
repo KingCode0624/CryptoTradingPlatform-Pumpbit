@@ -9,6 +9,7 @@ import {
 } from "react"
 import { UtilContextType, EthPriceType, TradeHeaderType } from "@/types"
 import { Authorization } from "@/authorization"
+import HeaderFooterSelector from "@/components/headerSelector"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 
@@ -25,6 +26,13 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         price24Low: 0
     })
 
+    const [sliprate, setSlipRate] = useState<number>(1)
+    const [language, setLanguage] = useState<string>(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('language') || 'EN';
+        }
+        return 'EN';
+    });
 
     const init = async () => {
         const result = await Authorization()
@@ -35,15 +43,26 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const value = useMemo(() => ({
         ethPrice: ethPrice,
         headerPrice: headerPrice,
+        sliprate: sliprate,
+        language: language,
+        setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
         setEthPrice: setEthPrice,
+        setLanguage: setLanguage
 
-    }), [ethPrice, setEthPrice])
+    }), [ethPrice, headerPrice, sliprate, language, setSlipRate, setHeaderPrice, setEthPrice, setLanguage])
 
     useEffect(() => {
         init();
+        setLanguage(() => {
+            if (typeof window !== 'undefined') {
+                return localStorage.getItem('language') || 'EN';
+            }
+            return 'EN';
+        })
     }, []);
 
+    
     return (
         <UtilContext.Provider value={value}>
             {children}

@@ -55,37 +55,32 @@ export const AllLayer = {
     },
 };
 
+export const AlLayerTestNet = {
+    id: 2648,
+    name: "AILayer Testnet",
+    nativeCurrency: {
+        name: "BTC",
+        symbol: "BTC",
+        decimals: 18,
+    },
+    rpcUrls: {
+        default: { http: ["https://testnet-rpc.ailayer.xyz"] }
+    }
+}
+
 export const chains: readonly [Chain, ...Chain[]] = [
-    {
-        ...mainnet,
-    },
-    {
-        ...merlin,
-        iconUrl: "/assets/icons/chainIcon.svg",
-    },
-    {
-        ...bitLayer,
-        iconUrl: "/assets/icons/bitlayer.svg",
-    },
-    {
-        ...b2Network,
-        iconUrl: "/assets/icons/b2.svg",
-    },
+
     {
         ...b2TestNetwork,
         iconUrl: "/assets/icons/b2.svg",
     },
     {
-        ...AllLayer,
+        ...AlLayerTestNet,
         iconUrl: "/assets/icons/ailayer.svg",
     },
 ];
 
 export const transports = {
-    [mainnetwork.id]: http(),
-    [merlinnetwork.id]: http(),
-    [bitLayer.id]: http(),
-    [b2Network.id]: http(),
     [b2TestNetwork.id]: http(),
-    [AllLayer.id]: http(),
+    [AlLayerTestNet.id]: http(),
 }

@@ -9,6 +9,12 @@ import ButtonsDropDown from "./buttonsPopover";
 import Image from "next/image";
 import { FaCamera } from "react-icons/fa";
 import { useUtilContext } from "@/hooks";
+import MarketDepthChart from "./depthgraph";
+import MarketPriceChart from "./pricegraph";
+import {
+  Lang_Price,
+  Lang_Depth
+} from "@/constants/language";
 
 interface PriceDiagramProps {
   selectedPair: TPairInfo;
@@ -34,11 +40,13 @@ export const GetMaxandMinPrice = (priceList: any) => {
 
 
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
-  const { setEthPrice, setHeaderPrice } = useUtilContext()
+  const { setEthPrice, setHeaderPrice, language } = useUtilContext()
+  const [isLoading, setIsloading] = useState<boolean>(true)
 
+  const [typeOfGraph, setTypeOfGraph] = useState<string>("Price")
   const chain: string = "b_square_testnet"
   const [chartInterval, setChartInterval] = useState<string>("1m")
-  const [countBack, setCountBack] = useState<Number>(100)
+  const [countBack, setCountBack] = useState<number>(100)
 
   const [tickData, setTickData] = useState<TTick[]>([
     {
@@ -50,11 +58,8 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
     },
   ]);
 
-  const chartContainerRef = useRef<HTMLDivElement>(null);
-  const candlestickSeriesRef = useRef<any>(null);
 
   useEffect(() => {
-    let setted = false;
 
     const fetchData = async () => {
       if (!selectedPair.market) {
@@ -76,65 +81,6 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       setHeaderPrice(result)
       setEthPrice(formattedTicks[formattedTicks.length - 1])
       setTickData(formattedTicks);
-
-      if (candlestickSeriesRef.current === null) {
-        if (chartContainerRef.current) {
-          const chart = createChart(chartContainerRef.current, {
-            width: chartContainerRef.current.clientWidth,
-            height: 300,
-            layout: {
-              textColor: "#FEFEFE",
-              background: { type: ColorType.Solid, color: "transparent" },
-            },
-            grid: {
-              vertLines: {
-                color: "rgba(197, 203, 206, 0.5)",
-              },
-              horzLines: {
-                color: "rgba(197, 203, 206, 0.5)",
-              },
-            },
-            rightPriceScale: {
-              borderColor: "rgba(197, 203, 206, 0.8)",
-            },
-            timeScale: {
-              borderColor: "rgba(197, 203, 206, 0.8)",
-            },
-          });
-          candlestickSeriesRef.current = chart.addCandlestickSeries({
-            upColor: "#13DF87",
-            downColor: "#EA4161",
-            borderVisible: false,
-          });
-          if (tickData.length > 1) {
-            candlestickSeriesRef.current.setData(tickData);
-          }
-          chart.timeScale().fitContent();
-          const handleResize = () => {
-            if (chartContainerRef.current) {
-              chart.applyOptions({
-                width: chartContainerRef.current.clientWidth,
-              });
-            }
-          };
-
-          window.addEventListener("resize", handleResize);
-          return () => {
-            window.removeEventListener("resize", handleResize);
-            chart.remove();
-          };
-        }
-      } else {
-        if (tickData.length > 1) {
-          if (!setted) {
-            candlestickSeriesRef.current.setData(tickData);
-            setted = true;
-          }
-          else {
-            candlestickSeriesRef.current.update(tickData[tickData.length - 1]);
-          }
-        }
-      }
     };
 
     const interval = setInterval(() => {
@@ -148,11 +94,33 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
     setChartInterval(e.target.value)
   }
 
+  useEffect(() => {
+    setIsloading(false)
+  }, [language])
+
+  if (isLoading) return (
+    <div>
+    </div>
+  )
+
   return (
     <div className="flex flex-col rounded-3xl border border-border bg-card backdrop-blur-lg/2">
       <div className="my-5 flex flex-row gap-x-10 px-5 text-lg font-bold">
-        <button>Price</button>
-        <button>Depth</button>
+        <button
+          onClick={() => setTypeOfGraph("Price")}
+        >
+          {
+            language === "EN" ? Lang_Price.en : Lang_Price.ch
+          }
+        </button>
+
+        <button
+          onClick={() => setTypeOfGraph("Depth")}
+        >
+          {
+            language === "EN" ? Lang_Depth.en : Lang_Depth.ch
+          }
+        </button>
       </div>
       <hr className="border border-border  " />
       <div className=" flex justify-between py-2 px-5">
@@ -236,10 +204,16 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
             }, C: ${tickData.length > 0 ? tickData[tickData.length - 1].close : ""
             }`}</div>
         </div>
-        <div
-          ref={chartContainerRef}
-          style={{ width: "100%", height: "300px" }}
-        />
+        {
+          typeOfGraph === "Price" ?
+            <MarketPriceChart
+              selectedPair={selectedPair}
+              tickData={tickData}
+            /> :
+            <MarketDepthChart
+              tickData={tickData}
+            />
+        }
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Dialog, DialogTrigger } from "../models";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useUtilContext } from "@/hooks";
+import { Lang_trade } from "@/constants/language";
 
 type TableRowProps = {
     pool: string;
@@ -18,6 +20,19 @@ type TableRowProps = {
 
 export const TableRow = (props: TableRowProps) => {
     const [expanded, setExpanded] = useState<boolean>(false);
+    const { language } = useUtilContext()
+    const [isLoading, setIsLoading] = useState<boolean>(true)
+
+    useEffect(() => {
+        setIsLoading(false)
+    }, [language])
+
+    if (isLoading)
+        return (
+            <div>
+                Loading ...
+            </div>
+        )
     return (
         <>
             {" "}
@@ -40,7 +55,7 @@ export const TableRow = (props: TableRowProps) => {
                 <td align="center">
                     <button className="lg:rounded-lg rounded-md bg-button-primary px-2 py-1">
                         <Link href="/trade" >
-                            Trade
+                            {language === "EN" ? Lang_trade.en : Lang_trade.ch}
                         </Link>
                     </button>
                 </td>

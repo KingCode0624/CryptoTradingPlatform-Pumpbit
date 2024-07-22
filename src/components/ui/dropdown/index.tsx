@@ -18,7 +18,7 @@ export const MagicMenu = () => {
               width={35}
               height={20}
             />
-            ETH/USDC
+            BTC/USDC
           </div>
           <MdArrowDropDown className="h-6 w-6 " />
         </div>
@@ -37,7 +37,7 @@ export const MagicMenu = () => {
                   width={35}
                   height={20}
                 />
-                ETH/USDC
+                BTC/USDC
               </div>
             </button>
             <button
@@ -51,7 +51,7 @@ export const MagicMenu = () => {
                   width={35}
                   height={20}
                 />
-                ETH/USDC
+                BTC/USDC
               </div>
             </button>
           </div>
