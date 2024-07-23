@@ -54,6 +54,19 @@ const MarketPriceChart = ({ selectedPair, tickData }: PriceDiagramProps) => {
                         },
                         timeScale: {
                             borderColor: "rgba(197, 203, 206, 0.8)",
+                            timeVisible: true,
+                            tickMarkFormatter: (time: any) => {
+                                const date = new Date(time * 1000); 
+                                const options: any = {
+                                    day: '2-digit',
+                                    // month: 'short',
+                                    // year: '2-digit',
+                                    // hour: '2-digit',
+                                    // minute: '2-digit',
+                                    hour12: false, // Use 24-hour format
+                                };
+                                return date.toLocaleString('en-GB', options);
+                            },
                         },
                     });
                     candlestickSeriesRef.current = chart.addCandlestickSeries({

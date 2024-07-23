@@ -9,6 +9,7 @@ export type Web3ContextType = {
   orderBookContract: any;
   marketDescriptorDeployerContract: any;
   usdtTokenContract: any;
+  usdcTokenContract: any;
   routerContract: any;
 };
 

@@ -69,6 +69,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       const response = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
 
       const data = response ? response.data : tickData;
+
       const formattedTicks = data.map((tick: MarketTick) => ({
         time: tick.t / 1000,
         open: Number(tick.o),
@@ -76,8 +77,8 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         low: Number(tick.l),
         close: Number(tick.c),
       }));
-      const result = GetMaxandMinPrice(formattedTicks)
 
+      const result = GetMaxandMinPrice(formattedTicks)
       setHeaderPrice(result)
       setEthPrice(formattedTicks[formattedTicks.length - 1])
       setTickData(formattedTicks);
@@ -198,11 +199,14 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       <div className="mt-5 flex flex-col gap-y-5 px-6">
         <div className="flex flex-row gap-x-10">
           <p>{selectedPair.market}</p>
-          <div>{`O: ${tickData.length > 0 ? tickData[tickData.length - 1].open : ""
-            }, H: ${tickData.length > 0 ? tickData[tickData.length - 1].high : ""
-            }, L: ${tickData.length > 0 ? tickData[tickData.length - 1].low : ""
-            }, C: ${tickData.length > 0 ? tickData[tickData.length - 1].close : ""
-            }`}</div>
+          <div>
+            {`
+             O: ${tickData.length > 0 ? tickData[tickData.length - 1].open : ""},
+             H: ${tickData.length > 0 ? tickData[tickData.length - 1].high : ""}, 
+             L: ${tickData.length > 0 ? tickData[tickData.length - 1].low : ""}, 
+             C: ${tickData.length > 0 ? tickData[tickData.length - 1].close : ""}
+             `}
+          </div>
         </div>
         {
           typeOfGraph === "Price" ?

@@ -57,9 +57,9 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const { ethPrice, language } = useUtilContext()
   const {
     orderBookContract,
-    marketDescriptorDeployerContract,
     routerContract,
     account,
+    usdcTokenContract,
     usdtTokenContract
   } = useWeb3()
 
@@ -146,11 +146,18 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }
 
   const IsTransactionAvailable = async () => {
-    await usdtTokenContract.methods.approve(b2testnet_Router_Address, 1000 * Math.pow(10, 18)).send({ from: account })
+    console.log("OK1")
+    console.log("Balance =>", await usdcTokenContract.methods.balanceOf(account).call())
+    
+    // await usdcTokenContract.methods.approve(b2testnet_Router_Address, 1000 * Math.pow(10, 18)).send({ from: account })
+    await usdcTokenContract.methods.approve(b2testnet_Router_Address, 1000 * Math.pow(10, 18)).send({ from: account })
+    console.log("OK2")
     await routerContract.methods.approvePlugin(b2testnet_OrderBook_Address).send({ from: account })
   }
 
   const OpenOrderBook = async () => {
+
+
     if (toWei(orderInitPay) == 0) {
       const { id, dismiss } = toast({
         title: " Margin rice is 0!",

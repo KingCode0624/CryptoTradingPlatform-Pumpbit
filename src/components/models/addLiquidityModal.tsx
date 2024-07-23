@@ -10,14 +10,14 @@ import {
 import { useWeb3 } from "@/hooks";
 export default function AddLiquidityModal() {
 
-  const { account, usdtTokenContract } = useWeb3()
+  const { account, usdcTokenContract } = useWeb3()
 
   const [accountBalance, setAccountBalance] = useState<number>(0)
   const [poolLiquidity, setPoolLiquidity] = useState<number>(0)
   const [poolSize, setPoolSize] = useState<number>(0)
   const [slider, setSlider] = useState<number[]>([1])
   const init = async () => {
-    const _accountBalance = await usdtTokenContract.methods.balanceOf(account).call()
+    const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
     setAccountBalance(Number(_accountBalance) / Math.pow(10, 18))
   }
 
@@ -86,7 +86,7 @@ export default function AddLiquidityModal() {
                 />
               </div>
               <div className="flex gap-x-2 items-center">
-                <p className="text-lg font-bold">USDT</p>
+                <p className="text-lg font-bold">USDC</p>
                 <button className="rounded-3xl border border-border bg-card-secondary px-3 py-1 text-lg font-normal"
                   onClick={() => { setPoolLiquidity(accountBalance) }}
                 >
@@ -107,7 +107,7 @@ export default function AddLiquidityModal() {
                 <p className="text-white text-xl">{poolSize}</p>
               </div>
               <div className=" ">
-                <p className="text-lg font-bold">USDT</p>
+                <p className="text-lg font-bold">USDC</p>
               </div>
             </div>
           </div>

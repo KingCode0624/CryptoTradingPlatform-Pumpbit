@@ -10,19 +10,20 @@ import { useWeb3 } from "@/hooks";
 
 
 export default function AddLiquidityFirstTimeModal() {
-  const { account, usdtTokenContract } = useWeb3()
+  const { account, usdcTokenContract } = useWeb3()
 
   const [accountBalance, setAccountBalance] = useState<number>(0)
 
   useEffect(() => {
 
     const init = async () => {
-      const _accountBalance = await usdtTokenContract.methods.balanceOf(account).call()
+      const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
       setAccountBalance(_accountBalance)
     }
 
     init()
   }, [])
+
   return (
     <div>
       <Dialog>
@@ -67,7 +68,7 @@ export default function AddLiquidityFirstTimeModal() {
                   <p className="text-white text-xl">1000.00</p>
                 </div>
                 <div className="flex gap-x-2 items-center">
-                  <p className="text-lg font-bold">USDT</p>
+                  <p className="text-lg font-bold">USDC</p>
                   <button className="rounded-3xl border border-border bg-card-secondary px-3 py-1 text-lg font-normal">
                     Max
                   </button>
@@ -86,7 +87,7 @@ export default function AddLiquidityFirstTimeModal() {
                   <p className="text-white text-xl">1000.00</p>
                 </div>
                 <div className=" ">
-                  <p className="text-lg font-bold">USDT</p>
+                  <p className="text-lg font-bold">USDC</p>
                 </div>
               </div>
             </div>
@@ -121,7 +122,7 @@ export default function AddLiquidityFirstTimeModal() {
           </div>
           <div className="mt-1 mb-2">
             <button className="py-2 w-full rounded-lg text-lg bg-primary font-bold">
-              Approve USDT
+              Approve USDC
             </button>
           </div>
         </DialogContent>

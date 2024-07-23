@@ -35,7 +35,7 @@ export default function StakeBPTModal() {
                 <p className="text-text-secondary text-xl">0.00</p>
               </div>
               <div className="flex gap-x-2 items-center">
-                <p className="text-lg font-bold">USDT</p>
+                <p className="text-lg font-bold">USDC</p>
                 <button className="rounded-3xl border border-border bg-tr px-3 py-1 text-lg font-normal">
                   Max
                 </button>
