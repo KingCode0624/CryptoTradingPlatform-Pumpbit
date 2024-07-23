@@ -14,7 +14,7 @@ export const Lang_EASYREWARDSMADESIMPLE = {
 }
 
 export const Lang_EarnrewardsfromtradingfeesandPBTmining = {
-    en: "Earn rewards from trading fees and PBT mining.",
+    en: "Earn rewards from trading fees and PUMB mining.",
     ch: "透過交易費用和 PBT 挖礦賺取獎勵。"
 }
 

@@ -12,14 +12,16 @@ import {
   Lang_24hChange,
   Lang_FundingCountdown
 } from "@/constants/language"
+import { count } from "console";
 
 export default function TradeHeader() {
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const { ethPrice, headerPrice, language } = useUtilContext()
+  const { ethPrice, headerPrice, language, marketOrderType } = useUtilContext()
   const [changeDay, setChangeDay] = useState<string>("0%")
-
+  const [funding, setFunding] = useState<number>(0)
+  const [countTime, setCountTime] = useState<any>({ m: 60, s: 0 })
   const init = async () => {
     const result = await getMarketInfo(market, chain)
     const _changeDay = String(Number(result.change_in_24h).toFixed(2)) + "%"
@@ -28,6 +30,14 @@ export default function TradeHeader() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      setCountTime((prev: any) => {
+        if (prev.m === 0 && prev.s === 0)
+          return { m: 60, s: 0 }
+        const newTime = prev.m * 60 + prev.s - 1
+        const minute = Math.floor(newTime / 60)
+        const second = newTime % 60
+        return { m: minute, s: second }
+      })
       init();
     }, 1000);
 
@@ -37,6 +47,10 @@ export default function TradeHeader() {
   useEffect(() => {
     setIsLoading(false)
   }, [language])
+
+  useEffect(() => {
+    marketOrderType === "Long" ? setFunding(-0.0022) : setFunding(0.002)
+  }, [marketOrderType])
 
   if (isLoading) return (
     <div>Loading</div>
@@ -95,9 +109,8 @@ export default function TradeHeader() {
             }
           </p>
           <p>
-            {" "}
-            <span className=" text-semantic-warning">0.00081% </span>
-            <span className=" text-white text-lg">/ 00:29:51</span>
+            <span className=" text-semantic-warning">{funding}</span>
+            <span className=" text-white text-lg">/ {countTime.m + ":" + countTime.s}</span>
           </p>
         </div>
       </div>

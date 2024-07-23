@@ -33,6 +33,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
         return 'EN';
     });
+    const [marketOrderType, setMarketOrderType] = useState<string>("Long")
 
     const init = async () => {
         const result = await Authorization()
@@ -45,6 +46,8 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         headerPrice: headerPrice,
         sliprate: sliprate,
         language: language,
+        marketOrderType: marketOrderType,
+        setMarketOrderType: setMarketOrderType,
         setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
         setEthPrice: setEthPrice,
@@ -62,7 +65,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         })
     }, []);
 
-    
+
     return (
         <UtilContext.Provider value={value}>
             {children}

@@ -18,6 +18,8 @@ export type UtilContextType = {
   headerPrice: TradeHeaderType;
   sliprate: number;
   language: string;
+  marketOrderType: string;
+  setMarketOrderType: (type: string) => void;
   setSlipRate: (rate: number) => void;
   setHeaderPrice: (price: TradeHeaderType) => void;
   setEthPrice: (price: EthPriceType) => void;

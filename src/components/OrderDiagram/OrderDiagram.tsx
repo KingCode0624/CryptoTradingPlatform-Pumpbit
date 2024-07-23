@@ -54,7 +54,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { toast } = useToast()
 
-  const { ethPrice, language } = useUtilContext()
+  const { ethPrice, language, setMarketOrderType } = useUtilContext()
   const {
     orderBookContract,
     routerContract,
@@ -73,10 +73,12 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const [estimatedEth, setEstimatedEth] = useState<number>(0)
   const [currentEthPrice, setCurrentEthPrice] = useState<number>(0)
   const [entryPrice, setEntryPrice] = useState<number>(0)
-  const [liquidityPrice, setLiquidityPrice] = useState<number>(0)
+  const [liquidationPrice, setLiquidationPrice] = useState<number>(0)
   const [checked, setChecked] = useState(false);
   const [tpPrice, setTpPrice] = useState<number>(0)
   const [slPrice, setSlPrice] = useState<number>(0)
+  const [fees, setFees] = useState<number>(0)
+  const [priceImpact, setPriceImpact] = useState<number>(0)
 
   const handleLeverageChange = (value: number) => {
     setLeverage(value);
@@ -88,6 +90,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const handleSideSelection = (side: string) => {
     setSelectedSide(side);
+    setMarketOrderType(side)
   };
 
   const handleTypeSelection = (type: string) => {
@@ -113,6 +116,20 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   useEffect(() => {
     setCurrentEthPrice(ethPrice.close)
   }, [ethPrice])
+
+  useEffect(() => {
+    let feeRate: number = 0
+    if (leverage > 100) feeRate = 0.01
+    else if (leverage > 50) feeRate = 0.02
+    else if (leverage > 20) feeRate = 0.1
+    else if (leverage > 0) feeRate = 0.2
+
+    console.log("FeeRate => ", feeRate)
+    setFees(orderInitPay * feeRate / 100)
+
+    setLiquidationPrice((entryPrice * 1.0041) - (entryPrice / leverage))
+    setPriceImpact((orderPay / 5000) * 0.001)
+  }, [leverage, orderInitPay])
 
 
   const CreateIncreateOrderBook = async () => {
@@ -338,7 +355,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             <p className="mr-auto text-p-light">
               {language === "EN" ? Lang_PricImpact.en : Lang_PricImpact.ch}
             </p>
-            <p className={`${liquidityPrice >= 0 ? "text-p-light" : "text-red-600"}`}>{liquidityPrice + "%"}</p>
+            <p className={`${priceImpact >= 0 ? "text-p-light" : "text-red-600"}`}>{priceImpact.toFixed(4) + "%"}</p>
           </div>
           <div className="flex flex-row">
             <p className="mr-auto text-p-light">
@@ -346,7 +363,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             </p>
             <div className="flex flex-row gap-x-1">
               <p>
-                {selectedPair.quote}
+                {liquidationPrice.toFixed(2) + selectedPair.quote}
               </p>
             </div>
           </div>
@@ -365,7 +382,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             </p>
             <div className="flex flex-row gap-x-1">
               <p>
-                {Number(0.0005 * currentEthPrice).toFixed(2)}
+                {fees.toFixed(2)}
               </p>
               <p>{selectedPair.quote}</p>
             </div>
