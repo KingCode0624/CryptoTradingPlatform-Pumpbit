@@ -140,8 +140,8 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const CreateIncreateOrderBook = async () => {
     const acceptabelRate = 10 // this means 10%
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
-    console.log("Market =>", market )
-    let minExecuteFee = ethers.parseEther("0.005");
+    console.log("Market =>", market)
+    let minExecuteFee = ethers.parseEther("0.0005");
 
     const side: number = selectedSide === "Long" ? 1 : 2
     const marginDelta = BigInt(toWei(orderInitPay))
