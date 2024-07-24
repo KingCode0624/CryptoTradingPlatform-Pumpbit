@@ -140,9 +140,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const CreateIncreateOrderBook = async () => {
     const acceptabelRate = 10 // this means 10%
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
-    // const market = "0xC8dD5FBBF01392ade733b2F3db36dD87d0FAAA49"
-
-    // let minExecuteFee = await orderBookContract.methods.minExecutionFee().call();
+    console.log("Market =>", market )
     let minExecuteFee = ethers.parseEther("0.005");
 
     const side: number = selectedSide === "Long" ? 1 : 2
@@ -170,19 +168,23 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const IsTransactionAvailable = async () => {
     let routerAddr: string = ""
     let orderBookAddr: string = ""
-
-    if (chainId === b2testnetChainId) {
+    console.log("Chain ID =>", chainId)
+    if (chainId == b2testnetChainId) {
+      console.log("Chain is => b2", chainId, " ", b2testnetChainId)
       routerAddr = b2testnet_Router_Address
       orderBookAddr = b2testnet_OrderBook_Address
     }
-    else (chainId === ailayertestnetChainId)
-    {
+    else {
+      console.log("Chain is => AI", chainId, " ", ailayertestnetChainId)
       routerAddr = ailayertestnet_Router_Address
       orderBookAddr = ailayertestnet_OrderBook_Address
     }
 
     await usdcTokenContract.methods.approve(routerAddr, 100000000000 * Math.pow(10, 18)).send({ from: account })
-    await routerContract.methods.approvePlugin(orderBookAddr).send({ from: account })
+    const isApproved = await routerContract.methods.isPluginApproved(account, orderBookAddr).call()
+    console.log("Is Approved =>", isApproved)
+    if (isApproved === false)
+      await routerContract.methods.approvePlugin(orderBookAddr).send({ from: account })
   }
 
   const OpenOrderBook = async () => {
