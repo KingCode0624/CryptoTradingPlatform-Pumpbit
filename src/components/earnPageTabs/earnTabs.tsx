@@ -20,21 +20,20 @@ import { Dialog, DialogTrigger } from "../models";
 import ClaimModal from "../models/claimModal";
 import PositionHistoryCard from "./positionHistoryCard";
 import { useUtilContext } from "@/hooks";
-import { Lang_24hFee_Income, Lang_LiquidityMining, Lang_MaxAPR, Lang_MyLiquidity, Lang_MyPosition, Lang_Pool, Lang_PositionMining, Lang_TotalLiquidity, Lang_TotalPosition } from "@/constants/language";
 import { useWeb3 } from "@/hooks";
-import { Poller_One } from "next/font/google";
+import { Lang_24hFee_Income, Lang_LiquidityMining, Lang_MaxAPR, Lang_MyLiquidity, Lang_MyPosition, Lang_Pool, Lang_PositionMining, Lang_TotalLiquidity, Lang_TotalPosition } from "@/constants/language";
 
-const TitlesPumpFiler = [
-  {
-    title1: "Pool",
-    title2: "Max APR",
-    title3: "24h Fee Income",
-    title4: "Win Rate%",
-    title5: "Total Liquidity",
-    title6: "My Liquidity",
-    title7: "Claimable Rewards",
-  },
-];
+// const Data = [
+//   {
+//     pool: "ETH/USDC",
+//     maxAPR: 294.12,
+//     feeIncome: 1.5,
+//     dailyEmission: 893.23,
+//     totalLiquidity: 1000,
+//     myLiquidity: 1000,
+//     claimableRewards: 1000,
+//   },
+// ];
 
 
 const PositionMiningData = [
@@ -47,11 +46,11 @@ const PositionMiningData = [
 ]
 
 const EarnTabs = () => {
-  const { positionRouterContract } = useWeb3()
-  const { language } = useUtilContext()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const [Data, setData] = useState<any>([
+  const { language } = useUtilContext()
+  const { positionRouterContract } = useWeb3()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [liquidityData, setLiquidityData] = useState<any>([
     {
       pool: "ETH/USDC",
       maxAPR: 294.12,
@@ -60,39 +59,50 @@ const EarnTabs = () => {
       totalLiquidity: 1000,
       myLiquidity: 1000,
       claimableRewards: 1000,
-    },
+    }
   ])
-
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      const index = await positionRouterContract.methods.increaseLiquidityPositionIndex().call()
-
-      // for (let i = 0; i <= index; i++) {  
-      // }
-      const data = await positionRouterContract.methods.increaseLiquidityPositionRequests(index).call()
-      const _data = {
-        pool: "BTC/USDC",
-        maxAPR: 294.12,
-        feeIncome: 1.5,
-        dailyEmission: 893.23,
-        totalLiquidity: 1000,
-        myLiquidity: 1000,
-        claimableRewards: 1000,
-      }
-      console.log("Index => ", index)
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [])
-
   useEffect(() => {
     setIsLoading(false)
   }, [language])
+
+  const init = async () => {
+    const idx = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
+    console.log("Idx =>", idx)
+    let _Data: any = []
+    for (let i = 0; i < idx; i++) {
+      const data: any = [
+        {
+          pool: "ETH/USDC",
+          maxAPR: 294.12,
+          feeIncome: 1.5,
+          dailyEmission: 893.23,
+          totalLiquidity: 1000,
+          myLiquidity: 1000,
+          claimableRewards: 1000,
+        },
+      ];
+      _Data.push(data)
+    }
+    setLiquidityData(_Data)
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      init()
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+
 
   if (isLoading) return (
     <div>
       Loading ...
     </div>
   )
+
+
 
   const PositionMiningTitle = [
     {
@@ -112,12 +122,21 @@ const EarnTabs = () => {
       title5: `${language === "EN" ? Lang_MyLiquidity.en : Lang_MyLiquidity.ch}`,
     },
   ];
+
+  if (isLoading) return (
+    <div>
+      Loading ...
+    </div>
+  )
+
+
   return (
     <div>
       <div className="rounded-3xl backdrop-blur-lg/2 bg-card border border-border ">
         <Tabs defaultValue="Position Mining">
           <TabsList className="py-5 lg:px-7  px-3 lg:overflow-hidden overflow-x-scroll flex justify-between items-center border-b border-border rounded-none">
             <div className="flex justify-center items-center gap-x-3 lg:gap-x-5">
+              {/* <TabsTrigger value="Staking">Staking</TabsTrigger> */}
               <TabsTrigger value="Position Mining">
                 {language === 'EN' ? Lang_PositionMining.en : Lang_PositionMining.ch}
               </TabsTrigger>
@@ -133,8 +152,6 @@ const EarnTabs = () => {
             </div>
           </TabsList>
 
-
-
           <TabsContent value="Position Mining">
             <div>
               {
@@ -149,22 +166,12 @@ const EarnTabs = () => {
           </TabsContent>
           <TabsContent value="Liquidity Mining">
             <div className="">{ }</div>
-            {Titles.map((item, index) => (
-              <LMiningAndPFiler
-                key={index}
-                title={Titles}
-                data={Data} />
-            ))}
+            <LMiningAndPFiler
+              title={Titles}
+              data={liquidityData}
+            />
           </TabsContent>
-          <TabsContent value="Pump Flier">
-            {TitlesPumpFiler.map((data, index) => (
-              <LMiningAndPFiler
-                key={index}
-                title={TitlesPumpFiler}
-                data={Data}
-              />
-            ))}
-          </TabsContent>
+
         </Tabs>
       </div>
     </div>

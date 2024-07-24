@@ -8,6 +8,8 @@ import PositionHistoryCard from "./positionHistoryCard";
 import { cn } from "@/lib/utils";
 import { useUtilContext } from "@/hooks";
 import { Lang_Add } from "@/constants/language";
+import { useWeb3 } from "@/hooks";
+
 
 type TableRowProps = {
   pool: string;
@@ -22,14 +24,38 @@ type TableRowProps = {
   toggleAccordion: (index: number) => void;
 };
 
-export const TableRow = (props: TableRowProps) => {
+
+type TableRowType = {
+  pool: string;
+  maxAPR: number;
+  feeIncome: number;
+  dailyEmission: number;
+  totalLiquidity: number;
+  myLiquidity: number;
+  claimableRewards: number;
+  index: number;
+  isOpen: boolean;
+  toggleAccordion: (index: number) => void;
+  liquidityIndex: number;
+};
+
+export const TableRow = (props: TableRowType) => {
   const { language } = useUtilContext()
+  const { positionRouterContract } = useWeb3()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [expanded, setExpanded] = useState<boolean>(false);
+  const [liquidityData, setLiquidityData] = useState<any>()
 
   useEffect(() => {
     setIsLoading(false)
   }, [language])
+
+  const GetLiquidityPosition = async (idx: number) => {
+    const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(idx).call()
+    console.log("Result =><", result)
+    setLiquidityData(result)
+  }
+
 
   if (isLoading)
     return (
@@ -41,18 +67,25 @@ export const TableRow = (props: TableRowProps) => {
     <>
       {" "}
       <tr className="w-full [&_td]:min-w-11  [&_td]:py-5 px-12">
-        <td align="center">{props.pool}</td>
+        <td align="center">BTC/USDC</td>
+        {/* <td align="center">{props.pool}</td> */}
         <td align="center" className="text-semantic-success">
-          <p>{props.maxAPR}%</p>
+          <p>294.12%</p>
+          {/* <p>{props.maxAPR}%</p> */}
         </td>
-        <td align="center">{props.feeIncome}</td>
-        {/* <td align="center">{props.dailyEmission} PBT</td> */}
-        <td align="center">{props.totalLiquidity} M</td>
-        <td align="center">{props.myLiquidity} USDC</td>
-        {/* <td align="center">{props.claimableRewards} PBT</td> */}
+        <td align="center">1.5</td>
+        {/* <td align="center">{props.feeIncome}</td> */}
+        <td align="center">103 M</td>
+        {/* <td align="center">{props.totalLiquidity} M</td> */}
+        <td align="center">1000 USDC</td>
+        {/* <td align="center">{props.myLiquidity} USDC</td> */}
 
         <td align="center">
-          <button className="px-2 py-1" onClick={() => setExpanded(!expanded)}>
+          <button className="px-2 py-1" onClick={() => {
+            setExpanded(!expanded)
+            console.log("LiquidityIndex =>", props.liquidityIndex)
+            GetLiquidityPosition(props.liquidityIndex)
+          }}>
             <Image
               src="/assets/arrow_drop_down.png"
               alt="pool image"
@@ -80,7 +113,9 @@ export const TableRow = (props: TableRowProps) => {
               "max-h-0 ": !expanded,
             })}
           >
-            <PositionHistoryCard />
+            <PositionHistoryCard
+              liquidityData={liquidityData}
+            />
           </div>
         </td>
       </tr>
@@ -120,6 +155,7 @@ export const LMiningAndPFiler = (props: TableProps) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+
   if (!Array.isArray(props.data) || props.data.length === 0) {
     return (
       <div className="flex items-center justify-center">
@@ -146,6 +182,7 @@ export const LMiningAndPFiler = (props: TableProps) => {
                   index={index}
                   isOpen={openIndex === index}
                   toggleAccordion={toggleAccordion}
+                  liquidityIndex={index}
                 />
               ))}
             </tbody>
