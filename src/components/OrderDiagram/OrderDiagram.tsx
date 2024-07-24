@@ -139,7 +139,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const CreateIncreateOrderBook = async () => {
     const acceptabelRate = 10 // this means 10%
-    const market = await marketDescriptorDeployerContract.methods.descriptors("ETH").call()
+    const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
     // const market = "0xC8dD5FBBF01392ade733b2F3db36dD87d0FAAA49"
 
     // let minExecuteFee = await orderBookContract.methods.minExecutionFee().call();

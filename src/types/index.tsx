@@ -10,6 +10,7 @@ export type Web3ContextType = {
   orderBookContract: any;
   usdcTokenContract: any;
   routerContract: any;
+  positionRouterContract: any;
 };
 
 export type UtilContextType = {
