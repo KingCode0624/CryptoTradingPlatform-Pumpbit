@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from ".";
+import { ethers } from "ethers";
 import {
   SliderRange,
   SliderRoot,
@@ -8,9 +9,19 @@ import {
   SliderTrack,
 } from "../ui/slider";
 import { useWeb3 } from "@/hooks";
+import { toWei } from "@/utils/etcfunction";
+import { b2testnetChainId, ailayertestnetChainId } from "@/constants";
+import {
+  ailayertestnet_PositionRouter_Address,
+  b2testnet_PositionRouter_Address
+} from "@/constants";
+import { useToast } from "../ui/toast/use-toast";
+
+
 export default function AddLiquidityModal() {
 
-  const { account, usdcTokenContract, positionRouterContract, marketDescriptorDeployerContract } = useWeb3()
+  const { toast } = useToast()
+  const { account, usdcTokenContract, positionRouterContract, marketDescriptorDeployerContract, chainId, routerContract } = useWeb3()
 
   const [accountBalance, setAccountBalance] = useState<number>(0)
   const [margin, setMargin] = useState<number>(0)
@@ -36,16 +47,50 @@ export default function AddLiquidityModal() {
 
   const createLiquidity = async () => {
     const acceptableRate = 10
-    console.log("HQWQEW")
+    let minExecuteFee = ethers.parseEther("0.0005");
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
     const acceptablePrice = margin * (1 + acceptableRate / 100)
+
     console.log("Market =>", market)
-    await positionRouterContract.methods.createIncreaseLiquidityPosition(
-      market,
-      margin,
-      liquidity,
-      acceptablePrice
-    )
+    console.log("Margin =>", margin)
+    console.log("Liquidity =>", liquidity)
+    console.log("Accet+>", acceptablePrice)
+
+    let positionRouterAddr: string = ""
+    console.log("Chain ID =>", chainId)
+
+    if (chainId == b2testnetChainId) {
+      console.log("Chain is => b2", chainId, " ", b2testnetChainId)
+      positionRouterAddr = b2testnet_PositionRouter_Address
+    }
+    else {
+      console.log("Chain is => AI", chainId, " ", ailayertestnetChainId)
+      positionRouterAddr = ailayertestnet_PositionRouter_Address
+    }
+
+    const isApproved = await routerContract.methods.isPluginApproved(account, positionRouterAddr).call()
+    console.log("Is Approved =>", isApproved)
+    if (isApproved === false)
+      await routerContract.methods.approvePlugin(positionRouterAddr).send({ from: account })
+
+    try {
+      await positionRouterContract.methods.createIncreaseLiquidityPosition(
+        market,
+        toWei(margin),
+        toWei(liquidity),
+        toWei(acceptablePrice),
+      ).send({ from: account, value: minExecuteFee })
+
+      const { id, dismiss } = toast({
+        title: "Success",
+        description: "Success"
+      })
+    } catch (err) {
+      const { id, dismiss } = toast({
+        title: "Warning",
+        description: "Failed"
+      })
+    }
   }
 
   return (

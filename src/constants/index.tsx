@@ -13,6 +13,6 @@ export const ailayertestnet_USDC_Address = "0x4069F86aDd448c60546A5363Da92156900
 export const ailayertestnet_Router_Address = "0x8C37248c8409432dC9e7cC4DeCabE74B2f2A761D"
 export const ailayertestnet_OrderBook_Address = "0xA6Fe1c813b4C078DffAFad3f6afcD51B994e548c"
 export const ailayertestnet_MarketDescriptorDeployer_Address = "0x56a6cB9D2e0359dE639c2ff644d874c0Ee526e74"
-export const ailayertestnet_PositionRouter_Address = "0xAE537862Ff6705497901F7c29Bb1F0085Ac09bE1"
+export const ailayertestnet_PositionRouter_Address = "0xfC7ca25F5ce3A7a523D700012BF21B5bfE802DCB"
 export const b2testnetChainId: number = 1123
 export const ailayertestnetChainId: number = 2648

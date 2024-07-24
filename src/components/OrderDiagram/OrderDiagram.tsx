@@ -26,6 +26,7 @@ import {
 import { useToast } from "../ui/toast/use-toast";
 import { getPublicMarket } from "@/services/markets";
 import { chain, market } from "@/constants/index"
+import { toWei } from "@/utils/etcfunction";
 import {
   Lang_Market,
   Lang_Limit,
@@ -50,9 +51,7 @@ interface OrderDiagramProps {
   selectedPair: any;
 }
 
-export const toWei = (price: number) => {
-  return Math.round(price * Math.pow(10, 18))
-}
+
 
 export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
