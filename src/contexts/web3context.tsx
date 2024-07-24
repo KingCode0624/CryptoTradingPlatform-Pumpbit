@@ -14,12 +14,13 @@ import { useEthersProvider, useEthersSigner } from '@/utils/wagmi-ethers';
 import { Web3ContextType } from '../types';
 import {
     b2testnet_OrderBook_Address,
-    b2testnet_PositionRoute_Address,
-    b2testnet_MarketManager_Address,
     b2testnet_MarketDescriptorDeployer_Address,
-    b2testnet_USDT_Address,
     b2testnet_USDC_Address,
-    b2testnet_Router_Address
+    b2testnet_Router_Address,
+    ailayertestnet_OrderBook_Address,
+    ailayertestnet_USDC_Address,
+    ailayertestnet_Router_Address,
+    ailayertestnet_MarketDescriptorDeployer_Address
 } from '@/constants';
 
 import orderBookAbi from "@/contracts/OrderBook.json"
@@ -27,7 +28,10 @@ import marketDescriptorDeployerAbi from "@/contracts/MarketDescriptorDeployer.js
 import usdtTokenContractAbi from "@/contracts/usdtAbi.json"
 import usdcTokenContractAbi from "@/contracts/usdcAbi.json"
 import routerContractAbi from "@/contracts/Router.json"
-
+import {
+    b2testnetChainId,
+    ailayertestnetChainId
+} from '@/constants';
 
 declare let window: any;
 const Web3Context = createContext<Web3ContextType | null>(null);
@@ -46,13 +50,10 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
 
     const [provider, setProvider] = useState<ContractRunner>(defaultProvider);
 
-    const [usdtTokenContract, setUsdtTokenContract] = useState<Contract>({} as Contract)
     const [usdcTokenContract, setUsdcTokenContract] = useState<Contract>({} as Contract)
-    const [marketManagerContract, setMarketManagerContract] = useState<Contract>({} as Contract);
     const [orderBookContract, setOrderBookContract] = useState<Contract>({} as Contract);
-    const [marketDescriptorDeployerContract, setMarketDescriptorDeployerContract] = useState<Contract>({} as Contract)
     const [routerContract, setRouterContract] = useState<Contract>({} as Contract)
-
+    const [marketDescriptorDeployerContract, setMarketDescriptorDeployerContract] = useState<Contract>({} as Contract)
     const init = useCallback(async () => {
         try {
             if (!isConnected || !ethersProvider) {
@@ -63,24 +64,28 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             }
 
             let _orderBookContract: any;
-            let _marketDescriptorDeployerContract: any
-            let _usdtTokenContract: any
             let _usdcTokenContract: any
             let _routerContract: any
+            let _marketDescriptorDeployerContract: any
 
-            if (chainId === 1123) {
+            if (chainId === b2testnetChainId) {
                 _orderBookContract = new web3.eth.Contract(orderBookAbi, b2testnet_OrderBook_Address);
-                _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, b2testnet_MarketDescriptorDeployer_Address)
-                _usdtTokenContract = new web3.eth.Contract(usdtTokenContractAbi, b2testnet_USDT_Address)
                 _usdcTokenContract = new web3.eth.Contract(usdcTokenContractAbi, b2testnet_USDC_Address)
                 _routerContract = new web3.eth.Contract(routerContractAbi, b2testnet_Router_Address)
+                _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, b2testnet_MarketDescriptorDeployer_Address)
+            }
+            if (chainId === ailayertestnetChainId) {
+                _orderBookContract = new web3.eth.Contract(orderBookAbi, ailayertestnet_OrderBook_Address);
+                _usdcTokenContract = new web3.eth.Contract(usdcTokenContractAbi, ailayertestnet_USDC_Address)
+                _routerContract = new web3.eth.Contract(routerContractAbi, ailayertestnet_Router_Address)
+                _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, ailayertestnet_MarketDescriptorDeployer_Address)
             }
 
             setOrderBookContract(_orderBookContract);
-            setMarketDescriptorDeployerContract(_marketDescriptorDeployerContract)
-            setUsdtTokenContract(_usdtTokenContract)
             setUsdcTokenContract(_usdcTokenContract)
             setRouterContract(_routerContract)
+            setMarketDescriptorDeployerContract(_marketDescriptorDeployerContract)
+
         } catch (err) {
             // console.log(err);
         }
@@ -100,10 +105,9 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             isConnected,
             library: provider ?? signer,
             orderBookContract,
-            marketDescriptorDeployerContract,
-            usdtTokenContract,
             usdcTokenContract,
-            routerContract
+            routerContract,
+            marketDescriptorDeployerContract
         }),
         [
             address,
@@ -113,7 +117,6 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             signer,
             orderBookContract,
             marketDescriptorDeployerContract,
-            usdtTokenContract,
             usdcTokenContract,
             routerContract
         ]

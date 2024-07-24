@@ -6,9 +6,8 @@ export type Web3ContextType = {
   chainId?: number;
   isConnected?: boolean;
   library?: ContractRunner | Promise<JsonRpcSigner>;
-  orderBookContract: any;
   marketDescriptorDeployerContract: any;
-  usdtTokenContract: any;
+  orderBookContract: any;
   usdcTokenContract: any;
   routerContract: any;
 };
