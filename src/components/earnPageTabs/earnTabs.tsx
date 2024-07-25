@@ -65,34 +65,18 @@ const EarnTabs = () => {
     setIsLoading(false)
   }, [language])
 
-  const init = async () => {
-    const idx = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
-    console.log("Idx =>", idx)
-    let _Data: any = []
-    for (let i = 0; i < idx; i++) {
-      const data: any = [
-        {
-          pool: "ETH/USDC",
-          maxAPR: 294.12,
-          feeIncome: 1.5,
-          dailyEmission: 893.23,
-          totalLiquidity: 1000,
-          myLiquidity: 1000,
-          claimableRewards: 1000,
-        },
-      ];
-      _Data.push(data)
-    }
-    setLiquidityData(_Data)
-  }
+  // const init = async () => {
+  //   const idx = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
+  //   console.log("Idx =>", idx)
+  // }
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      init()
-    }, 1000)
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     init()
+  //   }, 1000)
 
-    return () => clearInterval(interval)
-  }, [])
+  //   return () => clearInterval(interval)
+  // }, [])
 
 
 
@@ -153,19 +137,16 @@ const EarnTabs = () => {
           </TabsList>
 
           <TabsContent value="Position Mining">
-            <div>
-              {
-                PositionMiningTitle.map((it, idx) => (
-                  <PositionMiningCard
-                    key={idx}
-                    title={PositionMiningTitle}
-                    data={PositionMiningData} />
-                ))
-              }
-            </div>
+            {
+              PositionMiningTitle.map((it, idx) => (
+                <PositionMiningCard
+                  key={idx}
+                  title={PositionMiningTitle}
+                  data={PositionMiningData} />
+              ))
+            }
           </TabsContent>
           <TabsContent value="Liquidity Mining">
-            <div className="">{ }</div>
             <LMiningAndPFiler
               title={Titles}
               data={liquidityData}

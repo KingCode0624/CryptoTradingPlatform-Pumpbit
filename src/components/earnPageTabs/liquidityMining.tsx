@@ -39,23 +39,52 @@ type TableRowType = {
   liquidityIndex: number;
 };
 
+export const toInt = (num: BigInt) => {
+  return Number(num) / Math.pow(10, 18)
+}
+
 export const TableRow = (props: TableRowType) => {
   const { language } = useUtilContext()
-  const { positionRouterContract } = useWeb3()
+  const { positionRouterContract, account } = useWeb3()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [liquidityData, setLiquidityData] = useState<any>()
+  const [liquidityData, setLiquidityData] = useState<any[]>([])
+  const [myLiquidity, setMyLiquidity] = useState<number>(0)
+  const [totalLiquidity, setTotalLiquidity] = useState<number>(0)
 
   useEffect(() => {
     setIsLoading(false)
   }, [language])
 
-  const GetLiquidityPosition = async (idx: number) => {
-    const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(idx).call()
-    console.log("Result =><", result)
-    setLiquidityData(result)
+  const GetLiquidityPosition = async () => {
+    const liquidityIndex = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
+
+    let _result: any[] = []
+    let _totalPoolLiquidity: number = 0
+    let _myPoolLiquidity: number = 0
+    console.log("idx =>", liquidityIndex)
+    for (let i = 0; i < liquidityIndex; i++) {
+      const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
+      _totalPoolLiquidity = _totalPoolLiquidity + toInt(result.liquidityDelta)
+
+      if (account === result.account)
+        _myPoolLiquidity = _myPoolLiquidity + toInt(result.liquidityDelta)
+
+      if (result.liquidityDelta != 0)
+        _result.push(result)
+    }
+
+    setLiquidityData(_result)
+
+    setMyLiquidity(_myPoolLiquidity)
+    setTotalLiquidity(_totalPoolLiquidity)
+
+    console.log("Result =>", _result)
   }
 
+  useEffect(() => {
+    GetLiquidityPosition()
+  }, [])
 
   if (isLoading)
     return (
@@ -75,16 +104,14 @@ export const TableRow = (props: TableRowType) => {
         </td>
         <td align="center">1.5</td>
         {/* <td align="center">{props.feeIncome}</td> */}
-        <td align="center">103 M</td>
+        <td align="center">{totalLiquidity} USDC</td>
         {/* <td align="center">{props.totalLiquidity} M</td> */}
-        <td align="center">1000 USDC</td>
+        <td align="center">{myLiquidity} USDC</td>
         {/* <td align="center">{props.myLiquidity} USDC</td> */}
 
         <td align="center">
           <button className="px-2 py-1" onClick={() => {
             setExpanded(!expanded)
-            console.log("LiquidityIndex =>", props.liquidityIndex)
-            GetLiquidityPosition(props.liquidityIndex)
           }}>
             <Image
               src="/assets/arrow_drop_down.png"
@@ -113,9 +140,19 @@ export const TableRow = (props: TableRowType) => {
               "max-h-0 ": !expanded,
             })}
           >
-            <PositionHistoryCard
+            {/* <PositionHistoryCard
               liquidityData={liquidityData}
-            />
+            /> */}
+            {
+              liquidityData.map((item, idx) => (
+                <PositionHistoryCard
+                  key={idx}
+                  liquidityData={liquidityData[idx]}
+                  index={idx}
+                />
+              ))
+            }
+
           </div>
         </td>
       </tr>

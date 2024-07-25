@@ -33,7 +33,7 @@ export default function Header() {
   const pathname = usePathname();
   const { language } = useUtilContext()
   const { chainId, faucetContract, account } = useWeb3()
-
+  const [currentAccount, setCurrentAccount] = useState<any>()
   const [chain, setChain] = useState<string>("b2")
 
   useEffect(() => {
@@ -61,6 +61,11 @@ export default function Header() {
       { name: language === "EN" ? Lang_earn.en : Lang_earn.ch, link: "/earn" },
     ])
   }, [language])
+
+  useEffect(() => {
+    setCurrentAccount(account)
+  }, [account])
+
 
   const [open, setOpen] = useState(false);
 
@@ -158,8 +163,9 @@ export default function Header() {
           </PopoverContent>
         </Popover>
         <div className=" flex gap-x-2 ">
+
           <button
-            className="flex justify-center items-center rounded-[60px] w-[150px] h-[45px] text-[20px] bg-[#3d3a5d] gap-3"
+            className={`${currentAccount === undefined ? "hidden" : "block"} flex justify-center items-center rounded-[60px] w-[150px] h-[45px] text-[20px] bg-[#3d3a5d] gap-3`}
             onClick={() => airDropToken()}
           >
             <Image

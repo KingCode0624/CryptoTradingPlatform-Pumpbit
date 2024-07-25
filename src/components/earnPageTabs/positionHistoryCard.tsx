@@ -4,14 +4,18 @@ import { useEffect, useState } from "react";
 import { TabsList, Tabs, TabsTrigger, TabsContent } from "../ui/tabs";
 import PositionMiningCard from "./positionMiningCard";
 import { useToast } from "../ui/toast/use-toast";
+import { useWeb3 } from "@/hooks";
 
 export const toNumber = (num: BigInt) => {
   return Number(num) / Number(Math.pow(10, 18))
 }
-export default function PositionHistoryCard({ liquidityData }: any) {
+export default function PositionHistoryCard({ liquidityData, index }: any) {
 
+  const { toast } = useToast()
+  const { account, positionRouterContract } = useWeb3()
   const [liquidity, setLiquidity] = useState<any>(0)
   const [margin, setMargin] = useState<any>(0)
+  const [liquidityAccount, setLiquidityAccount] = useState<string>("")
 
   useEffect(() => {
 
@@ -20,13 +24,34 @@ export default function PositionHistoryCard({ liquidityData }: any) {
     console.log("Prop => ", liquidityData)
     setMargin(toNumber(liquidityData.marginDelta))
     setLiquidity(toNumber(liquidityData.liquidityDelta))
+    setLiquidityAccount(String(liquidityData.account))
+
   }, [liquidityData])
 
   useEffect(() => {
     console.log("Margin =>", margin);
     console.log("Liquidity =>", liquidity);
+    console.log("LiquidityAcc =>", liquidityAccount);
+  }, [margin, liquidity, liquidityAccount])
 
-  }, [margin, liquidity])
+  const cancelLiquidityPosition = async () => {
+    console.log("Index1 =>", index)
+    try {
+      await positionRouterContract.methods.cancelIncreaseLiquidityPosition(index, account).send({ from: account })
+      const { id, dismiss } = toast({
+        title: "Success",
+        description: "Canceled Success"
+      })
+    } catch (err) {
+
+      const { id, dismiss } = toast({
+        title: "Failed",
+        description: "Cancel Failed"
+      })
+
+    }
+  }
+
   return (
     <div className="px-9 py-5 text-gray-500 font-normal text-lg">
       <hr className="py-3 border-gray-700" />
@@ -59,7 +84,12 @@ export default function PositionHistoryCard({ liquidityData }: any) {
           <div className="text-white pt-3">{margin} USDC</div>
         </div>
         <div className="flex items-center justify-center">
-          <button className="px-5 py-2 border rounded-lg">Remove</button>
+          <button className={`${account === liquidityAccount ? "text-[white]" : ""} px-5 py-2 border rounded-lg`}
+            disabled={account === liquidityAccount ? false : true}
+            onClick={() => cancelLiquidityPosition()}
+          >
+            Remove
+          </button>
         </div>
       </div>
     </div>

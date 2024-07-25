@@ -12,14 +12,12 @@ const Admin = () => {
     const { faucetContract, usdcTokenContract, chainId, account } = useWeb3()
 
     const transferToken = async () => {
-        console.log("Iok")
         let _faucetAddr: string = ""
         if (chainId === ailayertestnetChainId)
             _faucetAddr = ailayertestnet_Faucet_Address
         else if (chainId === b2testnetChainId)
             _faucetAddr = b2testnet_Faucet_Address
 
-        console.log("Faucet Addr =>", _faucetAddr)
         try {
             await usdcTokenContract.methods.transfer(_faucetAddr, ethers.parseUnits("10000", 18)).send({ from: account })
             console.log("Token Transfter to contract is success")

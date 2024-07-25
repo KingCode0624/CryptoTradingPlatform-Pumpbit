@@ -27,7 +27,10 @@ export default function AddLiquidityModal() {
   const [margin, setMargin] = useState<number>(0)
   const [liquidity, setLiquidity] = useState<number>(0)
   const [slider, setSlider] = useState<number[]>([1])
+
   const init = async () => {
+    if (account === undefined) return
+
     const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
     setAccountBalance(Number(_accountBalance) / Math.pow(10, 18))
   }
