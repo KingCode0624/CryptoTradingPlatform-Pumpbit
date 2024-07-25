@@ -63,33 +63,52 @@ export default function PositionHistoryCard({ liquidityData, index }: any) {
       <div className="grid grid-cols-6 place-items-start mt-4 text-center text-sm">
         <div>
           <div className="">Liquidity</div>
-          <div className="text-white pt-3">{liquidity}</div>
+          {
+            liquidityAccount === account &&
+            <div className="text-white pt-3">{liquidity}</div>
+          }
         </div>
         <div>
           <div className="">Leverage</div>
-          <div className="text-white pt-3">{liquidity / margin}x</div>
+          {
+            liquidityAccount === account &&
+            <div className="text-white pt-3">{liquidity / margin}x</div>
+          }
         </div>
         <div>
           <div className="">Unrealized PnL</div>
-          <div className="text-semantic-success pt-3">120.20</div>
+          {
+            liquidityAccount === account &&
+            <div className="text-semantic-success pt-3">120.20</div>
+          }
         </div>
         <div>
           <div className="text-gray-500">Risk</div>
-          <div className="flex items-center justify-center pt-3 text-white">
-            93.95%
-          </div>
+          {
+            liquidityAccount === account &&
+            <div className="flex items-center justify-center pt-3 text-white">
+              93.95%
+            </div>
+          }
         </div>
         <div>
           <div className="text-gray-500">Margin</div>
-          <div className="text-white pt-3">{margin} USDC</div>
+          {
+            liquidityAccount === account &&
+            <div className="text-white pt-3">{margin} USDC</div>
+          }
         </div>
         <div className="flex items-center justify-center">
-          <button className={`${account === liquidityAccount ? "text-[white]" : ""} px-5 py-2 border rounded-lg`}
-            disabled={account === liquidityAccount ? false : true}
-            onClick={() => cancelLiquidityPosition()}
-          >
-            Remove
-          </button>
+
+          {
+            liquidityAccount === account &&
+            <button className={`${account === liquidityAccount ? "text-[white]" : ""} px-5 py-2 border rounded-lg`}
+              disabled={account === liquidityAccount ? false : true}
+              onClick={() => cancelLiquidityPosition()}
+            >
+              Remove
+            </button>
+          }
         </div>
       </div>
     </div>

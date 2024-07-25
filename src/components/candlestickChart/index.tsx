@@ -69,16 +69,11 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
       const response1 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
       const response2 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
 
-      const data1 = response1 ? response1.data : tickData;
       const data2 = response2 ? response2.data : tickData;
 
-      console.log("Data1 =>", data1)
-      const data = [...data2, ...data1]
 
-      data.sort((a, b) => a.t - b.t);
 
-      console.log("Data =>", data)
-      const formattedTicks = data.map((tick: MarketTick) => ({
+      const formattedTicks = data2.map((tick: MarketTick) => ({
         time: tick.t / 1000,
         open: Number(tick.o),
         high: Number(tick.h),

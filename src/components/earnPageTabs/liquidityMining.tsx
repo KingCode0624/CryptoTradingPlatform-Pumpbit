@@ -65,6 +65,7 @@ export const TableRow = (props: TableRowType) => {
     let _totalPoolLiquidity: number = 0
     let _myPoolLiquidity: number = 0
     console.log("idx =>", liquidityIndex)
+
     for (let i = 0; i < liquidityIndex; i++) {
       const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
       _totalPoolLiquidity = _totalPoolLiquidity + toInt(result.liquidityDelta)
@@ -75,6 +76,7 @@ export const TableRow = (props: TableRowType) => {
       if (result.liquidityDelta != 0)
         _result.push(result)
     }
+
 
     setLiquidityData(_result)
 
