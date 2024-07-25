@@ -169,11 +169,25 @@ export default function Header() {
             onClick={() => airDropToken()}
           >
             <Image
-              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" : "/assets/icons/b2.svg"}`}
+              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" : "/assets/Btc.png"}`}
               width={30}
               height={30}
               alt="FaucetLogo" />
             Faucet
+          </button>
+
+          <button
+            className={`${chain === "ailayer" ? "hidden" : ""}   ${currentAccount === undefined ? "hidden" : "block"} flex justify-center items-center rounded-[60px] w-[150px] h-[45px] text-[20px] bg-[#3d3a5d] gap-3`}
+            onClick={() => {
+              window.open('https://www.bsquared.network/faucet/', '_blank');
+            }}
+          >
+            <Image
+              src="/assets/icons/b2.svg"
+              width={30}
+              height={30}
+              alt="FaucetLogo" />
+            Airdrop
           </button>
           <div className="flex gap-x-2 items-center pr-10 md:flex-row-reverse">
             {/* <ChainMenu /> */}

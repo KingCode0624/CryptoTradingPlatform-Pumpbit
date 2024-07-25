@@ -51,6 +51,8 @@ export const TableRow = (props: TableRowType) => {
   const [liquidityData, setLiquidityData] = useState<any[]>([])
   const [myLiquidity, setMyLiquidity] = useState<number>(0)
   const [totalLiquidity, setTotalLiquidity] = useState<number>(0)
+  const [isVisibleModel, setIsVisibleModal] = useState<boolean>(false)
+
 
   useEffect(() => {
     setIsLoading(false)
@@ -86,6 +88,10 @@ export const TableRow = (props: TableRowType) => {
     GetLiquidityPosition()
   }, [])
 
+  useEffect(() => {
+    console.log("Visible =>", isVisibleModel)
+  }, [isVisibleModel])
+
   if (isLoading)
     return (
       <div>
@@ -99,10 +105,10 @@ export const TableRow = (props: TableRowType) => {
         <td align="center">BTC/USDC</td>
         {/* <td align="center">{props.pool}</td> */}
         <td align="center" className="text-semantic-success">
-          <p>294.12%</p>
+          <p>Coming soon</p>
           {/* <p>{props.maxAPR}%</p> */}
         </td>
-        <td align="center">1.5</td>
+        <td align="center">Coming soon</td>
         {/* <td align="center">{props.feeIncome}</td> */}
         <td align="center">{totalLiquidity} USDC</td>
         {/* <td align="center">{props.totalLiquidity} M</td> */}
@@ -124,11 +130,15 @@ export const TableRow = (props: TableRowType) => {
         <td align="center">
           <Dialog>
             <DialogTrigger asChild>
-              <button className="lg:rounded-lg rounded-md bg-button-primary px-2 py-1">
+              <button className="lg:rounded-lg rounded-md bg-button-primary px-2 py-1"
+              >
                 {language === "EN" ? Lang_Add.en : Lang_Add.ch}
               </button>
             </DialogTrigger>
-            <AddLiquidityModal />
+            <DialogTrigger asChild>
+              <AddLiquidityModal />
+            </DialogTrigger>
+
           </Dialog>
         </td>
       </tr>

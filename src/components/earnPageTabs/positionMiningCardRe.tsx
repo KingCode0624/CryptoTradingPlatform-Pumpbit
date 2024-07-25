@@ -38,9 +38,9 @@ export const TableRow = (props: TableRowProps) => {
             {" "}
             <tr className="w-full [&_td]:min-w-11  [&_td]:py-5 px-12">
                 <td align="center">{props.pool}</td>
-                <td align="center">{props.maxApr} PBT</td>
-                <td align="center">{props.totalPosition} M</td>
-                <td align="center">{props.myPosition}</td>
+                <td align="center">Coming soon</td>
+                <td align="center">Coming soon</td>
+                <td align="center">Coming soon</td>
 
                 {/* <td align="center">
                     <button className="px-2 py-1" onClick={() => setExpanded(!expanded)}>

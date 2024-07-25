@@ -43,8 +43,8 @@ export async function getMarketTicks(market: string, chain: string, interval: st
 
     const response = await client.get(`/public/market/ticks`, {
       params: {
-        from: currentTimeStap,
-        to: thirtyAgoTimeStap,
+        to: currentTimeStap,
+        from: thirtyAgoTimeStap,
         market: market,
         interval: interval,
         chain: chain,

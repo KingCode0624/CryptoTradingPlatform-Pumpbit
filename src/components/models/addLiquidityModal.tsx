@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from ".";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from ".";
 import { ethers } from "ethers";
 import {
   SliderRange,
@@ -75,7 +75,11 @@ export default function AddLiquidityModal() {
     }
 
 
-    await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
+    const tokenApproved = await usdcTokenContract.methods.allowance(account, routerAddr).call()
+
+    if (tokenApproved == BigInt(0))
+      await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
+
 
     const isApproved = await routerContract.methods.isPluginApproved(account, positionRouterAddr).call()
     console.log("Is Approved =>", isApproved)
@@ -91,9 +95,10 @@ export default function AddLiquidityModal() {
         toWei(acceptablePrice),
       ).send({ from: account, value: minExecuteFee })
 
+
       const { id, dismiss } = toast({
         title: "Success",
-        description: "Success"
+        description: "Created Liquidity Position sucessfully"
       })
     } catch (err) {
       const { id, dismiss } = toast({
@@ -214,7 +219,8 @@ export default function AddLiquidityModal() {
         <div className="mt-1mb-2">
           <button className="py-2 w-full rounded-lg text-lg bg-primary font-bold"
             onClick={() => {
-              createLiquidity()
+              // createLiquidity()
+              console.log("OK")
             }}
           >
             Add

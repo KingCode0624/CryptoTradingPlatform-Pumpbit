@@ -179,8 +179,11 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       orderBookAddr = ailayertestnet_OrderBook_Address
     }
 
-    await usdcTokenContract.methods.approve(routerAddr, 100000000000 * Math.pow(10, 18)).send({ from: account })
-    
+    const tokenApproved = await usdcTokenContract.methods.allowance(account, routerAddr).call()
+
+    if (tokenApproved == BigInt(0))
+      await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
+
     const isApproved = await routerContract.methods.isPluginApproved(account, orderBookAddr).call()
     console.log("Is Approved =>", isApproved)
     if (isApproved === false)

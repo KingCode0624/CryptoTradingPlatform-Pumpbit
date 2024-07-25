@@ -65,20 +65,6 @@ const EarnTabs = () => {
     setIsLoading(false)
   }, [language])
 
-  // const init = async () => {
-  //   const idx = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
-  //   console.log("Idx =>", idx)
-  // }
-
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     init()
-  //   }, 1000)
-
-  //   return () => clearInterval(interval)
-  // }, [])
-
-
 
   if (isLoading) return (
     <div>
