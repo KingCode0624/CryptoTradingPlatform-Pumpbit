@@ -22,7 +22,9 @@ import {
     ailayertestnet_Router_Address,
     ailayertestnet_MarketDescriptorDeployer_Address,
     b2testnet_PositionRouter_Address,
-    ailayertestnet_PositionRouter_Address
+    ailayertestnet_PositionRouter_Address,
+    ailayertestnet_Faucet_Address,
+    b2testnet_Faucet_Address
 } from '@/constants';
 
 import orderBookAbi from "@/contracts/OrderBook.json"
@@ -31,6 +33,8 @@ import usdtTokenContractAbi from "@/contracts/usdtAbi.json"
 import usdcTokenContractAbi from "@/contracts/usdcAbi.json"
 import routerContractAbi from "@/contracts/Router.json"
 import positionRouterAbi from "@/contracts/PositionRouter.json"
+import FaucetAbi from "@/contracts/Faucet.json"
+
 import {
     b2testnetChainId,
     ailayertestnetChainId
@@ -58,6 +62,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     const [routerContract, setRouterContract] = useState<Contract>({} as Contract)
     const [marketDescriptorDeployerContract, setMarketDescriptorDeployerContract] = useState<Contract>({} as Contract)
     const [positionRouterContract, setPositionRouterContract] = useState<Contract>({} as Contract)
+    const [faucetContract, setFaucetContract] = useState<Contract>({} as Contract)
+
     const init = useCallback(async () => {
         try {
             if (!isConnected || !ethersProvider) {
@@ -72,12 +78,14 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             let _routerContract: any
             let _marketDescriptorDeployerContract: any
             let _positionRouterContract: any
+            let _faucetContract: any
             if (chainId === b2testnetChainId) {
                 _orderBookContract = new web3.eth.Contract(orderBookAbi, b2testnet_OrderBook_Address);
                 _usdcTokenContract = new web3.eth.Contract(usdcTokenContractAbi, b2testnet_USDC_Address)
                 _routerContract = new web3.eth.Contract(routerContractAbi, b2testnet_Router_Address)
                 _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, b2testnet_MarketDescriptorDeployer_Address)
                 _positionRouterContract = new web3.eth.Contract(positionRouterAbi, b2testnet_PositionRouter_Address)
+                _faucetContract = new web3.eth.Contract(FaucetAbi, b2testnet_Faucet_Address)
             }
             if (chainId === ailayertestnetChainId) {
                 _orderBookContract = new web3.eth.Contract(orderBookAbi, ailayertestnet_OrderBook_Address);
@@ -85,6 +93,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
                 _routerContract = new web3.eth.Contract(routerContractAbi, ailayertestnet_Router_Address)
                 _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, ailayertestnet_MarketDescriptorDeployer_Address)
                 _positionRouterContract = new web3.eth.Contract(positionRouterAbi, ailayertestnet_PositionRouter_Address)
+                _faucetContract = new web3.eth.Contract(FaucetAbi, ailayertestnet_Faucet_Address)
             }
 
             setOrderBookContract(_orderBookContract);
@@ -92,6 +101,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             setRouterContract(_routerContract)
             setMarketDescriptorDeployerContract(_marketDescriptorDeployerContract)
             setPositionRouterContract(_positionRouterContract)
+            setFaucetContract(_faucetContract)
         } catch (err) {
             // console.log(err);
         }
@@ -115,6 +125,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             routerContract,
             marketDescriptorDeployerContract,
             positionRouterContract,
+            faucetContract
         }),
         [
             address,
@@ -126,7 +137,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             marketDescriptorDeployerContract,
             usdcTokenContract,
             routerContract,
-            positionRouterContract
+            positionRouterContract,
+            faucetContract
         ]
     );
     return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;

@@ -23,11 +23,29 @@ import {
   Lang_trade,
   Lang_earn
 } from "@/constants/language";
-
+import { useWeb3 } from "@/hooks";
+import {
+  b2testnetChainId,
+  ailayertestnetChainId
+} from "@/constants";
 
 export default function Header() {
   const pathname = usePathname();
   const { language } = useUtilContext()
+  const { chainId, faucetContract, account } = useWeb3()
+
+  const [chain, setChain] = useState<string>("b2")
+
+  useEffect(() => {
+    if (chainId === ailayertestnetChainId)
+      setChain("ailayer")
+    else if (chainId === b2testnetChainId)
+      setChain("b2")
+  }, [chainId])
+
+  useEffect(() => {
+    console.log("Chain =>", chain)
+  }, [chain])
 
   const [paths, setPaths] = useState<any>([
     { name: "", link: "/trade" },
@@ -46,12 +64,20 @@ export default function Header() {
 
   const [open, setOpen] = useState(false);
 
+  const airDropToken = async () => {
+    try {
+      await faucetContract.methods.claimTokens().send({ from: account })
+      console.log("Airdrop is success")
+    } catch (err) {
+      console.log("Airdopr is failed")
+    }
+  }
+
   return (
     <section className="w-full fixed top-0 left-0">
       <div className="flex gap-x-10 md:gap-x-3 items-center relative  md:justify-between   py-4 md:px-10 pl-2">
         <div
-          className="cursor-pointer flex items-center
-       "
+          className="cursor-pointer flex items-center     "
         >
           <Image
             className="w-36 lg:w-44"
@@ -61,7 +87,7 @@ export default function Header() {
             alt="logo"
           />
 
-          <div className=" py-6 md:flex md:pl-4 lg:pl-48 hidden   ">
+          <div className=" py-6 md:flex md:pl-4 lg:pl-48 hidden ">
             {paths.map((path: any) => (
               <div key={path.name}>
                 <div className="  text-[#b1b6be] active:text-white   visited:text-white  flex justify-between  gap-y-2 px-3 text-xl   ">
@@ -82,7 +108,6 @@ export default function Header() {
           <PopoverTrigger className="text-3xl absolute right-2 top-5   cursor-pointer md:hidden">
             <GiHamburgerMenu />
           </PopoverTrigger>
-
           <PopoverContent className="w-screen border-none -translate-y-20 ">
             <div
               className={`md:items-center md:pb-0 fixed bg-gradient-bg  z-10 left-0 w-full md:w-auto md:hidden  transition-all duration-500 ease-in`}
@@ -122,6 +147,7 @@ export default function Header() {
 
               <hr className="md:hidden" />
               <div className="md:hidden ">
+
                 <SettingMobileMenu />
               </div>
 
@@ -132,8 +158,20 @@ export default function Header() {
           </PopoverContent>
         </Popover>
         <div className=" flex gap-x-2 ">
+          <button
+            className="flex justify-center items-center rounded-[60px] w-[150px] h-[45px] text-[20px] bg-[#3d3a5d] gap-3"
+            onClick={() => airDropToken()}
+          >
+            <Image
+              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" : "/assets/icons/b2.svg"}`}
+              width={30}
+              height={30}
+              alt="FaucetLogo" />
+            Faucet
+          </button>
           <div className="flex gap-x-2 items-center pr-10 md:flex-row-reverse">
             {/* <ChainMenu /> */}
+
             <ConnectButton />
           </div>
           <div className="hidden md:flex gap-x-4 items-center ">

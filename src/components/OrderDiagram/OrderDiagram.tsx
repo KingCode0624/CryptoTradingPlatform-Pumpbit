@@ -180,6 +180,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     }
 
     await usdcTokenContract.methods.approve(routerAddr, 100000000000 * Math.pow(10, 18)).send({ from: account })
+    
     const isApproved = await routerContract.methods.isPluginApproved(account, orderBookAddr).call()
     console.log("Is Approved =>", isApproved)
     if (isApproved === false)

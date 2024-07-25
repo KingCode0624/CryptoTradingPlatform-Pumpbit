@@ -11,6 +11,7 @@ export type Web3ContextType = {
   usdcTokenContract: any;
   routerContract: any;
   positionRouterContract: any;
+  faucetContract: any;
 };
 
 export type UtilContextType = {

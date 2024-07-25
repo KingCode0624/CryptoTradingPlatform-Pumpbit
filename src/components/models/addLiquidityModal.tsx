@@ -10,7 +10,7 @@ import {
 } from "../ui/slider";
 import { useWeb3 } from "@/hooks";
 import { toWei } from "@/utils/etcfunction";
-import { b2testnetChainId, ailayertestnetChainId } from "@/constants";
+import { b2testnetChainId, ailayertestnetChainId, b2testnet_Router_Address, ailayertestnet_Router_Address } from "@/constants";
 import {
   ailayertestnet_PositionRouter_Address,
   b2testnet_PositionRouter_Address
@@ -57,21 +57,28 @@ export default function AddLiquidityModal() {
     console.log("Accet+>", acceptablePrice)
 
     let positionRouterAddr: string = ""
+    let routerAddr: string = ""
     console.log("Chain ID =>", chainId)
 
     if (chainId == b2testnetChainId) {
       console.log("Chain is => b2", chainId, " ", b2testnetChainId)
       positionRouterAddr = b2testnet_PositionRouter_Address
+      routerAddr = b2testnet_Router_Address
     }
     else {
       console.log("Chain is => AI", chainId, " ", ailayertestnetChainId)
       positionRouterAddr = ailayertestnet_PositionRouter_Address
+      routerAddr = ailayertestnet_Router_Address
     }
+
+
+    await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
 
     const isApproved = await routerContract.methods.isPluginApproved(account, positionRouterAddr).call()
     console.log("Is Approved =>", isApproved)
     if (isApproved === false)
       await routerContract.methods.approvePlugin(positionRouterAddr).send({ from: account })
+    console.log("Approved")
 
     try {
       await positionRouterContract.methods.createIncreaseLiquidityPosition(

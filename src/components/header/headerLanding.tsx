@@ -45,31 +45,27 @@ export default function HeaderLanding() {
       </div>
 
       <div
-        className={` w-full flex flex-col gap-y-8 px-10 py-3 bg-gradient-bg justify-center items-center absolute z-10 right-0 top-20 lg:relative lg:!bg-none  lg:top-0  lg:flex-row lg:justify-end  lg:items-center lg:gap-x-10 lg:flex ${
-          isOpen ? "block" : "hidden"
-        } `}
+        className={` w-full flex flex-col gap-y-8 px-10 py-3 bg-gradient-bg justify-center items-center absolute z-10 right-0 top-20 lg:relative lg:!bg-none  lg:top-0  lg:flex-row lg:justify-end  lg:items-center lg:gap-x-10 lg:flex ${isOpen ? "block" : "hidden"
+          } `}
       >
         <Link
           href="/airdrop"
-          className={`text-xl lg:text-xl font-normal hover:border-b  hover:border-hovernav ${
-            pathname === "/airdrop" && " border-b border-hovernav"
-          }`}
+          className={`text-xl lg:text-xl font-normal hover:border-b  hover:border-hovernav ${pathname === "/airdrop" && " border-b border-hovernav"
+            }`}
         >
           Airdrop
         </Link>
         <Link
           href="/nftMint"
-          className={`text-xl lg:text-xl font-normal hover:border-b  hover:border-hovernav ${
-            pathname === "/nftMint" && " border-b border-hovernav"
-          }`}
+          className={`text-xl lg:text-xl font-normal hover:border-b  hover:border-hovernav ${pathname === "/nftMint" && " border-b border-hovernav"
+            }`}
         >
           NFT Mint
         </Link>
         <Link
           href="/referral"
-          className={`text-xl lg:text-xl font-normal hover:border-b  hover:border-hovernav ${
-            pathname === "/referral" && " border-b border-hovernav"
-          }`}
+          className={`text-xl lg:text-xl font-normal hover:border-b  hover:border-hovernav ${pathname === "/referral" && " border-b border-hovernav"
+            }`}
         >
           Referral
         </Link>
