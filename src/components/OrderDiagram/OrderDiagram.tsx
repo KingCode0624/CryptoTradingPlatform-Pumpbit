@@ -178,6 +178,8 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     }
   }
 
+
+  
   const IsTransactionAvailable = async () => {
     let routerAddr: string = ""
     let orderBookAddr: string = ""
