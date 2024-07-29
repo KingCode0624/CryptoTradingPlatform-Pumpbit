@@ -165,8 +165,16 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
         acceptablePrice,
       ).send({ from: account, value: minExecuteFee })
 
-    } catch (err) {
+      const { id, dismiss } = toast({
+        title: "Success",
+        description: "Order is created successfully!"
+      })
 
+    } catch (err) {
+      const { id, dismiss } = toast({
+        title: "Failed",
+        description: "Creation of Order is failed!"
+      })
     }
   }
 
@@ -192,7 +200,10 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       try {
         await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
       } catch (err) {
-
+        const { id, dismiss } = toast({
+          title: "Failed",
+          description: "Creation of Order is failed!"
+        })
       }
 
     const isApproved = await routerContract.methods.isPluginApproved(account, orderBookAddr).call()
@@ -202,7 +213,10 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       try {
         await routerContract.methods.approvePlugin(orderBookAddr).send({ from: account })
       } catch (err) {
-
+        const { id, dismiss } = toast({
+          title: "Failed",
+          description: "Creation of Order is failed!"
+        })
       }
   }
 
@@ -222,8 +236,14 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       await IsTransactionAvailable()
       await CreateIncreateOrderBook()
       setAnimation(false)
-    } catch (err) {
 
+
+
+    } catch (err) {
+      const { id, dismiss } = toast({
+        title: "Failed",
+        description: "Creation of Order is failed!"
+      })
     }
   }
 
