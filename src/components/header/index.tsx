@@ -187,7 +187,7 @@ export default function Header() {
               width={30}
               height={30}
               alt="FaucetLogo" />
-            Airdrop
+            Faucet
           </button>
           <div className="flex gap-x-2 items-center pr-10 md:flex-row-reverse">
             {/* <ChainMenu /> */}
