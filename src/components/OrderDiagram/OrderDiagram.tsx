@@ -47,11 +47,11 @@ import {
   Lang_OpenLong,
   Lang_OpenShort
 } from "@/constants/language"
+import "./style/index.css"
+
 interface OrderDiagramProps {
   selectedPair: any;
 }
-
-
 
 export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
@@ -83,6 +83,9 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const [slPrice, setSlPrice] = useState<number>(0)
   const [fees, setFees] = useState<number>(0)
   const [priceImpact, setPriceImpact] = useState<number>(0)
+  const [isAnimation, setAnimation] = useState<boolean>(false)
+  const [orderBtnName, setOrderBtnName] = useState<string>("")
+
 
   const handleLeverageChange = (value: number) => {
     setLeverage(value);
@@ -149,25 +152,29 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     const triggerAbove = true
     const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100))
 
-
-
     console.log("margin_delt => ", marginDelta)
-    await orderBookContract.methods.createIncreaseOrder(
-      market,
-      side,
-      marginDelta,
-      sizeDelta,
-      triggerMarketPrice,
-      triggerAbove,
-      acceptablePrice,
 
-    ).send({ from: account, value: minExecuteFee })
+    try {
+      await orderBookContract.methods.createIncreaseOrder(
+        market,
+        side,
+        marginDelta,
+        sizeDelta,
+        triggerMarketPrice,
+        triggerAbove,
+        acceptablePrice,
+      ).send({ from: account, value: minExecuteFee })
+
+    } catch (err) {
+
+    }
   }
 
   const IsTransactionAvailable = async () => {
     let routerAddr: string = ""
     let orderBookAddr: string = ""
     console.log("Chain ID =>", chainId)
+
     if (chainId == b2testnetChainId) {
       console.log("Chain is => b2", chainId, " ", b2testnetChainId)
       routerAddr = b2testnet_Router_Address
@@ -182,16 +189,24 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     const tokenApproved = await usdcTokenContract.methods.allowance(account, routerAddr).call()
 
     if (tokenApproved == BigInt(0))
-      await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
+      try {
+        await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
+      } catch (err) {
+
+      }
 
     const isApproved = await routerContract.methods.isPluginApproved(account, orderBookAddr).call()
     console.log("Is Approved =>", isApproved)
+
     if (isApproved === false)
-      await routerContract.methods.approvePlugin(orderBookAddr).send({ from: account })
+      try {
+        await routerContract.methods.approvePlugin(orderBookAddr).send({ from: account })
+      } catch (err) {
+
+      }
   }
 
   const OpenOrderBook = async () => {
-
     if (toWei(orderInitPay) == 0) {
       const { id, dismiss } = toast({
         title: " Margin rice is 0!",
@@ -201,8 +216,15 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       return
     }
 
-    await IsTransactionAvailable()
-    await CreateIncreateOrderBook()
+    setAnimation(true)
+
+    try {
+      await IsTransactionAvailable()
+      await CreateIncreateOrderBook()
+      setAnimation(false)
+    } catch (err) {
+
+    }
   }
 
   const init = async () => {
@@ -211,6 +233,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }
 
   useEffect(() => {
+
     const interval = setInterval(() => {
       init();
     }, 1000);
@@ -221,6 +244,14 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   useEffect(() => {
     setIsLoading(false)
   }, [language])
+
+  useEffect(() => {
+    selectedSide === "Long" ?
+      `${language === "EN" ? setOrderBtnName(Lang_OpenLong.en) : setOrderBtnName(Lang_OpenLong.ch)}` :
+      `${language === "EN" ? setOrderBtnName(Lang_OpenShort.en) : setOrderBtnName(Lang_OpenShort.ch)}`
+
+  }, [language, selectedSide])
+
 
   if (isLoading) return (
     <div>
@@ -442,10 +473,17 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             } py-3`}
           onClick={() => { OpenOrderBook() }}
         >
-          {selectedSide === "Long" ?
-            `${language === "EN" ? Lang_OpenLong.en : Lang_OpenLong.ch}` :
-            `${language === "EN" ? Lang_OpenShort.en : Lang_OpenShort.ch}`
+
+          {!isAnimation && orderBtnName}
+
+          {
+            isAnimation &&
+            <div className="stage">
+              <div className='dot-typing'>
+              </div>
+            </div>
           }
+
         </button>
       </div>
     </div>
