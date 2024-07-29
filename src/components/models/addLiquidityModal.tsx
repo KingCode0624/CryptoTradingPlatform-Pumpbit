@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogClose } from ".";
 import { ethers } from "ethers";
 import {
@@ -8,6 +8,7 @@ import {
   SliderThumb,
   SliderTrack,
 } from "../ui/slider";
+
 import { useWeb3 } from "@/hooks";
 import { toWei } from "@/utils/etcfunction";
 import { b2testnetChainId, ailayertestnetChainId, b2testnet_Router_Address, ailayertestnet_Router_Address } from "@/constants";
@@ -28,6 +29,7 @@ export default function AddLiquidityModal() {
   const [liquidity, setLiquidity] = useState<number>(0)
   const [slider, setSlider] = useState<number[]>([1])
   const [isAnimation, setAnimation] = useState<boolean>(false)
+  const btnRef = useRef<HTMLButtonElement | null>(null);
 
 
   const init = async () => {
@@ -50,7 +52,22 @@ export default function AddLiquidityModal() {
     setLiquidity(margin * newValue[0])
   };
 
+  const clickCloseBtn = () => {
+    if (btnRef.current)
+      btnRef.current.click()
+  }
+
   const createLiquidity = async () => {
+    if (account === undefined) {
+      const { id, dismiss } = toast({
+        title: "Warning",
+        description: "Please connect wallet"
+      })
+      return
+    }
+
+    setAnimation(true)
+
     const acceptableRate = 10
     let minExecuteFee = ethers.parseEther("0.0005");
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
@@ -85,8 +102,14 @@ export default function AddLiquidityModal() {
 
     const isApproved = await routerContract.methods.isPluginApproved(account, positionRouterAddr).call()
     console.log("Is Approved =>", isApproved)
-    if (isApproved === false)
-      await routerContract.methods.approvePlugin(positionRouterAddr).send({ from: account })
+    if (isApproved === false) {
+      try {
+        await routerContract.methods.approvePlugin(positionRouterAddr).send({ from: account })
+      } catch (err) {
+
+      }
+    }
+
     console.log("Approved")
 
     try {
@@ -96,18 +119,22 @@ export default function AddLiquidityModal() {
         toWei(liquidity),
         toWei(acceptablePrice),
       ).send({ from: account, value: minExecuteFee })
-
-
       const { id, dismiss } = toast({
         title: "Success",
         description: "Created Liquidity Position sucessfully"
       })
+
+      clickCloseBtn()
+
     } catch (err) {
       const { id, dismiss } = toast({
         title: "Warning",
         description: "Failed"
       })
     }
+
+    setAnimation(false)
+
   }
 
   return (
@@ -221,25 +248,25 @@ export default function AddLiquidityModal() {
         <div className="mt-1mb-2">
           <button className="py-2 w-full rounded-lg text-lg bg-primary font-bold"
             onClick={() => {
-              // createLiquidity()
-              console.log("OK")
-              setAnimation(true)
+              createLiquidity()
             }}
           >
-            {isAnimation &&
+            {!isAnimation &&
               "Add"
             }
-
             {
-              !isAnimation &&
+              isAnimation &&
               <div className="stage">
                 <div className='dot-typing'>
                 </div>
               </div>
-
             }
           </button>
         </div>
+
+        <DialogClose className="absolute w-[0px] h-[0px]">
+          <button ref={btnRef} />
+        </DialogClose>
       </DialogContent>
     </div>
   );

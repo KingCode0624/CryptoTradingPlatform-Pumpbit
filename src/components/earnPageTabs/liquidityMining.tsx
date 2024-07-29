@@ -105,17 +105,12 @@ export const TableRow = (props: TableRowType) => {
       {" "}
       <tr className="w-full [&_td]:min-w-11  [&_td]:py-5 px-12">
         <td align="center">BTC/USDC</td>
-        {/* <td align="center">{props.pool}</td> */}
         <td align="center" className="text-semantic-success">
           <p>Coming soon</p>
-          {/* <p>{props.maxAPR}%</p> */}
         </td>
         <td align="center">Coming soon</td>
-        {/* <td align="center">{props.feeIncome}</td> */}
         <td align="center">{totalLiquidity} USDC</td>
-        {/* <td align="center">{props.totalLiquidity} M</td> */}
         <td align="center">{myLiquidity} USDC</td>
-        {/* <td align="center">{props.myLiquidity} USDC</td> */}
 
         <td align="center">
           <button className="px-2 py-1" onClick={() => {
@@ -137,9 +132,7 @@ export const TableRow = (props: TableRowType) => {
                 {language === "EN" ? Lang_Add.en : Lang_Add.ch}
               </button>
             </DialogTrigger>
-            <DialogTrigger asChild>
-              <AddLiquidityModal />
-            </DialogTrigger>
+            <AddLiquidityModal />
 
           </Dialog>
         </td>

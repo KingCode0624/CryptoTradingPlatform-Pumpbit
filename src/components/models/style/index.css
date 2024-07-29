@@ -1,6 +1,6 @@
 .stage {
-    width: 200px;
-    height: 10px;
+    width: 100%;
+    height: 29px;
     display: flex;
     justify-content: center;
     align-items: center;
