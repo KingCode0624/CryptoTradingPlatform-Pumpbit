@@ -16,7 +16,7 @@ import {
   b2testnet_PositionRouter_Address
 } from "@/constants";
 import { useToast } from "../ui/toast/use-toast";
-
+import "./style/index.css"
 
 export default function AddLiquidityModal() {
 
@@ -27,6 +27,8 @@ export default function AddLiquidityModal() {
   const [margin, setMargin] = useState<number>(0)
   const [liquidity, setLiquidity] = useState<number>(0)
   const [slider, setSlider] = useState<number[]>([1])
+  const [isAnimation, setAnimation] = useState<boolean>(false)
+
 
   const init = async () => {
     if (account === undefined) return
@@ -126,7 +128,7 @@ export default function AddLiquidityModal() {
               <p className="text-text-secondary">
                 Max APR
                 <span className="block text-semantic-success text-sm pt-2">
-                  294.12%
+                  Coming soon
                 </span>
               </p>
             </div>
@@ -139,7 +141,7 @@ export default function AddLiquidityModal() {
             <div className="flex-1">
               <p className="text-text-secondary text-base">
                 24h Fee Income
-                <span className="block text-white text-sm pt-2">893.23</span>
+                <span className="block text-white text-sm pt-2">coming soon</span>
               </p>
             </div>
           </div>
@@ -221,9 +223,21 @@ export default function AddLiquidityModal() {
             onClick={() => {
               // createLiquidity()
               console.log("OK")
+              setAnimation(true)
             }}
           >
-            Add
+            {isAnimation &&
+              "Add"
+            }
+
+            {
+              !isAnimation &&
+              <div className="stage">
+                <div className='dot-typing'>
+                </div>
+              </div>
+
+            }
           </button>
         </div>
       </DialogContent>
