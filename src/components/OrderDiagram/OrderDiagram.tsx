@@ -17,7 +17,7 @@ import {
 import { useToast } from "../ui/toast/use-toast";
 import { getPublicMarket } from "@/services/markets";
 import { chain, market } from "@/constants/index"
-import { toWei } from "@/utils/etcfunction";
+import { toWei, toInt } from "@/utils/etcfunction";
 import {
   Lang_Market,
   Lang_Limit,
@@ -48,14 +48,15 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { toast } = useToast()
 
-  const { ethPrice, language, setMarketOrderType } = useUtilContext()   
+  const { ethPrice, language, setMarketOrderType } = useUtilContext()
   const {
     orderBookContract,
     routerContract,
     account,
     usdcTokenContract,
     chainId,
-    marketDescriptorDeployerContract
+    marketDescriptorDeployerContract,
+    isWeb3Loading
   } = useWeb3()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -76,7 +77,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const [priceImpact, setPriceImpact] = useState<number>(0)
   const [isAnimation, setAnimation] = useState<boolean>(false)
   const [orderBtnName, setOrderBtnName] = useState<string>("")
-
+  const [tokenBalance, setTokenBalance] = useState<number>(0)
 
   const handleLeverageChange = (value: number) => {
     setLeverage(value);
@@ -133,7 +134,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const CreateIncreateOrderBook = async () => {
     const acceptabelRate = 10 // this means 10%
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
-    console.log("Market =>", market)
     let minExecuteFee = ethers.parseEther("0.0005");
 
     const side: number = selectedSide === "Long" ? 1 : 2
@@ -142,8 +142,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     const triggerMarketPrice = BigInt(toWei(entryPrice))
     const triggerAbove = true
     const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100))
-
-    console.log("margin_delt => ", marginDelta)
 
     try {
       await orderBookContract.methods.createIncreaseOrder(
@@ -174,15 +172,12 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const IsTransactionAvailable = async () => {
     let routerAddr: string = ""
     let orderBookAddr: string = ""
-    console.log("Chain ID =>", chainId)
 
     if (chainId == b2testnetChainId) {
-      console.log("Chain is => b2", chainId, " ", b2testnetChainId)
       routerAddr = b2testnet_Router_Address
       orderBookAddr = b2testnet_OrderBook_Address
     }
     else {
-      console.log("Chain is => AI", chainId, " ", ailayertestnetChainId)
       routerAddr = ailayertestnet_Router_Address
       orderBookAddr = ailayertestnet_OrderBook_Address
     }
@@ -200,7 +195,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       }
 
     const isApproved = await routerContract.methods.isPluginApproved(account, orderBookAddr).call()
-    console.log("Is Approved =>", isApproved)
 
     if (isApproved === false)
       try {
@@ -219,7 +213,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
         title: " Margin rice is 0!",
         description: "Please input margin price."
       })
-      console.log("Price is not enogugh")
       return
     }
 
@@ -229,9 +222,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       await IsTransactionAvailable()
       await CreateIncreateOrderBook()
       setAnimation(false)
-
-
-
     } catch (err) {
       const { id, dismiss } = toast({
         title: "Failed",
@@ -262,8 +252,16 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     selectedSide === "Long" ?
       `${language === "EN" ? setOrderBtnName(Lang_OpenLong.en) : setOrderBtnName(Lang_OpenLong.ch)}` :
       `${language === "EN" ? setOrderBtnName(Lang_OpenShort.en) : setOrderBtnName(Lang_OpenShort.ch)}`
-
   }, [language, selectedSide])
+
+  const getTokenBalance = async () => {
+    const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
+    setTokenBalance(_accountBalance)
+  }
+
+  useEffect(() => {
+    if (isWeb3Loading) getTokenBalance()
+  }, [isWeb3Loading])
 
 
   if (isLoading) return (
@@ -361,6 +359,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
                 <input
                   className="w-full bg-inherit text-lg font-bold "
                   placeholder={`${language === "EN" ? Lang_QuoteAmount.en : Lang_QuoteAmount.ch}`}
+                  value={orderInitPay}
                   step="0.01"
                   onChange={(e: any) => {
                     setOrderInitPay(e.target.value)
@@ -370,6 +369,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
                 <p className="text-lg font-bold">{selectedPair.quote}</p>
                 <button
                   className="rounded-3xl border border-p-light bg-button-primary px-3 py-1 text-lg font-normal"
+                  onClick={() => setOrderInitPay(toInt(tokenBalance))}
                 >
                   {language === "EN" ? Lang_Max.en : Lang_Max.ch}
                 </button>

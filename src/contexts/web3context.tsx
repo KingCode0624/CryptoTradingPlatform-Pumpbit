@@ -63,6 +63,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     const [marketDescriptorDeployerContract, setMarketDescriptorDeployerContract] = useState<Contract>({} as Contract)
     const [positionRouterContract, setPositionRouterContract] = useState<Contract>({} as Contract)
     const [faucetContract, setFaucetContract] = useState<Contract>({} as Contract)
+    const [isWeb3Loading, setIsWeb3Loading] = useState<boolean>(false)
 
     const init = useCallback(async () => {
         try {
@@ -102,6 +103,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             setMarketDescriptorDeployerContract(_marketDescriptorDeployerContract)
             setPositionRouterContract(_positionRouterContract)
             setFaucetContract(_faucetContract)
+            setIsWeb3Loading(true)
         } catch (err) {
             // console.log(err);
         }
@@ -125,7 +127,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             routerContract,
             marketDescriptorDeployerContract,
             positionRouterContract,
-            faucetContract
+            faucetContract,
+            isWeb3Loading
         }),
         [
             address,
@@ -138,7 +141,8 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             usdcTokenContract,
             routerContract,
             positionRouterContract,
-            faucetContract
+            faucetContract,
+            isWeb3Loading
         ]
     );
     return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;
