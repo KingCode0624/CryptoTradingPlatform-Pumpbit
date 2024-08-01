@@ -48,7 +48,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { toast } = useToast()
 
-  const { ethPrice, language, setMarketOrderType } = useUtilContext()
+  const { ethPrice, language, setMarketOrderType } = useUtilContext()   
   const {
     orderBookContract,
     routerContract,
