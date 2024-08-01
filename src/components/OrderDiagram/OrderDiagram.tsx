@@ -171,9 +171,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       })
 
     } catch (err) {
-
-
-      
       const { id, dismiss } = toast({
         title: "Failed",
         description: "Creation of Order is failed!"
