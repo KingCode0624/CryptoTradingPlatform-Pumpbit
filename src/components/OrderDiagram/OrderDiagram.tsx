@@ -1,4 +1,3 @@
-"this is felix"
 "use client";
 import React, { useEffect, useState } from "react";
 import TPSLInput from "./TPSLInput";
@@ -49,7 +48,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { toast } = useToast()
 
-  const { ethPrice, language, setMarketOrderType } = useUtilContext()
+  const { ethPrice, language, setMarketOrderType } = useUtilContext()   
   const {
     orderBookContract,
     routerContract,
