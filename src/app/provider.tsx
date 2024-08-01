@@ -27,7 +27,7 @@ import {
   chains,
   transports
 } from "@/utils/network";
-// const projectId = "7e778a0cc9adc4e4434bf73bff51f07c"; //default projectId
+
 const projectId = "57826bfdbc6cd9752e192a296fbbd40d"
 
 const { wallets } = getDefaultWallets({
