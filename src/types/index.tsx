@@ -12,6 +12,7 @@ export type Web3ContextType = {
   routerContract: any;
   positionRouterContract: any;
   faucetContract: any;
+  isWeb3Loading: boolean;
 };
 
 export type UtilContextType = {
