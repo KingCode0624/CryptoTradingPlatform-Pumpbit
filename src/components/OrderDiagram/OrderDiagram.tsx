@@ -1,19 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import ArrowDownIcon from "/public/assets/arrow-trending-down.svg";
-import ArrowUpIcon from "/public/assets/arrow-trending-up.svg";
-import {
-  SliderRoot,
-  SliderRange,
-  SliderThumb,
-  SliderTrack,
-} from "../ui/slider";
 import TPSLInput from "./TPSLInput";
 import { Checkbox } from "../ui/checkbox";
 import LeverageSlider from "../ui-custom/leverage-slider";
 import { useUtilContext } from "@/hooks";
 import { useWeb3 } from "@/hooks";
-import { RxValue } from "react-icons/rx";
 import { ethers } from "ethers";
 import {
   b2testnet_Router_Address,
