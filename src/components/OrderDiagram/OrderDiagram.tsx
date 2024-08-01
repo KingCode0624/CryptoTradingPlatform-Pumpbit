@@ -170,7 +170,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }
 
 
-  
+
   const IsTransactionAvailable = async () => {
     let routerAddr: string = ""
     let orderBookAddr: string = ""
@@ -273,7 +273,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   )
 
   return (
-
     <div className="">
       <div className="flex flex-col gap-y-6 rounded-3xl border border-border bg-card backdrop-blur-lg/2  p-5 ">
         <div className="flex w-full flex-row text-xl font-bold border border-secondary rounded-full">
