@@ -3,6 +3,7 @@ import { Chain, } from "@rainbow-me/rainbowkit";
 import { http } from "wagmi"
 export const mainnetwork = mainnet
 export const merlinnetwork = merlin
+
 export const bitLayer = {
     id: 200901,
     name: "Bitlayer Mainnet",
@@ -68,6 +69,19 @@ export const AlLayerTestNet = {
     }
 }
 
+export const BEVMTestnet = {
+    id: 11503,
+    name: "BEVM Testnet",
+    nativeCurrency: {
+        name: "BTC",
+        symbol: "BTC",
+        decimals: 18,
+    },
+    rpcUrls: {
+        default: { http: ["https://testnet.bevm.io/"] }
+    }
+}
+
 export const chains: readonly [Chain, ...Chain[]] = [
 
     {
@@ -78,9 +92,14 @@ export const chains: readonly [Chain, ...Chain[]] = [
         ...AlLayerTestNet,
         iconUrl: "/assets/icons/ailayer.svg",
     },
+    {
+        ...BEVMTestnet,
+        iconUrl: "/assets/icons/b2.svg",
+    }
 ];
 
 export const transports = {
     [b2TestNetwork.id]: http(),
     [AlLayerTestNet.id]: http(),
+    [BEVMTestnet.id]: http(),
 }
