@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-
 import TPSLInput from "./TPSLInput";
 import { Checkbox } from "../ui/checkbox";
 import LeverageSlider from "../ui-custom/leverage-slider";
