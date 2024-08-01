@@ -94,7 +94,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
     },
     {
         ...BEVMTestnet,
-        iconUrl: "/assets/icons/b2.svg",
+        iconUrl: "/assets/icons/ailayer.svg",
     }
 ];
 
