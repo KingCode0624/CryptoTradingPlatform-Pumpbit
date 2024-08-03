@@ -4,12 +4,15 @@ import {
     b2testnet_Faucet_Address,
     ailayertestnet_Faucet_Address,
     b2testnetChainId,
-    ailayertestnetChainId
+    ailayertestnetChainId,
+    bevmtestnet_Faucet_Address
 } from "@/constants"
 import { ethers } from "ethers"
+import Web3 from 'web3';
+import { withOutEIP } from "@/utils/etcfunction"
 
 const Admin = () => {
-    const { faucetContract, usdcTokenContract, chainId, account } = useWeb3()
+    const { faucetContract, usdcTokenContract, chainId, account, web3 } = useWeb3()
 
     const transferToken = async () => {
         let _faucetAddr: string = ""
@@ -27,18 +30,25 @@ const Admin = () => {
     }
 
     const airdropToken = async () => {
+        if (!faucetContract) return;
+
+
+
+        const gasPrice = await web3.eth.getGasPrice()
+
         try {
-            await faucetContract.methods.claimTokens().send({ from: account })
-            console.log("Airdrop success")
+            await faucetContract.methods.claimTokens().send({ from: account, gasPrice: gasPrice })
         } catch (err) {
-            console.log("Airdrop failed", err)
+            console.log("Err: =>")
         }
-    }
+    };
 
     const getBalance = async () => {
         try {
             const _balance = await usdcTokenContract.methods.balanceOf(account).call()
+            const _balance1 = await usdcTokenContract.methods.balanceOf(bevmtestnet_Faucet_Address).call()
             console.log("Balance =>", _balance)
+            console.log("Contract Balance  =>", _balance1)
         } catch (err) {
 
         }

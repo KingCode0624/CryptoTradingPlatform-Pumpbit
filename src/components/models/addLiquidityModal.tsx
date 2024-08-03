@@ -11,7 +11,7 @@ import {
 
 import { useWeb3 } from "@/hooks";
 import { toWei } from "@/utils/etcfunction";
-import { b2testnetChainId, ailayertestnetChainId, b2testnet_Router_Address, ailayertestnet_Router_Address } from "@/constants";
+import { b2testnetChainId, ailayertestnetChainId, b2testnet_Router_Address, ailayertestnet_Router_Address, bevmtestnetChainId, bevmtestnet_PositionRouter_Address, bevmtestnet_Router_Address } from "@/constants";
 import {
   ailayertestnet_PositionRouter_Address,
   b2testnet_PositionRouter_Address
@@ -22,7 +22,7 @@ import "./style/index.css"
 export default function AddLiquidityModal() {
 
   const { toast } = useToast()
-  const { account, usdcTokenContract, positionRouterContract, marketDescriptorDeployerContract, chainId, routerContract } = useWeb3()
+  const { account, usdcTokenContract, positionRouterContract, marketDescriptorDeployerContract, chainId, routerContract, web3 } = useWeb3()
 
   const [accountBalance, setAccountBalance] = useState<number>(0)
   const [margin, setMargin] = useState<number>(0)
@@ -65,7 +65,7 @@ export default function AddLiquidityModal() {
       })
       return
     }
-
+    const gasPrice = await web3.eth.getGasPrice()
     setAnimation(true)
 
     const acceptableRate = 10
@@ -87,24 +87,35 @@ export default function AddLiquidityModal() {
       positionRouterAddr = b2testnet_PositionRouter_Address
       routerAddr = b2testnet_Router_Address
     }
-    else {
+
+    else if (chainId == ailayertestnetChainId) {
       console.log("Chain is => AI", chainId, " ", ailayertestnetChainId)
       positionRouterAddr = ailayertestnet_PositionRouter_Address
       routerAddr = ailayertestnet_Router_Address
+    }
+
+    else if (chainId == bevmtestnetChainId) {
+      console.log("Chain is => AI", chainId, " ", bevmtestnetChainId)
+      positionRouterAddr = bevmtestnet_PositionRouter_Address
+      routerAddr = bevmtestnet_Router_Address
     }
 
 
     const tokenApproved = await usdcTokenContract.methods.allowance(account, routerAddr).call()
 
     if (tokenApproved == BigInt(0))
-      await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
+      try {
+        await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account, gasPrice: gasPrice })
+      } catch (err) {
+
+      }
 
 
     const isApproved = await routerContract.methods.isPluginApproved(account, positionRouterAddr).call()
     console.log("Is Approved =>", isApproved)
     if (isApproved === false) {
       try {
-        await routerContract.methods.approvePlugin(positionRouterAddr).send({ from: account })
+        await routerContract.methods.approvePlugin(positionRouterAddr).send({ from: account, gasPrice: gasPrice })
       } catch (err) {
 
       }
@@ -118,13 +129,13 @@ export default function AddLiquidityModal() {
         toWei(margin),
         toWei(liquidity),
         toWei(acceptablePrice),
-      ).send({ from: account, value: minExecuteFee })
+      ).send({ from: account, value: minExecuteFee, gasPrice: gasPrice })
       const { id, dismiss } = toast({
         title: "Success",
         description: "Created Liquidity Position sucessfully"
       })
 
-      clickCloseBtn()
+      clickCloseBtn()   
 
     } catch (err) {
       const { id, dismiss } = toast({

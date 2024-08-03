@@ -12,7 +12,7 @@ export const toNumber = (num: BigInt) => {
 export default function PositionHistoryCard({ liquidityData, index }: any) {
 
   const { toast } = useToast()
-  const { account, positionRouterContract } = useWeb3()
+  const { account, positionRouterContract, web3 } = useWeb3()
   const [liquidity, setLiquidity] = useState<any>(0)
   const [margin, setMargin] = useState<any>(0)
   const [liquidityAccount, setLiquidityAccount] = useState<string>("")
@@ -37,7 +37,8 @@ export default function PositionHistoryCard({ liquidityData, index }: any) {
   const cancelLiquidityPosition = async () => {
     console.log("Index1 =>", index)
     try {
-      await positionRouterContract.methods.cancelIncreaseLiquidityPosition(index, account).send({ from: account })
+      const gasPrice = await web3.eth.getGasPrice()
+      await positionRouterContract.methods.cancelIncreaseLiquidityPosition(index, account).send({ from: account, gasPrice: gasPrice })
       const { id, dismiss } = toast({
         title: "Success",
         description: "Canceled Success"

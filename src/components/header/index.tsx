@@ -26,21 +26,27 @@ import {
 import { useWeb3 } from "@/hooks";
 import {
   b2testnetChainId,
-  ailayertestnetChainId
+  ailayertestnetChainId,
+  bevmtestnetChainId
 } from "@/constants";
 
 export default function Header() {
   const pathname = usePathname();
   const { language } = useUtilContext()
-  const { chainId, faucetContract, account } = useWeb3()
+  const { chainId, faucetContract, account, web3 } = useWeb3()
   const [currentAccount, setCurrentAccount] = useState<any>()
   const [chain, setChain] = useState<string>("b2")
 
   useEffect(() => {
     if (chainId === ailayertestnetChainId)
       setChain("ailayer")
-    else if (chainId === b2testnetChainId)
+
+    if (chainId === b2testnetChainId)
       setChain("b2")
+
+    if (chainId === bevmtestnetChainId)
+      setChain("BEVM")
+
   }, [chainId])
 
   useEffect(() => {
@@ -71,10 +77,11 @@ export default function Header() {
 
   const airDropToken = async () => {
     try {
-      await faucetContract.methods.claimTokens().send({ from: account })
+      const gasPrice = await web3.eth.getGasPrice()
+      await faucetContract.methods.claimTokens().send({ from: account, gasPrice: gasPrice })
       console.log("Airdrop is success")
     } catch (err) {
-      console.log("Airdopr is failed")
+      console.log("Airdopr is failed", err)
     }
   }
 
@@ -169,7 +176,9 @@ export default function Header() {
             onClick={() => airDropToken()}
           >
             <Image
-              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" : "/assets/Btc.png"}`}
+              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" :
+                chain === "b2" ? "/assets/Btc.png" : "/assets/bevm.png"
+                }`}
               width={30}
               height={30}
               alt="FaucetLogo" />
@@ -179,11 +188,19 @@ export default function Header() {
           <button
             className={`${chain === "ailayer" ? "hidden" : ""}   ${currentAccount === undefined ? "hidden" : "block"} flex justify-center items-center rounded-[60px] w-[150px] h-[45px] text-[20px] bg-[#3d3a5d] gap-3`}
             onClick={() => {
-              window.open('https://www.bsquared.network/faucet/', '_blank');
+              let faucetUrl: string = ""
+              console.log("Chain =>", chain)
+              if (chain === 'b2')
+                faucetUrl = "https://www.bsquared.network/faucet/"
+              else if (chain === "BEVM")
+                faucetUrl = "https://bevm-testnet-faucet-alpha.vercel.app/"
+              window.open(faucetUrl, '_blank');
             }}
           >
             <Image
-              src="/assets/icons/b2.svg"
+              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" :
+                chain === "b2" ? "/assets/Btc.png" : "/assets/bevm.png"
+                }`}
               width={30}
               height={30}
               alt="FaucetLogo" />
