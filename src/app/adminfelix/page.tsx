@@ -9,7 +9,6 @@ import {
 } from "@/constants"
 import { ethers } from "ethers"
 import Web3 from 'web3';
-import { withOutEIP } from "@/utils/etcfunction"
 
 const Admin = () => {
     const { faucetContract, usdcTokenContract, chainId, account, web3 } = useWeb3()
