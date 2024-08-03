@@ -17,28 +17,35 @@ import {
     b2testnet_MarketDescriptorDeployer_Address,
     b2testnet_USDC_Address,
     b2testnet_Router_Address,
+    b2testnet_PositionRouter_Address,
+    b2testnet_Faucet_Address,
+
     ailayertestnet_OrderBook_Address,
     ailayertestnet_USDC_Address,
     ailayertestnet_Router_Address,
     ailayertestnet_MarketDescriptorDeployer_Address,
-    b2testnet_PositionRouter_Address,
     ailayertestnet_PositionRouter_Address,
     ailayertestnet_Faucet_Address,
-    b2testnet_Faucet_Address
+
+    bevmtestnet_Faucet_Address,
+    bevmtestnet_MarketDescriptorDeployer_Address,
+    bevmtestnet_OrderBook_Address,
+    bevmtestnet_PositionRouter_Address,
+    bevmtestnet_Router_Address,
+    bevmtestnet_USDC_Address,
+
+    b2testnetChainId,
+    ailayertestnetChainId,
+    bevmtestnetChainId
 } from '@/constants';
 
 import orderBookAbi from "@/contracts/OrderBook.json"
 import marketDescriptorDeployerAbi from "@/contracts/MarketDescriptorDeployer.json"
-import usdtTokenContractAbi from "@/contracts/usdtAbi.json"
 import usdcTokenContractAbi from "@/contracts/usdcAbi.json"
 import routerContractAbi from "@/contracts/Router.json"
 import positionRouterAbi from "@/contracts/PositionRouter.json"
 import FaucetAbi from "@/contracts/Faucet.json"
 
-import {
-    b2testnetChainId,
-    ailayertestnetChainId
-} from '@/constants';
 
 declare let window: any;
 const Web3Context = createContext<Web3ContextType | null>(null);
@@ -66,12 +73,14 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     const [isWeb3Loading, setIsWeb3Loading] = useState<boolean>(false)
 
     const init = useCallback(async () => {
+
         try {
             if (!isConnected || !ethersProvider) {
                 console.log('Not connected wallet');
             } else {
                 setProvider(ethersProvider);
                 console.log('Connected wallet');
+                console.log("gasPrice: ", await web3.eth.getGasPrice())
             }
 
             let _orderBookContract: any;
@@ -80,21 +89,102 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             let _marketDescriptorDeployerContract: any
             let _positionRouterContract: any
             let _faucetContract: any
+
             if (chainId === b2testnetChainId) {
-                _orderBookContract = new web3.eth.Contract(orderBookAbi, b2testnet_OrderBook_Address);
-                _usdcTokenContract = new web3.eth.Contract(usdcTokenContractAbi, b2testnet_USDC_Address)
-                _routerContract = new web3.eth.Contract(routerContractAbi, b2testnet_Router_Address)
-                _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, b2testnet_MarketDescriptorDeployer_Address)
-                _positionRouterContract = new web3.eth.Contract(positionRouterAbi, b2testnet_PositionRouter_Address)
-                _faucetContract = new web3.eth.Contract(FaucetAbi, b2testnet_Faucet_Address)
+                _orderBookContract = new web3.eth.Contract(
+                    orderBookAbi,
+                    b2testnet_OrderBook_Address
+                );
+
+                _usdcTokenContract = new web3.eth.Contract(
+                    usdcTokenContractAbi,
+                    b2testnet_USDC_Address
+                );
+
+                _routerContract = new web3.eth.Contract(
+                    routerContractAbi,
+                    b2testnet_Router_Address
+                );
+
+                _marketDescriptorDeployerContract = new web3.eth.Contract(
+                    marketDescriptorDeployerAbi,
+                    b2testnet_MarketDescriptorDeployer_Address
+                );
+
+                _positionRouterContract = new web3.eth.Contract(
+                    positionRouterAbi,
+                    b2testnet_PositionRouter_Address
+                );
+
+                _faucetContract = new web3.eth.Contract(
+                    FaucetAbi,
+                    b2testnet_Faucet_Address
+                );
             }
+            
             if (chainId === ailayertestnetChainId) {
-                _orderBookContract = new web3.eth.Contract(orderBookAbi, ailayertestnet_OrderBook_Address);
-                _usdcTokenContract = new web3.eth.Contract(usdcTokenContractAbi, ailayertestnet_USDC_Address)
-                _routerContract = new web3.eth.Contract(routerContractAbi, ailayertestnet_Router_Address)
-                _marketDescriptorDeployerContract = new web3.eth.Contract(marketDescriptorDeployerAbi, ailayertestnet_MarketDescriptorDeployer_Address)
-                _positionRouterContract = new web3.eth.Contract(positionRouterAbi, ailayertestnet_PositionRouter_Address)
-                _faucetContract = new web3.eth.Contract(FaucetAbi, ailayertestnet_Faucet_Address)
+                _orderBookContract = new web3.eth.Contract(
+                    orderBookAbi,
+                    ailayertestnet_OrderBook_Address
+                );
+
+                _usdcTokenContract = new web3.eth.Contract(
+                    usdcTokenContractAbi,
+                    ailayertestnet_USDC_Address
+                )
+
+                _routerContract = new web3.eth.Contract(
+                    routerContractAbi,
+                    ailayertestnet_Router_Address
+                )
+
+                _marketDescriptorDeployerContract = new web3.eth.Contract(
+                    marketDescriptorDeployerAbi,
+                    ailayertestnet_MarketDescriptorDeployer_Address
+                )
+
+                _positionRouterContract = new web3.eth.Contract(
+                    positionRouterAbi,
+                    ailayertestnet_PositionRouter_Address
+                )
+
+                _faucetContract = new web3.eth.Contract(
+                    FaucetAbi,
+                    ailayertestnet_Faucet_Address
+                )
+            }
+
+            if (chainId === bevmtestnetChainId) {
+                _orderBookContract = new web3.eth.Contract(
+                    orderBookAbi,
+                    bevmtestnet_OrderBook_Address
+                );
+
+                _usdcTokenContract = new web3.eth.Contract(
+                    usdcTokenContractAbi,
+                    bevmtestnet_USDC_Address
+                )
+
+                _routerContract = new web3.eth.Contract(
+                    routerContractAbi,
+                    bevmtestnet_Router_Address
+                )
+
+                _marketDescriptorDeployerContract = new web3.eth.Contract(
+                    marketDescriptorDeployerAbi,
+                    bevmtestnet_MarketDescriptorDeployer_Address
+                )
+
+                _positionRouterContract = new web3.eth.Contract(
+                    positionRouterAbi,
+                    bevmtestnet_PositionRouter_Address
+                )
+
+                _faucetContract = new web3.eth.Contract(
+                    FaucetAbi,
+                    bevmtestnet_Faucet_Address
+                )
+
             }
 
             setOrderBookContract(_orderBookContract);
@@ -119,6 +209,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
     const value = useMemo(
         () => ({
             account: address,
+            web3,
             chainId,
             isConnected,
             library: provider ?? signer,
@@ -132,6 +223,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
         }),
         [
             address,
+            web3,
             chainId,
             isConnected,
             provider,

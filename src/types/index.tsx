@@ -3,6 +3,7 @@ import { Address } from "viem";
 
 export type Web3ContextType = {
   account?: Address;
+  web3: any;
   chainId?: number;
   isConnected?: boolean;
   library?: ContractRunner | Promise<JsonRpcSigner>;

@@ -12,7 +12,10 @@ import {
   b2testnetChainId,
   ailayertestnetChainId,
   ailayertestnet_Router_Address,
-  ailayertestnet_OrderBook_Address
+  ailayertestnet_OrderBook_Address,
+  bevmtestnetChainId,
+  bevmtestnet_Router_Address,
+  bevmtestnet_OrderBook_Address
 } from "@/constants";
 import { useToast } from "../ui/toast/use-toast";
 import { getPublicMarket } from "@/services/markets";
@@ -49,6 +52,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const { toast } = useToast()
 
   const { ethPrice, language, setMarketOrderType } = useUtilContext()
+
   const {
     orderBookContract,
     routerContract,
@@ -56,6 +60,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     usdcTokenContract,
     chainId,
     marketDescriptorDeployerContract,
+    web3,
     isWeb3Loading
   } = useWeb3()
 
@@ -132,6 +137,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
 
   const CreateIncreateOrderBook = async () => {
+
     const acceptabelRate = 10 // this means 10%
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
     let minExecuteFee = ethers.parseEther("0.0005");
@@ -143,7 +149,11 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     const triggerAbove = true
     const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100))
 
+
+
     try {
+      const gasPrice = await web3.eth.getGasPrice()
+
       await orderBookContract.methods.createIncreaseOrder(
         market,
         side,
@@ -152,7 +162,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
         triggerMarketPrice,
         triggerAbove,
         acceptablePrice,
-      ).send({ from: account, value: minExecuteFee })
+      ).send({ from: account, value: minExecuteFee, gasPrice: gasPrice })
 
       const { id, dismiss } = toast({
         title: "Success",
@@ -177,16 +187,23 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       routerAddr = b2testnet_Router_Address
       orderBookAddr = b2testnet_OrderBook_Address
     }
-    else {
+    else if (chainId == ailayertestnetChainId) {
       routerAddr = ailayertestnet_Router_Address
       orderBookAddr = ailayertestnet_OrderBook_Address
     }
+    else if (chainId == bevmtestnetChainId) {
+      routerAddr = bevmtestnet_Router_Address
+      orderBookAddr = bevmtestnet_OrderBook_Address
+    }
+
+
+    const gasPrice = await web3.eth.getGasPrice()
 
     const tokenApproved = await usdcTokenContract.methods.allowance(account, routerAddr).call()
 
     if (tokenApproved == BigInt(0))
       try {
-        await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account })
+        await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account, gasPrice: gasPrice })
       } catch (err) {
         const { id, dismiss } = toast({
           title: "Failed",
@@ -198,7 +215,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
     if (isApproved === false)
       try {
-        await routerContract.methods.approvePlugin(orderBookAddr).send({ from: account })
+        await routerContract.methods.approvePlugin(orderBookAddr).send({ from: account, gasPrice: gasPrice })
       } catch (err) {
         const { id, dismiss } = toast({
           title: "Failed",
@@ -501,5 +518,3 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     </div>
   );
 }
-
-//project end
