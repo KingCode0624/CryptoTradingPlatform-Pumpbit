@@ -1,11 +1,9 @@
 "use client"
-import Image from "next/image";
 import { MagicMenu } from "./ui/dropdown";
 import { useUtilContext } from "@/hooks";
 import { useEffect, useState } from "react";
 import { getMarketInfo } from "@/services/markets";
 import { chain, market } from "@/constants/index"
-import { cookieStorage } from "wagmi";
 import {
   Lang_24HHigh,
   Lang_24Low,
