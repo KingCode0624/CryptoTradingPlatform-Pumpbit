@@ -45,7 +45,7 @@ const Admin = () => {
     const getBalance = async () => {
         try {
             const _balance = await usdcTokenContract.methods.balanceOf(account).call()
-            const _balance1 = await usdcTokenContract.methods.balanceOf(bevmtestnet_Faucet_Address).call()
+            const _balance1 = await usdcTokenContract.methods.balanceOf(b2testnet_Faucet_Address).call()
             console.log("Balance =>", _balance)
             console.log("Contract Balance  =>", _balance1)
         } catch (err) {
