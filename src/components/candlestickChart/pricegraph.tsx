@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react"
 import { TPairInfo, TTick } from "@/lib/types";
-import { getMarketTicks } from "@/services/markets";
 import { createChart, ColorType } from "lightweight-charts";
 
 interface PriceDiagramProps {

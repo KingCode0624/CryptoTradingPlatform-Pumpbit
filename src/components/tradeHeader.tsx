@@ -18,7 +18,7 @@ export default function TradeHeader() {
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const { ethPrice, headerPrice, language, marketOrderType } = useUtilContext()
+  const { marketPrice, headerPrice, language, marketOrderType } = useUtilContext()
   const [changeDay, setChangeDay] = useState<string>("0%")
   const [funding, setFunding] = useState<number>(0)
   const [countTime, setCountTime] = useState<any>({ m: 60, s: 0 })
@@ -60,18 +60,11 @@ export default function TradeHeader() {
     <div className="flex flex-col justify-around xl:flex-row py-4 backdrop-blur-lg/2 px-2 bg-card border border-border rounded-3xl">
       <div className="flex justify-between items-center sm:gap-12 gap-2">
         <div className="flex justify-between">
-          {/* <Image
-            src="/assets/token pair.png"
-            alt="tokenPair"
-            width={48}
-            height={32}
-          />
-          <h1 className="font-bold text-2xl pl-2">BTC/USDC</h1> */}
           <MagicMenu />
         </div>
         <div>
           <p className="text-semantic-success font-bold sm:text-4xl text-sm ">
-            {ethPrice ? String(Number(ethPrice.close).toFixed(2)) : "0"}
+            {marketPrice ? String(Number(marketPrice.close).toFixed(2)) : "0"}
           </p>
         </div>
         <div>

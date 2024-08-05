@@ -104,7 +104,11 @@ export const TableRow = (props: TableRowType) => {
     <>
       {" "}
       <tr className="w-full [&_td]:min-w-11  [&_td]:py-5 px-12">
-        <td align="center">BTC/USDC</td>
+        <td align="center">
+          {
+            localStorage.getItem("pair")
+          }
+        </td>
         <td align="center" className="text-semantic-success">
           <p>Coming soon</p>
         </td>

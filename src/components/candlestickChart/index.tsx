@@ -40,7 +40,7 @@ export const GetMaxandMinPrice = (priceList: any) => {
 
 
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
-  const { setEthPrice, setHeaderPrice, language } = useUtilContext()
+  const { setMarketPrice, setHeaderPrice, language } = useUtilContext()
   const [isLoading, setIsloading] = useState<boolean>(true)
 
   const [typeOfGraph, setTypeOfGraph] = useState<string>("Price")
@@ -66,10 +66,9 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         console.error("Selected pair market is not defined.");
         return;
       }
-      const response1 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
-      const response2 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
+      const response = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
 
-      const data2 = response2 ? response2.data : tickData;
+      const data2 = response ? response.data : tickData;
 
 
 
@@ -83,7 +82,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
 
       const result = GetMaxandMinPrice(formattedTicks)
       setHeaderPrice(result)
-      setEthPrice(formattedTicks[formattedTicks.length - 1])
+      setMarketPrice(formattedTicks[formattedTicks.length - 1])
       setTickData(formattedTicks);
     };
 

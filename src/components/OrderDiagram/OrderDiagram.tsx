@@ -51,7 +51,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { toast } = useToast()
 
-  const { ethPrice, language, setMarketOrderType } = useUtilContext()
+  const { marketPrice, language, setMarketOrderType } = useUtilContext()
 
   const {
     orderBookContract,
@@ -118,8 +118,8 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }, [leverage])
 
   useEffect(() => {
-    setCurrentEthPrice(ethPrice.close)
-  }, [ethPrice])
+    setCurrentEthPrice(marketPrice.close)
+  }, [marketPrice])
 
   useEffect(() => {
     let feeRate: number = 0

@@ -7,7 +7,7 @@ import {
     useState,
     useMemo,
 } from "react"
-import { UtilContextType, EthPriceType, TradeHeaderType } from "@/types"
+import { UtilContextType, MarketPriceType, TradeHeaderType } from "@/types"
 import { Authorization } from "@/authorization"
 import HeaderFooterSelector from "@/components/headerSelector"
 
@@ -15,7 +15,7 @@ const UtilContext = createContext<UtilContextType | null>(null)
 
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-    const [ethPrice, setEthPrice] = useState<EthPriceType>({
+    const [marketPrice, setMarketPrice] = useState<MarketPriceType>({
         open: 0,
         close: 0,
         high: 0,
@@ -34,6 +34,17 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return 'EN';
     });
     const [marketOrderType, setMarketOrderType] = useState<string>("Long")
+    const [marketPair, setMarketPair] = useState<string>(() => {
+        if (typeof window !== 'undefined') {
+            const _lgPair = localStorage.getItem('pair')
+            if (_lgPair === "BTC/USDC")
+                return "btcusdt"
+            if (_lgPair === "ETH/USDC")
+                return "ethusdt"
+        }
+        return "btcusdt"
+    })
+
 
     const init = async () => {
         const result = await Authorization()
@@ -42,18 +53,31 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     const value = useMemo(() => ({
-        ethPrice: ethPrice,
+        marketPrice: marketPrice,
         headerPrice: headerPrice,
         sliprate: sliprate,
         language: language,
         marketOrderType: marketOrderType,
+        marketPair: marketPair,
         setMarketOrderType: setMarketOrderType,
         setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
-        setEthPrice: setEthPrice,
-        setLanguage: setLanguage
+        setMarketPrice: setMarketPrice,
+        setLanguage: setLanguage,
+        setMarketPair: setMarketPair,
 
-    }), [ethPrice, headerPrice, sliprate, language, setSlipRate, setHeaderPrice, setEthPrice, setLanguage])
+    }), [
+        marketPrice,
+        headerPrice,
+        sliprate,
+        language,
+        marketPair,
+        setMarketPair,
+        setSlipRate,
+        setHeaderPrice,
+        setMarketPrice,
+        setLanguage
+    ])
 
     useEffect(() => {
         init();
