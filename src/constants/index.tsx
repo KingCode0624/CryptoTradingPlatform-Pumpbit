@@ -1,7 +1,7 @@
 export const chain = "b_square_testnet"
 export const market = "btcusdt"
 export const decimalBtc = 16
-export const b2testnet_USDT_Address = "0x05c9e0a1D372d3e160a0E34ec55Ff77a2aA79Aab"
+// export const b2testnet_USDT_Address = "0x05c9e0a1D372d3e160a0E34ec55Ff77a2aA79Aab"
 // export const b2testnet_USDC_Address = "0xcC88f39a2F936A9411e60A8EDe3DDaC3bEF0220F"
 // export const b2testnet_Router_Address = "0xB7D989FA95988eF5fA9FD5cca3E3355D57D7cB17"
 // export const b2testnet_OrderBook_Address = "0x93aE20E08A656415D3901d5d8fAA0e00058EE9A1"

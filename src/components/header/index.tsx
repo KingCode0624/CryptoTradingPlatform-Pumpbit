@@ -176,9 +176,7 @@ export default function Header() {
             onClick={() => airDropToken()}
           >
             <Image
-              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" :
-                chain === "b2" ? "/assets/Btc.png" : "/assets/bevm.png"
-                }`}
+              src={`${"/assets/Btc.png"}`}
               width={30}
               height={30}
               alt="FaucetLogo" />
@@ -199,7 +197,7 @@ export default function Header() {
           >
             <Image
               src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" :
-                chain === "b2" ? "/assets/Btc.png" : "/assets/bevm.png"
+                chain === "b2" ? "/assets/icons/b2.svg" : "/assets/bevm.png"
                 }`}
               width={30}
               height={30}
