@@ -272,8 +272,11 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }, [language, selectedSide])
 
   const getTokenBalance = async () => {
-    const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
-    setTokenBalance(_accountBalance)
+    try {
+      const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
+      setTokenBalance(_accountBalance)
+    } catch (err) {
+    }
   }
 
   useEffect(() => {

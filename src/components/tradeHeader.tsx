@@ -12,19 +12,18 @@ import {
   Lang_24hChange,
   Lang_FundingCountdown
 } from "@/constants/language"
-import { count } from "console";
 
 export default function TradeHeader() {
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const { marketPrice, headerPrice, language, marketOrderType } = useUtilContext()
-  const [changeDay, setChangeDay] = useState<string>("0%")
+  const [changeDay, setChangeDay] = useState<number>(0)
   const [funding, setFunding] = useState<number>(0)
   const [countTime, setCountTime] = useState<any>({ m: 60, s: 0 })
   const init = async () => {
     const result = await getMarketInfo(market, chain)
-    const _changeDay = String(Number(result.change_in_24h).toFixed(2)) + "%"
+    const _changeDay = Number(result.change_in_24h)
     setChangeDay(_changeDay)
   }
 
@@ -40,7 +39,6 @@ export default function TradeHeader() {
       })
       init();
     }, 1000);
-
     return () => clearInterval(interval);
   }, [])
 
@@ -63,7 +61,9 @@ export default function TradeHeader() {
           <MagicMenu />
         </div>
         <div>
-          <p className="text-semantic-success font-bold sm:text-4xl text-sm ">
+          <p
+            className={`font-bold sm:text-4xl text-sm ${changeDay < 0 ? "text-red-600" : "text-semantic-success"}`}
+          >
             {marketPrice ? String(Number(marketPrice.close).toFixed(2)) : "0"}
           </p>
         </div>
@@ -74,7 +74,11 @@ export default function TradeHeader() {
                 language === "EN" ? Lang_24hChange.en : Lang_24hChange.ch
               }
             </span>{" "}
-            <span className="block  text-semantic-success text-lg">{changeDay}</span>
+            <span
+              className={`block text-lg ${changeDay < 0 ? "text-red-600" : "text-semantic-success"}`}
+            >
+              {changeDay.toFixed(2) + " %"}
+            </span>
           </p>
         </div>
       </div>
