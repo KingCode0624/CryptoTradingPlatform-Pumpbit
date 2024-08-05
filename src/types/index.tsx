@@ -17,7 +17,7 @@ export type Web3ContextType = {
 };
 
 export type UtilContextType = {
-  ethPrice: EthPriceType;
+  marketPrice: MarketPriceType;
   headerPrice: TradeHeaderType;
   sliprate: number;
   language: string;
@@ -25,7 +25,7 @@ export type UtilContextType = {
   setMarketOrderType: (type: string) => void;
   setSlipRate: (rate: number) => void;
   setHeaderPrice: (price: TradeHeaderType) => void;
-  setEthPrice: (price: EthPriceType) => void;
+  setMarketPrice: (price: MarketPriceType) => void;
   setLanguage: (language: string) => void;
 }
 
@@ -33,7 +33,7 @@ export type TradeHeaderType = {
   price24High: number;
   price24Low: number;
 }
-export type EthPriceType = {
+export type MarketPriceType = {
   open: number,
   close: number,
   high: number,

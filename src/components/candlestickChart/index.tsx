@@ -40,7 +40,7 @@ export const GetMaxandMinPrice = (priceList: any) => {
 
 
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
-  const { setEthPrice, setHeaderPrice, language } = useUtilContext()
+  const { setMarketPrice, setHeaderPrice, language } = useUtilContext()
   const [isLoading, setIsloading] = useState<boolean>(true)
 
   const [typeOfGraph, setTypeOfGraph] = useState<string>("Price")
@@ -83,7 +83,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
 
       const result = GetMaxandMinPrice(formattedTicks)
       setHeaderPrice(result)
-      setEthPrice(formattedTicks[formattedTicks.length - 1])
+      setMarketPrice(formattedTicks[formattedTicks.length - 1])
       setTickData(formattedTicks);
     };
 

@@ -18,7 +18,7 @@ export default function TradeHeader() {
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const { ethPrice, headerPrice, language, marketOrderType } = useUtilContext()
+  const { marketPrice, headerPrice, language, marketOrderType } = useUtilContext()
   const [changeDay, setChangeDay] = useState<string>("0%")
   const [funding, setFunding] = useState<number>(0)
   const [countTime, setCountTime] = useState<any>({ m: 60, s: 0 })
@@ -71,7 +71,7 @@ export default function TradeHeader() {
         </div>
         <div>
           <p className="text-semantic-success font-bold sm:text-4xl text-sm ">
-            {ethPrice ? String(Number(ethPrice.close).toFixed(2)) : "0"}
+            {marketPrice ? String(Number(marketPrice.close).toFixed(2)) : "0"}
           </p>
         </div>
         <div>

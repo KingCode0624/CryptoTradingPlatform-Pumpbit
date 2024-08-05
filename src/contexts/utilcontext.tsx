@@ -7,7 +7,7 @@ import {
     useState,
     useMemo,
 } from "react"
-import { UtilContextType, EthPriceType, TradeHeaderType } from "@/types"
+import { UtilContextType, MarketPriceType, TradeHeaderType } from "@/types"
 import { Authorization } from "@/authorization"
 import HeaderFooterSelector from "@/components/headerSelector"
 
@@ -15,7 +15,7 @@ const UtilContext = createContext<UtilContextType | null>(null)
 
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-    const [ethPrice, setEthPrice] = useState<EthPriceType>({
+    const [marketPrice, setMarketPrice] = useState<MarketPriceType>({
         open: 0,
         close: 0,
         high: 0,
@@ -42,7 +42,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
 
     const value = useMemo(() => ({
-        ethPrice: ethPrice,
+        marketPrice: marketPrice,
         headerPrice: headerPrice,
         sliprate: sliprate,
         language: language,
@@ -50,10 +50,10 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setMarketOrderType: setMarketOrderType,
         setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
-        setEthPrice: setEthPrice,
+        setMarketPrice: setMarketPrice,
         setLanguage: setLanguage
 
-    }), [ethPrice, headerPrice, sliprate, language, setSlipRate, setHeaderPrice, setEthPrice, setLanguage])
+    }), [marketPrice, headerPrice, sliprate, language, setSlipRate, setHeaderPrice, setMarketPrice, setLanguage])
 
     useEffect(() => {
         init();
