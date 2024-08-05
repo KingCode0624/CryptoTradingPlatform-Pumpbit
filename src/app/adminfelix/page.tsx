@@ -5,7 +5,7 @@ import {
     ailayertestnet_Faucet_Address,
     b2testnetChainId,
     ailayertestnetChainId,
-    bevmtestnet_Faucet_Address
+    bevmtestnet_Faucet_Address,
 } from "@/constants"
 import { ethers } from "ethers"
 import Web3 from 'web3';
