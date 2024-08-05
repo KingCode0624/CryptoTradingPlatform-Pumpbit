@@ -60,13 +60,6 @@ export default function TradeHeader() {
     <div className="flex flex-col justify-around xl:flex-row py-4 backdrop-blur-lg/2 px-2 bg-card border border-border rounded-3xl">
       <div className="flex justify-between items-center sm:gap-12 gap-2">
         <div className="flex justify-between">
-          {/* <Image
-            src="/assets/token pair.png"
-            alt="tokenPair"
-            width={48}
-            height={32}
-          />
-          <h1 className="font-bold text-2xl pl-2">BTC/USDC</h1> */}
           <MagicMenu />
         </div>
         <div>

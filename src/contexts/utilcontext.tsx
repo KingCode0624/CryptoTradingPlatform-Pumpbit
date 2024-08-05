@@ -34,6 +34,17 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return 'EN';
     });
     const [marketOrderType, setMarketOrderType] = useState<string>("Long")
+    const [marketPair, setMarketPair] = useState<string>(() => {
+        if (typeof window !== 'undefined') {
+            const _lgPair = localStorage.getItem('pair')
+            if (_lgPair === "BTC/USDC")
+                return "btcusdt"
+            if (_lgPair === "ETH/USDC")
+                return "ethusdt"
+        }
+        return "btcusdt"
+    })
+
 
     const init = async () => {
         const result = await Authorization()
@@ -47,13 +58,26 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         sliprate: sliprate,
         language: language,
         marketOrderType: marketOrderType,
+        marketPair: marketPair,
         setMarketOrderType: setMarketOrderType,
         setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
         setMarketPrice: setMarketPrice,
-        setLanguage: setLanguage
+        setLanguage: setLanguage,
+        setMarketPair: setMarketPair,
 
-    }), [marketPrice, headerPrice, sliprate, language, setSlipRate, setHeaderPrice, setMarketPrice, setLanguage])
+    }), [
+        marketPrice,
+        headerPrice,
+        sliprate,
+        language,
+        marketPair,
+        setMarketPair,
+        setSlipRate,
+        setHeaderPrice,
+        setMarketPrice,
+        setLanguage
+    ])
 
     useEffect(() => {
         init();

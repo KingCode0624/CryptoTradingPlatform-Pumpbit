@@ -22,11 +22,13 @@ export type UtilContextType = {
   sliprate: number;
   language: string;
   marketOrderType: string;
+  marketPair: string;
   setMarketOrderType: (type: string) => void;
   setSlipRate: (rate: number) => void;
   setHeaderPrice: (price: TradeHeaderType) => void;
   setMarketPrice: (price: MarketPriceType) => void;
   setLanguage: (language: string) => void;
+  setMarketPair: (pair: string) => void;
 }
 
 export type TradeHeaderType = {

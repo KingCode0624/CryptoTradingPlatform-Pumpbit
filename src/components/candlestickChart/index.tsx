@@ -66,10 +66,9 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         console.error("Selected pair market is not defined.");
         return;
       }
-      const response1 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
-      const response2 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
+      const response = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack);
 
-      const data2 = response2 ? response2.data : tickData;
+      const data2 = response ? response.data : tickData;
 
 
 

@@ -3,8 +3,9 @@ import OrderDiagram from "@/components/OrderDiagram/OrderDiagram";
 import CandleStickChart from "@/components/candlestickChart";
 import Tabs from "@/components/table/tabs";
 import TradeHeader from "@/components/tradeHeader";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useWeb3 } from "@/hooks";
+import { useUtilContext } from "@/hooks";
 
 interface OrderDiagramProps {
   selectedPair: {
@@ -14,8 +15,25 @@ interface OrderDiagramProps {
 }
 
 export default function Trade() {
-  const { account, chainId, } = useWeb3()
-  const market: string = "btcusdt"
+  const { marketPair } = useUtilContext()
+  const [market, setMarket] = useState<string>("")
+  const [base, setBase] = useState<string>("")
+  const [quote, setQuote] = useState<string>("")
+  useEffect(() => {
+    console.log("MarketPair = >", marketPair)
+
+    if (marketPair == "btcusdt") {
+      setBase("BTC")
+      setQuote("USDC")
+    }
+
+    if (marketPair == "ethusdt") {
+      setBase("ETH")
+      setQuote("USDC")
+    }
+
+    setMarket(marketPair)
+  }, [marketPair])
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-28 px-1 md:px-10 min-h-screen">
@@ -27,8 +45,8 @@ export default function Trade() {
           <CandleStickChart
             selectedPair={{
               market: market,
-              base: "SOL",
-              quote: "USDC",
+              base: base,
+              quote: quote,
             }}
           />
         </div>
@@ -38,7 +56,10 @@ export default function Trade() {
       </div>
       <div className="col-span-1">
         <OrderDiagram
-          selectedPair={{ market: "BTCUSDC", base: "BTC", quote: "USDC" }}
+          selectedPair={{
+            base: base,
+            quote: quote
+          }}
         />
       </div>
     </div>

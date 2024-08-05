@@ -22,6 +22,7 @@ import PositionHistoryCard from "./positionHistoryCard";
 import { useUtilContext } from "@/hooks";
 import { useWeb3 } from "@/hooks";
 import { Lang_24hFee_Income, Lang_LiquidityMining, Lang_MaxAPR, Lang_MyLiquidity, Lang_MyPosition, Lang_Pool, Lang_PositionMining, Lang_TotalLiquidity, Lang_TotalPosition } from "@/constants/language";
+import { useSwitchAccount } from "wagmi";
 
 // const Data = [
 //   {
@@ -36,23 +37,15 @@ import { Lang_24hFee_Income, Lang_LiquidityMining, Lang_MaxAPR, Lang_MyLiquidity
 // ];
 
 
-const PositionMiningData = [
-  {
-    pool: "BTC/USDC",
-    maxApr: 294.12,
-    totalPosition: 103,
-    myPosition: "Comming soon",
-  }
-]
+
 
 const EarnTabs = () => {
 
-  const { language } = useUtilContext()
-  const { positionRouterContract } = useWeb3()
+  const { language, marketPair } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [liquidityData, setLiquidityData] = useState<any>([
     {
-      pool: "ETH/USDC",
+      pool: "ETH/USDC123",
       maxAPR: 294.12,
       feeIncome: 1.5,
       dailyEmission: 893.23,
@@ -61,6 +54,30 @@ const EarnTabs = () => {
       claimableRewards: 1000,
     }
   ])
+
+  const [positionMiningData, setPositionMiningData] = useState<any>([
+    {
+      pool: "BTC/USD123C",
+      maxApr: 294.12,
+      totalPosition: 103,
+      myPosition: "Comming soon",
+    }
+  ])
+
+
+  useEffect(() => {
+    const _pair = localStorage.getItem('pair')
+    setPositionMiningData([
+      {
+        pool: _pair,
+        maxApr: 294.12,
+        totalPosition: 103,
+        myPosition: "Comming soon",
+      }
+    ])
+  }, [marketPair])
+
+
   useEffect(() => {
     setIsLoading(false)
   }, [language])
@@ -128,7 +145,7 @@ const EarnTabs = () => {
                 <PositionMiningCard
                   key={idx}
                   title={PositionMiningTitle}
-                  data={PositionMiningData} />
+                  data={positionMiningData} />
               ))
             }
           </TabsContent>
