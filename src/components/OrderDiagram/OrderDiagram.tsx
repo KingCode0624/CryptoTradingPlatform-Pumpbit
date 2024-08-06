@@ -143,11 +143,11 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     let minExecuteFee = ethers.parseEther("0.0005");
 
     const side: number = selectedSide === "Long" ? 1 : 2
-    const marginDelta = BigInt(toWei(orderInitPay))
-    const sizeDelta = BigInt(toWei(estimatedEth))
-    const triggerMarketPrice = BigInt(toWei(entryPrice))
+    const marginDelta = BigInt(toWei(orderInitPay, chainId))
+    const sizeDelta = BigInt(toWei(estimatedEth, chainId))
+    const triggerMarketPrice = BigInt(toWei(entryPrice, chainId))
     const triggerAbove = true
-    const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100))
+    const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId)
 
 
 
@@ -203,7 +203,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
     if (tokenApproved == BigInt(0))
       try {
-        await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account, gasPrice: gasPrice })
+        await usdcTokenContract.methods.approve(routerAddr, toWei(100000000, chainId)).send({ from: account, gasPrice: gasPrice })
       } catch (err) {
         const { id, dismiss } = toast({
           title: "Failed",
@@ -225,7 +225,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }
 
   const OpenOrderBook = async () => {
-    if (toWei(orderInitPay) == 0) {
+    if (toWei(orderInitPay, chainId) == 0) {
       const { id, dismiss } = toast({
         title: " Margin rice is 0!",
         description: "Please input margin price."
@@ -389,7 +389,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
                 <p className="text-lg font-bold">{selectedPair.quote}</p>
                 <button
                   className="rounded-3xl border border-p-light bg-button-primary px-3 py-1 text-lg font-normal"
-                  onClick={() => setOrderInitPay(toInt(tokenBalance))}
+                  onClick={() => setOrderInitPay(toInt(tokenBalance, chainId))}
                 >
                   {language === "EN" ? Lang_Max.en : Lang_Max.ch}
                 </button>

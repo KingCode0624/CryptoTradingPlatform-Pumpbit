@@ -17,7 +17,7 @@ export const b2testnet_OrderBook_Address = "0xb13d335DF407dBb0A4cCFe1E00b1406CA5
 export const b2testnet_PositionRouter_Address = "0xC31F2A299c47710eC585395c5f152874993b1E51"
 export const b2testnet_MarketManager_Address = "0x2eB7Ebb20ad832f1cEc9aE95B1B20a6fE453f144"
 export const b2testnet_MarketDescriptorDeployer_Address = "0xB3265DaD51282a26e959e40596E054dE7cf3CCdC"
-export const b2testnet_Faucet_Address = "0x2D8eaB272f0e19A3B0762eacf42DC8925b7389EC"
+export const b2testnet_Faucet_Address = "0xD6AeF46507325CE2e70b4d1530890818E3082e4F"
 
 export const ailayertestnet_USDC_Address = "0x4069F86aDd448c60546A5363Da9215690086F8c3"
 export const ailayertestnet_Router_Address = "0x8C37248c8409432dC9e7cC4DeCabE74B2f2A761D"
@@ -33,7 +33,9 @@ export const bevmtestnet_MarketDescriptorDeployer_Address = "0x5230685d4802729BC
 export const bevmtestnet_PositionRouter_Address = "0x4f5c4434f58f94E69FE571cBdb7ef982dDEA3354"
 export const bevmtestnet_Faucet_Address = "0x4069F86aDd448c60546A5363Da9215690086F8c3"
 
-
 export const b2testnetChainId: number = 1123
 export const ailayertestnetChainId: number = 2648
 export const bevmtestnetChainId: number = 11503
+
+export const b2testnetDecimal: number = 6
+export const ailayertestnetDecimal: number = 18

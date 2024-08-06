@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useUtilContext } from "@/hooks";
 import { Lang_Add } from "@/constants/language";
 import { useWeb3 } from "@/hooks";
-
+import { toInt } from "@/utils/etcfunction";
 
 type TableRowProps = {
   pool: string;
@@ -39,13 +39,9 @@ type TableRowType = {
   liquidityIndex: number;
 };
 
-export const toInt = (num: BigInt) => {
-  return Number(num) / Math.pow(10, 18)
-}
-
 export const TableRow = (props: TableRowType) => {
   const { language } = useUtilContext()
-  const { positionRouterContract, account } = useWeb3()
+  const { positionRouterContract, account, chainId } = useWeb3()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [expanded, setExpanded] = useState<boolean>(false);
   const [liquidityData, setLiquidityData] = useState<any[]>([])
@@ -68,10 +64,10 @@ export const TableRow = (props: TableRowType) => {
 
     for (let i = 0; i < liquidityIndex; i++) {
       const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
-      _totalPoolLiquidity = _totalPoolLiquidity + toInt(result.liquidityDelta)
+      _totalPoolLiquidity = _totalPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
 
       if (account === result.account)
-        _myPoolLiquidity = _myPoolLiquidity + toInt(result.liquidityDelta)
+        _myPoolLiquidity = _myPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
 
       if (result.liquidityDelta != 0)
         _result.push(result)

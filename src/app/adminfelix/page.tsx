@@ -21,7 +21,7 @@ const Admin = () => {
             _faucetAddr = b2testnet_Faucet_Address
 
         try {
-            await usdcTokenContract.methods.transfer(_faucetAddr, ethers.parseUnits("10000", 18)).send({ from: account })
+            await usdcTokenContract.methods.transfer(_faucetAddr, ethers.parseUnits("100000", 6)).send({ from: account })
             console.log("Token Transfter to contract is success")
         } catch (err) {
             console.log("Token Transfer failed")

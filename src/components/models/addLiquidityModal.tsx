@@ -10,7 +10,7 @@ import {
 } from "../ui/slider";
 
 import { useWeb3 } from "@/hooks";
-import { toWei } from "@/utils/etcfunction";
+import { toWei, toInt } from "@/utils/etcfunction";
 import { b2testnetChainId, ailayertestnetChainId, b2testnet_Router_Address, ailayertestnet_Router_Address, bevmtestnetChainId, bevmtestnet_PositionRouter_Address, bevmtestnet_Router_Address } from "@/constants";
 import {
   ailayertestnet_PositionRouter_Address,
@@ -36,7 +36,7 @@ export default function AddLiquidityModal() {
     if (account === undefined) return
 
     const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
-    setAccountBalance(Number(_accountBalance) / Math.pow(10, 18))
+    setAccountBalance(toInt(Number(_accountBalance), chainId))
   }
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export default function AddLiquidityModal() {
 
     if (tokenApproved == BigInt(0))
       try {
-        await usdcTokenContract.methods.approve(routerAddr, 100000000 * Math.pow(10, 18)).send({ from: account, gasPrice: gasPrice })
+        await usdcTokenContract.methods.approve(routerAddr, toWei(100000000, chainId)).send({ from: account, gasPrice: gasPrice })
       } catch (err) {
 
       }
@@ -126,16 +126,16 @@ export default function AddLiquidityModal() {
     try {
       await positionRouterContract.methods.createIncreaseLiquidityPosition(
         market,
-        toWei(margin),
-        toWei(liquidity),
-        toWei(acceptablePrice),
+        toWei(margin, chainId),
+        toWei(liquidity, chainId),
+        toWei(acceptablePrice, chainId),
       ).send({ from: account, value: minExecuteFee, gasPrice: gasPrice })
       const { id, dismiss } = toast({
         title: "Success",
         description: "Created Liquidity Position sucessfully"
       })
 
-      clickCloseBtn()   
+      clickCloseBtn()
 
     } catch (err) {
       const { id, dismiss } = toast({

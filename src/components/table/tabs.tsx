@@ -32,6 +32,10 @@ const TradeTabs = () => {
     const _orders = await getOrders(accessToken, market, chain)
     const _histories = await getHistories(accessToken, market, chain)
 
+    if (_positions.data.positions === undefined) return
+    if (_orders.data.orders === undefined) return
+    if (_histories.data.histories === undefined) return
+
     setPositions(_positions.data.positions)
     setOrders(_orders.data.orders)
     setOrders(_histories.data.histories)
