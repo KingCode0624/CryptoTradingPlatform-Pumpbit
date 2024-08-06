@@ -5,14 +5,12 @@ import { TabsList, Tabs, TabsTrigger, TabsContent } from "../ui/tabs";
 import PositionMiningCard from "./positionMiningCard";
 import { useToast } from "../ui/toast/use-toast";
 import { useWeb3 } from "@/hooks";
+import { toInt } from "@/utils/etcfunction";
 
-export const toNumber = (num: BigInt) => {
-  return Number(num) / Number(Math.pow(10, 18))
-}
 export default function PositionHistoryCard({ liquidityData, index }: any) {
 
   const { toast } = useToast()
-  const { account, positionRouterContract, web3 } = useWeb3()
+  const { account, positionRouterContract, web3, chainId } = useWeb3()
   const [liquidity, setLiquidity] = useState<any>(0)
   const [margin, setMargin] = useState<any>(0)
   const [liquidityAccount, setLiquidityAccount] = useState<string>("")
@@ -22,8 +20,8 @@ export default function PositionHistoryCard({ liquidityData, index }: any) {
     if (liquidityData === undefined) return
 
     console.log("Prop => ", liquidityData)
-    setMargin(toNumber(liquidityData.marginDelta))
-    setLiquidity(toNumber(liquidityData.liquidityDelta))
+    setMargin(toInt(Number(liquidityData.marginDelta), chainId))
+    setLiquidity(toInt(Number(liquidityData.liquidityDelta), chainId))
     setLiquidityAccount(String(liquidityData.account))
 
   }, [liquidityData])
