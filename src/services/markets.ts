@@ -35,20 +35,17 @@ export async function getMarketInfo(market: string, chain: string) {
   }
 }
 
-export async function getMarketTicks(market: string, chain: string, interval: string, countBack: Number) {
+export async function getMarketTicks(market: string, chain: string, interval: string, countBack: Number, from: number, to: number) {
   try {
-    const currentDate = new Date();
-    const currentTimeStap = currentDate.getTime()
-    const thirtyAgoTimeStap = currentDate.getTime() - (5 * 24 * 60 * 60 * 1000)
+
 
     const response = await client.get(`/public/market/ticks`, {
       params: {
-        to: currentTimeStap,
-        from: thirtyAgoTimeStap,
+        to: to,
+        from: from,
         market: market,
         interval: interval,
         chain: chain,
-        count_back: countBack
       },
     });
     return response.data.data;

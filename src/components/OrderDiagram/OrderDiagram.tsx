@@ -149,8 +149,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     const triggerAbove = true
     const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId)
 
-
-
     try {
       const gasPrice = await web3.eth.getGasPrice()
 
