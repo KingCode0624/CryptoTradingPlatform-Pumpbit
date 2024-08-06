@@ -28,17 +28,17 @@ const TradeTabs = () => {
 
   const init = async () => {
     let accessToken: string = localStorage.getItem("accessToken") as string
-    const _positions = await getPosition(accessToken, market, chain)
-    const _orders = await getOrders(accessToken, market, chain)
-    const _histories = await getHistories(accessToken, market, chain)
+    try {
+      const _positions = await getPosition(accessToken, market, chain)
+      const _orders = await getOrders(accessToken, market, chain)
+      const _histories = await getHistories(accessToken, market, chain)
 
-    if (_positions.data.positions === undefined) return
-    if (_orders.data.orders === undefined) return
-    if (_histories.data.histories === undefined) return
+      setPositions(_positions.data.positions)
+      setOrders(_orders.data.orders)
+      setOrders(_histories.data.histories)
+    } catch (err) {
 
-    setPositions(_positions.data.positions)
-    setOrders(_orders.data.orders)
-    setOrders(_histories.data.histories)
+    }
   }
 
   useEffect(() => {
@@ -50,8 +50,12 @@ const TradeTabs = () => {
   }, [])
 
   const setOrder = async () => {
-    const orders = await orderBookContract.methods.increaseOrders(1).call()
-    console.log("Orders => ", orders)
+    try {
+      const orders = await orderBookContract.methods.increaseOrders(1).call()
+      console.log("Orders => ", orders)
+    } catch (err) {
+
+    }
   }
 
   useEffect(() => {
