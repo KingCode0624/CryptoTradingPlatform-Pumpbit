@@ -276,7 +276,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
       setTokenBalance(_accountBalance)
     } catch (err) {
-
     }
   }
 
