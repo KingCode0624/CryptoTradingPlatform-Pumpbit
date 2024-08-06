@@ -66,10 +66,14 @@ const EarnTabs = () => {
 
 
   useEffect(() => {
+    let pair: string = ""
     const _pair = localStorage.getItem('pair')
+    if (_pair == null)
+      pair = "BTC/USDC"
+    else pair = _pair
     setPositionMiningData([
       {
-        pool: _pair,
+        pool: pair,
         maxApr: 294.12,
         totalPosition: 103,
         myPosition: "Comming soon",

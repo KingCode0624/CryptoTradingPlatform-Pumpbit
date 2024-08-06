@@ -102,7 +102,7 @@ export const TableRow = (props: TableRowType) => {
       <tr className="w-full [&_td]:min-w-11  [&_td]:py-5 px-12">
         <td align="center">
           {
-            localStorage.getItem("pair")
+            localStorage.getItem("pair") === null ? "BTC/USDC" : localStorage.getItem("pair")
           }
         </td>
         <td align="center" className="text-semantic-success">
