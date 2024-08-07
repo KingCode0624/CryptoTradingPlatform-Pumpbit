@@ -175,8 +175,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     }
   }
 
-
-
   const IsTransactionAvailable = async () => {
     let routerAddr: string = ""
     let orderBookAddr: string = ""
@@ -193,7 +191,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       routerAddr = bevmtestnet_Router_Address
       orderBookAddr = bevmtestnet_OrderBook_Address
     }
-
 
     const gasPrice = await web3.eth.getGasPrice()
 
@@ -281,7 +278,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   useEffect(() => {
     if (isWeb3Loading) getTokenBalance()
   }, [isWeb3Loading, account])
-
 
   if (isLoading) return (
     <div>
