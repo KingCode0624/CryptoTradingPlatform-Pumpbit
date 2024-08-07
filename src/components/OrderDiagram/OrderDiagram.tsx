@@ -272,6 +272,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const getTokenBalance = async () => {
     try {
       const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
+      console.log("Balance => ", _accountBalance)
       setTokenBalance(_accountBalance)
     } catch (err) {
     }
@@ -279,7 +280,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   useEffect(() => {
     if (isWeb3Loading) getTokenBalance()
-  }, [isWeb3Loading])
+  }, [isWeb3Loading, account])
 
 
   if (isLoading) return (
