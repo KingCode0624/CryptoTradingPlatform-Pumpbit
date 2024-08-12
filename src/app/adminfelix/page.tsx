@@ -8,7 +8,6 @@ import {
     bevmtestnet_Faucet_Address,
 } from "@/constants"
 import { ethers } from "ethers"
-import Web3 from 'web3';
 
 const Admin = () => {
     const { faucetContract, usdcTokenContract, chainId, account, web3 } = useWeb3()
@@ -30,8 +29,6 @@ const Admin = () => {
 
     const airdropToken = async () => {
         if (!faucetContract) return;
-
-
 
         const gasPrice = await web3.eth.getGasPrice()
 
