@@ -3,7 +3,10 @@ import client from "./client";
 export async function getPublicMarket(market: string, chain: string) {
   try {
     const response = await client.get("/public/market", {
-      params: { market, chain },
+      params: {
+        market,
+        chain
+      },
     });
     return response.data.data;
   } catch (error) {
@@ -37,8 +40,6 @@ export async function getMarketInfo(market: string, chain: string) {
 
 export async function getMarketTicks(market: string, chain: string, interval: string, countBack: Number, from: number, to: number) {
   try {
-
-
     const response = await client.get(`/public/market/ticks`, {
       params: {
         to: to,
@@ -55,15 +56,15 @@ export async function getMarketTicks(market: string, chain: string, interval: st
   }
 }
 
-
 export async function getPosition(accessToken: string, market: string, chain: string) {
-
-
-
   try {
     const positions = await client.get(`/positions/`, {
+      // headers: {
+      //   'Authorization': `${accessToken}` // Use the provided accessToken
+      // },
       headers: {
-        'Authorization': `${accessToken}` // Use the provided accessToken
+        "X-CMC_PRO_API_KEY": process.env.REACT_APP_MARKET_CAP_KEY,
+        "Authorization": accessToken
       },
       params: {
         chain: chain,
@@ -82,8 +83,12 @@ export async function getOrders(accessToken: string, market: string, chain: stri
 
   try {
     const orders = await client.get(`/orders/`, {
+      // headers: {
+      //   'Authorization': `${accessToken}` // Use the provided accessToken
+      // },
       headers: {
-        'Authorization': `${accessToken}` // Use the provided accessToken
+        "X-CMC_PRO_API_KEY": process.env.REACT_APP_MARKET_CAP_KEY,
+        "Authorization": accessToken
       },
       params: {
         chain: chain,
@@ -103,8 +108,12 @@ export async function getHistories(accessToken: string, market: string, chain: s
 
   try {
     const histories = await client.get(`/position/histories`, {
+      // headers: {
+      //   'Authorization': `${accessToken}` // Use the provided accessToken
+      // },
       headers: {
-        'Authorization': `${accessToken}` // Use the provided accessToken
+        "X-CMC_PRO_API_KEY": process.env.REACT_APP_MARKET_CAP_KEY,
+        "Authorization": accessToken
       },
       params: {
         chain: chain,
