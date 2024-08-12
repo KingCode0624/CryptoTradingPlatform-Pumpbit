@@ -17,8 +17,12 @@ export default function AddLiquidityFirstTimeModal() {
   useEffect(() => {
 
     const init = async () => {
-      const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
-      setAccountBalance(_accountBalance)
+      try {
+        const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
+        setAccountBalance(_accountBalance)
+      } catch (err) {
+
+      }
     }
 
     init()

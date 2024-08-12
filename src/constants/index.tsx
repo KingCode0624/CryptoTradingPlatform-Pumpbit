@@ -48,5 +48,5 @@ export const b2testnetChainId: number = 1123
 export const ailayertestnetChainId: number = 2648
 export const bevmtestnetChainId: number = 11503
 
-export const b2testnetDecimal: number = 6
+export const b2testnetDecimal: number = 18
 export const ailayertestnetDecimal: number = 18
