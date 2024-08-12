@@ -30,7 +30,6 @@ export const ToPriceX96 = (price: number) => {
   let usdDecimal = 18
   let marketDecimal = 18
   return price * Math.pow(2, 96) * Math.pow(10, usdDecimal) / Math.pow(10, marketDecimal)
-
 }
 
 export const FromPriceX96 = (price: number) => {
