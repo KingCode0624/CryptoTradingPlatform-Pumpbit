@@ -10,7 +10,7 @@ import {
 } from "../ui/slider";
 
 import { useWeb3 } from "@/hooks";
-import { toWei, toInt } from "@/utils/etcfunction";
+import { toWei, toInt, getMinexecuteFee } from "@/utils/etcfunction";
 import { b2testnetChainId, ailayertestnetChainId, b2testnet_Router_Address, ailayertestnet_Router_Address, bevmtestnetChainId, bevmtestnet_PositionRouter_Address, bevmtestnet_Router_Address } from "@/constants";
 import {
   ailayertestnet_PositionRouter_Address,
@@ -69,7 +69,7 @@ export default function AddLiquidityModal() {
     setAnimation(true)
 
     const acceptableRate = 10
-    let minExecuteFee = ethers.parseEther("0.0005");
+    let minExecuteFee = getMinexecuteFee()
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
     const acceptablePrice = margin * (1 + acceptableRate / 100)
 

@@ -20,7 +20,13 @@ import {
 import { useToast } from "../ui/toast/use-toast";
 import { getPublicMarket } from "@/services/markets";
 import { chain, market } from "@/constants/index"
-import { toWei, toInt } from "@/utils/etcfunction";
+
+import {
+  toWei,
+  toInt,
+  getMinexecuteFee
+} from "@/utils/etcfunction";
+
 import {
   Lang_Market,
   Lang_Limit,
@@ -136,17 +142,17 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }, [leverage, orderInitPay])
 
 
-  const CreateIncreateOrderBook = async () => {
+  const CreateIncreaseOrderBook = async () => {
 
     const acceptabelRate = 10 // this means 10%
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
-    let minExecuteFee = ethers.parseEther("0.0005");
+    let minExecuteFee = getMinexecuteFee()
 
     const side: number = selectedSide === "Long" ? 1 : 2
     const marginDelta = BigInt(toWei(orderInitPay, chainId))
     const sizeDelta = BigInt(toWei(estimatedEth, chainId))
     const triggerMarketPrice = BigInt(toWei(entryPrice, chainId))
-    const triggerAbove = true
+    const triggerAbove = selectedSide === "Long" ? false : true
     const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId)
 
     try {
@@ -232,7 +238,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
     try {
       await IsTransactionAvailable()
-      await CreateIncreateOrderBook()
+      await CreateIncreaseOrderBook()
       setAnimation(false)
     } catch (err) {
       const { id, dismiss } = toast({
