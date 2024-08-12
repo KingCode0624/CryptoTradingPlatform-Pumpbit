@@ -1,43 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
 import { TabsList, Tabs, TabsTrigger, TabsContent } from "../ui/tabs";
-import Image from "next/image";
-import Link from "next/link";
-import OverviewCard from "./overviewCard";
-import StakeCard from "./stakeCard";
-import StakePbtCard from "./stakePbtCard";
-import PositionMiningCardRe from "./positionMiningCard";
 import { PositionMiningCard } from "./positionMiningCardRe";
 import { LMiningAndPFiler } from "./liquidityMining";
-import { Dialog, DialogTrigger } from "../models";
-import ClaimModal from "../models/claimModal";
-import PositionHistoryCard from "./positionHistoryCard";
 import { useUtilContext } from "@/hooks";
-import { useWeb3 } from "@/hooks";
 import { Lang_24hFee_Income, Lang_LiquidityMining, Lang_MaxAPR, Lang_MyLiquidity, Lang_MyPosition, Lang_Pool, Lang_PositionMining, Lang_TotalLiquidity, Lang_TotalPosition } from "@/constants/language";
-import { useSwitchAccount } from "wagmi";
-
-// const Data = [
-//   {
-//     pool: "ETH/USDC",
-//     maxAPR: 294.12,
-//     feeIncome: 1.5,
-//     dailyEmission: 893.23,
-//     totalLiquidity: 1000,
-//     myLiquidity: 1000,
-//     claimableRewards: 1000,
-//   },
-// ];
-
-
-
 
 const EarnTabs = () => {
 

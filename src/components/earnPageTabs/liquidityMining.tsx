@@ -49,37 +49,36 @@ export const TableRow = (props: TableRowType) => {
   const [totalLiquidity, setTotalLiquidity] = useState<number>(0)
   const [isVisibleModel, setIsVisibleModal] = useState<boolean>(false)
 
-
   useEffect(() => {
     setIsLoading(false)
   }, [language])
 
   const GetLiquidityPosition = async () => {
-    const liquidityIndex = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
+    try {
+      const liquidityIndex = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
 
-    let _result: any[] = []
-    let _totalPoolLiquidity: number = 0
-    let _myPoolLiquidity: number = 0
-    console.log("idx =>", liquidityIndex)
+      let _result: any[] = []
+      let _totalPoolLiquidity: number = 0
+      let _myPoolLiquidity: number = 0
+      console.log("idx =>", liquidityIndex)
 
-    for (let i = 0; i < liquidityIndex; i++) {
-      const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
-      _totalPoolLiquidity = _totalPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
+      for (let i = 0; i < liquidityIndex; i++) {
+        const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
+        _totalPoolLiquidity = _totalPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
 
-      if (account === result.account)
-        _myPoolLiquidity = _myPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
+        if (account === result.account)
+          _myPoolLiquidity = _myPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
 
-      if (result.liquidityDelta != 0)
-        _result.push(result)
+        if (result.liquidityDelta != 0)
+          _result.push(result)
+      }
+      setLiquidityData(_result)
+      setMyLiquidity(_myPoolLiquidity)
+      setTotalLiquidity(_totalPoolLiquidity)
+    } catch (err) {
+
     }
 
-
-    setLiquidityData(_result)
-
-    setMyLiquidity(_myPoolLiquidity)
-    setTotalLiquidity(_totalPoolLiquidity)
-
-    console.log("Result =>", _result)
   }
 
   useEffect(() => {

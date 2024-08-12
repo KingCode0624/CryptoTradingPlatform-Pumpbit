@@ -5,7 +5,6 @@ import { Checkbox } from "../ui/checkbox";
 import LeverageSlider from "../ui-custom/leverage-slider";
 import { useUtilContext } from "@/hooks";
 import { useWeb3 } from "@/hooks";
-import { ethers } from "ethers";
 import {
   b2testnet_Router_Address,
   b2testnet_OrderBook_Address,
@@ -24,7 +23,8 @@ import { chain, market } from "@/constants/index"
 import {
   toWei,
   toInt,
-  getMinexecuteFee
+  getMinexecuteFee,
+  ToPriceX96
 } from "@/utils/etcfunction";
 
 import {
@@ -143,19 +143,21 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
 
   const CreateIncreaseOrderBook = async () => {
-
-    const acceptabelRate = 10 // this means 10%
-    const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
-    let minExecuteFee = getMinexecuteFee()
-
-    const side: number = selectedSide === "Long" ? 1 : 2
-    const marginDelta = BigInt(toWei(orderInitPay, chainId))
-    const sizeDelta = BigInt(toWei(estimatedEth, chainId))
-    const triggerMarketPrice = BigInt(toWei(entryPrice, chainId))
-    const triggerAbove = selectedSide === "Long" ? false : true
-    const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId)
-
     try {
+
+      const acceptabelRate = 10 // this means 10%
+      const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
+      let minExecuteFee = getMinexecuteFee()
+
+      const side: number = selectedSide === "Long" ? 1 : 2
+      const marginDelta = BigInt(toWei(orderInitPay, chainId))
+      const sizeDelta = BigInt(toWei(estimatedEth, chainId))
+      const triggerMarketPrice = BigInt(ToPriceX96(entryPrice))
+      const triggerAbove = selectedSide === "Long" ? false : true
+      const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId)
+
+      console.log("TriggerMarketPrice => ", triggerMarketPrice)
+
       const gasPrice = await web3.eth.getGasPrice()
 
       await orderBookContract.methods.createIncreaseOrder(
@@ -249,8 +251,12 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }
 
   const init = async () => {
-    const result = await getPublicMarket(market, chain)
-    setIndexPrice(result.index_price)
+    try {
+      const result = await getPublicMarket(market, chain)
+      setIndexPrice(result.index_price)
+    } catch (err) {
+
+    }
   }
 
   useEffect(() => {

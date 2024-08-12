@@ -34,9 +34,12 @@ export default function AddLiquidityModal() {
 
   const init = async () => {
     if (account === undefined) return
+    try {
+      const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
+      setAccountBalance(toInt(Number(_accountBalance), chainId))
+    } catch (err) {
 
-    const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
-    setAccountBalance(toInt(Number(_accountBalance), chainId))
+    }
   }
 
   useEffect(() => {
