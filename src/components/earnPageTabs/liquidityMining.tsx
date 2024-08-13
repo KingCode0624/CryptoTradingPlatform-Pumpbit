@@ -64,6 +64,7 @@ export const TableRow = (props: TableRowType) => {
 
       for (let i = 0; i < liquidityIndex; i++) {
         const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
+        console.log("Result =>", i, " =>", result)
         _totalPoolLiquidity = _totalPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
 
         if (account === result.account)

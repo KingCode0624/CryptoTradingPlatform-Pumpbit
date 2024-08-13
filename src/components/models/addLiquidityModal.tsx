@@ -126,6 +126,10 @@ export default function AddLiquidityModal() {
 
     console.log("Approved")
 
+    console.log("Margin =>", margin)
+    console.log("Liquidity =>", liquidity)
+    console.log("accepPrice =>", acceptablePrice)
+
     try {
       await positionRouterContract.methods.createIncreaseLiquidityPosition(
         market,
@@ -133,6 +137,7 @@ export default function AddLiquidityModal() {
         toWei(liquidity, chainId),
         toWei(acceptablePrice, chainId),
       ).send({ from: account, value: minExecuteFee, gasPrice: gasPrice })
+
       const { id, dismiss } = toast({
         title: "Success",
         description: "Created Liquidity Position sucessfully"
