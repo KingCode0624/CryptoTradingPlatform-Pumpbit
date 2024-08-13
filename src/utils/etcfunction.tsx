@@ -8,7 +8,7 @@ export const toWei = (price: number, chainId: any) => {
   let decimal: number = 0
   if (chainId === b2testnetChainId)
     decimal = b2testnetDecimal
-  else decimal = 18
+  else decimal = 6
 
   return Math.round(price * Math.pow(10, decimal))
 }
@@ -17,7 +17,7 @@ export const toInt = (price: number, chainId: any) => {
   let decimal: number = 0
   if (chainId === b2testnetChainId)
     decimal = b2testnetDecimal
-  else decimal = 18
+  else decimal = 6
 
   return Math.round(Number(price) / Math.pow(10, decimal))
 }

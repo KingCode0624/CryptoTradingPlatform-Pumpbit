@@ -47,9 +47,13 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 
     const init = async () => {
-        const result = await Authorization()
-        const _accessToken = result.data.access_token
-        localStorage.setItem("accessToken", _accessToken)
+        try {
+            const result = await Authorization()
+            const _accessToken = result.data.access_token
+            localStorage.setItem("accessToken", _accessToken)
+        } catch (err) {
+
+        }
     }
 
     const value = useMemo(() => ({
