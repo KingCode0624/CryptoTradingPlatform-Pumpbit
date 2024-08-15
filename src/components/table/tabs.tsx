@@ -88,9 +88,10 @@ const TradeTabs = () => {
           <TabsContent value="positions">
             <div className="divide-y divide-dashed divide-border">
               {
-                positions.map((item: any, idx: any) => (
-                  <PositionsCard key={idx} />
-                ))
+                positions.length > 0 ?
+                  positions.map((item: any, idx: any) => (
+                    <PositionsCard key={idx} position={item} />
+                  )) : <></>
               }
             </div>
           </TabsContent>

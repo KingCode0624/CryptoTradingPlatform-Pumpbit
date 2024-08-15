@@ -40,6 +40,7 @@ export const b2TestNetwork = {
     },
     rpcUrls: {
         default: { http: ["https://b2-testnet.alt.technology"] }
+        // default: { http: ["https://rpc.ankr.com/b2_testnet"] }
     }
 }
 
