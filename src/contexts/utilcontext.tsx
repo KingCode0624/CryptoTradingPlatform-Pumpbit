@@ -1,19 +1,19 @@
 "use client"
 import {
-    useContext,
     createContext,
     useEffect,
-    useCallback,
     useState,
     useMemo,
 } from "react"
 import { UtilContextType, MarketPriceType, TradeHeaderType } from "@/types"
 import { Authorization } from "@/authorization"
-import HeaderFooterSelector from "@/components/headerSelector"
+import { useWeb3 } from "@/hooks"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+
+    const { account, positionRouterContract, web3, chainId, isConnected } = useWeb3()
 
     const [marketPrice, setMarketPrice] = useState<MarketPriceType>({
         open: 0,
@@ -48,9 +48,27 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const init = async () => {
         try {
-            const result = await Authorization()
-            const _accessToken = result.data.access_token
-            localStorage.setItem("accessToken", _accessToken)
+            let result: any = "Account is undefined"
+
+
+            if (localStorage.getItem("accessToken") == null) {
+
+                if (account !== undefined) {
+                    try {
+                        result = await Authorization(account, web3)
+                        const _accessToken = result
+                        localStorage.setItem("accessToken", _accessToken)
+
+                    } catch (err) {
+
+                    }
+                }
+                else {
+                    console.log("Acc is undefined")
+                }
+
+
+            }
         } catch (err) {
 
         }
@@ -84,7 +102,6 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     ])
 
     useEffect(() => {
-        init();
         setLanguage(() => {
             if (typeof window !== 'undefined') {
                 return localStorage.getItem('language') || 'EN';
@@ -93,6 +110,14 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         })
     }, []);
 
+    useEffect(() => {
+        init();
+    }, [account])
+
+    useEffect(() => {
+        if (isConnected === false)
+            localStorage.removeItem("accessToken")
+    }, [isConnected])
 
     return (
         <UtilContext.Provider value={value}>
