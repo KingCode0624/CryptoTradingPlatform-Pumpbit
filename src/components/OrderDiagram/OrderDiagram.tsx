@@ -14,7 +14,11 @@ import {
   ailayertestnet_OrderBook_Address,
   bevmtestnetChainId,
   bevmtestnet_Router_Address,
-  bevmtestnet_OrderBook_Address
+  bevmtestnet_OrderBook_Address,
+  strMarket,
+  strLimit,
+  strLong,
+  strShort
 } from "@/constants";
 import { useToast } from "../ui/toast/use-toast";
 import { getPublicMarket } from "@/services/markets";
@@ -71,8 +75,8 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   } = useWeb3()
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [selectedSide, setSelectedSide] = useState("Long");
-  const [selectedOrderType, setSelectedOrderType] = useState("Market");
+  const [selectedSide, setSelectedSide] = useState(strLong);
+  const [selectedOrderType, setSelectedOrderType] = useState(strMarket);
   const [indexPrice, setIndexPrice] = useState<number>(0)
   const [leverage, setLeverage] = useState<number>(1);
   const [orderInitPay, setOrderInitPay] = useState<number>(0)
@@ -114,7 +118,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   useEffect(() => {
     setEstimatedEth(orderPay / currentEthPrice)
 
-    if (selectedOrderType === "Market")
+    if (selectedOrderType === strMarket)
       setEntryPriceInMarket(currentEthPrice)
 
   }, [currentEthPrice, orderPay,])
@@ -137,7 +141,11 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     console.log("FeeRate => ", feeRate)
     setFees(orderInitPay * feeRate / 100)
 
-    setLiquidationPrice((entryPrice * 1.0041) - (entryPrice / leverage))
+    if (selectedSide == strLong)
+      setLiquidationPrice((entryPrice * 1.0041) - (entryPrice / leverage))
+    else if (selectedSide == strShort)
+      setLiquidationPrice((entryPrice * 1.0041) + (entryPrice / leverage))
+
     setPriceImpact((orderPay / 5000) * 0.001)
   }, [leverage, orderInitPay])
 
@@ -149,11 +157,11 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
       let minExecuteFee = getMinexecuteFee()
 
-      const side: number = selectedSide === "Long" ? 1 : 2
+      const side: number = selectedSide === strLong ? 1 : 2
       const marginDelta = BigInt(toWei(orderInitPay, chainId))
       const sizeDelta = BigInt(toWei(estimatedEth, chainId))
       const triggerMarketPrice = BigInt(ToPriceX96(entryPrice))
-      const triggerAbove = selectedSide === "Long" ? false : true
+      const triggerAbove = selectedSide === strLong ? false : true
       const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId)
 
       console.log("TriggerMarketPrice => ", triggerMarketPrice)
@@ -273,7 +281,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   }, [language])
 
   useEffect(() => {
-    selectedSide === "Long" ?
+    selectedSide === strLong ?
       `${language === "EN" ? setOrderBtnName(Lang_OpenLong.en) : setOrderBtnName(Lang_OpenLong.ch)}` :
       `${language === "EN" ? setOrderBtnName(Lang_OpenShort.en) : setOrderBtnName(Lang_OpenShort.ch)}`
   }, [language, selectedSide])
@@ -302,25 +310,25 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       <div className="flex flex-col gap-y-6 rounded-3xl border border-border bg-card backdrop-blur-lg/2  p-5 ">
         <div className="flex w-full flex-row text-xl font-bold border border-secondary rounded-full">
           <button
-            className={`px-15 w-1/2 py-3 ${selectedSide === "Long"
+            className={`px-15 w-1/2 py-3 ${selectedSide === strLong
               ? "bg-semantic-success"
               : "bg-secondary text-p-light"
               } rounded-s-full rounded-r-xl`}
-            onClick={() => handleSideSelection("Long")}
+            onClick={() => handleSideSelection(strLong)}
           >
             <div className="flex flex-row items-center justify-center gap-x-1 font-bold">
               {language === "EN" ? Lang_Long.en : Lang_Long.ch}
             </div>
           </button>
           <button
-            className={`px-15 w-1/2 py-3 ${selectedSide === "Short"
+            className={`px-15 w-1/2 py-3 ${selectedSide === strShort
               ? "bg-semantic-danger"
               : "bg-secondary text-p-light"
               } rounded-e-full`}
-            onClick={() => handleSideSelection("Short")}
+            onClick={() => handleSideSelection(strShort)}
           >
             <div className="flex flex-row items-center justify-center gap-x-1 font-bold"
-              onClick={() => { handleTypeSelection("Limit") }}
+              onClick={() => { handleTypeSelection(strLimit) }}
             >
               {language === "EN" ? Lang_Short.en : Lang_Short.ch}
             </div>
@@ -328,24 +336,24 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
         </div>
         <div className="flex flex-row gap-x-5 text-xl font-bold">
           <button
-            className={`text-lg font-bold ${selectedOrderType === "Market"
+            className={`text-lg font-bold ${selectedOrderType === strMarket
               ? "underline underline-offset-4"
               : ""
               }`}
             onClick={() => {
-              handleTypeSelection("Market")
+              handleTypeSelection(strMarket)
               setEntryPrice(currentEthPrice)
             }}
           >
             {language === "EN" ? Lang_Market.en : Lang_Market.ch}
           </button>
           <button
-            className={`text-lg font-bold ${selectedOrderType === "Limit"
+            className={`text-lg font-bold ${selectedOrderType === strLimit
               ? "underline underline-offset-4"
               : ""
               }`}
             onClick={() => {
-              handleTypeSelection("Limit")
+              handleTypeSelection(strLimit)
               setEntryPrice(0)
             }}
           >
@@ -353,7 +361,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
           </button>
         </div>
         <div className="flex flex-col gap-y-3">
-          {selectedOrderType === "Limit" && (
+          {selectedOrderType === strLimit && (
             <div className="rounded-3xl border border-p-light bg-secondary p-5">
               <div className="flex flex-col gap-y-6">
                 <div className="flex flex-row">
@@ -506,7 +514,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
           )}
         </div>
         <button
-          className={`px-15 rounded-3xl text-lg font-bold ${selectedSide === "Long"
+          className={`px-15 rounded-3xl text-lg font-bold ${selectedSide === strLong
             ? "bg-semantic-success"
             : "bg-semantic-danger"
             } py-3`}
