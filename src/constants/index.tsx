@@ -34,3 +34,5 @@ export const bevmtestnetChainId: number = 11503
 
 export const b2testnetDecimal: number = 6
 export const ailayertestnetDecimal: number = 6
+
+//git
