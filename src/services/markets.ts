@@ -1,4 +1,4 @@
-import client from "./client";
+import client, { tickets } from "./client";
 
 export async function getPublicMarket(market: string, chain: string) {
   try {
@@ -40,7 +40,7 @@ export async function getMarketInfo(market: string, chain: string) {
 
 export async function getMarketTicks(market: string, chain: string, interval: string, countBack: Number, from: number, to: number) {
   try {
-    const response = await client.get(`/public/market/ticks`, {
+    const response = await tickets.get(`/public/market/ticks`, {
       params: {
         to: to,
         from: from,
