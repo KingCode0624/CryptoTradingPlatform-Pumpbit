@@ -71,7 +71,6 @@ export async function getPosition(accessToken: string, market: string, chain: st
         market: market
       }
     })
-
     return positions.data
 
   } catch (err) {

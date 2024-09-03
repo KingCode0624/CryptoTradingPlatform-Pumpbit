@@ -17,26 +17,36 @@ import {
   Lang_Positions,
   Lang_History
 } from "@/constants/language";
+import { Authorization } from "@/authorization"
 
 const TradeTabs = () => {
-  const { routerContract, account, orderBookContract } = useWeb3()
+  const { web3, account } = useWeb3()
   const { language } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
   const [histories, setHistorys] = useState<any>([])
 
+  const ReAuthorization = async () => {
+    if (account === undefined) return
+    const result = await Authorization(account, web3)
+    localStorage.setItem("accessToken", result)
+  }
+
   const init = async () => {
     let accessToken: string = localStorage.getItem("accessToken") as string
     try {
       const _positions = await getPosition(accessToken, market, chain)
+      if (_positions.code == "ERR_BAD_REQUEST") {
+        ReAuthorization()
+      }
       const _orders = await getOrders(accessToken, market, chain)
       const _histories = await getHistories(accessToken, market, chain)
 
-      console.log("Orders =>>>>>>>>>", _orders.data.orders)
-      setPositions(_positions.data.positions)
-      setOrders(_orders.data.orders)
-      setOrders(_histories.data.histories)
+      await setPositions(_positions.data.positions)
+      await setOrders(_orders.data.orders)
+      await setHistorys(_histories.data.histories)
+
     } catch (err) {
 
     }
@@ -54,9 +64,6 @@ const TradeTabs = () => {
     setIsLoading(false)
   }, [language])
 
-  useEffect(() => {
-    console.log("Orders =>", orders)
-  }, [orders])
 
   if (isLoading) return (<></>)
 
@@ -95,7 +102,7 @@ const TradeTabs = () => {
             <div>
               {
                 orders.map((item: any, idx: any) => (
-                  <OrdersCard key={idx} />
+                  <OrdersCard key={idx} order={item} />
                 ))
               }
             </div>
