@@ -32,7 +32,6 @@ const TradeTabs = () => {
     if (account === undefined) return
     const result = await Authorization(account, web3)
     localStorage.setItem("accessToken", result)
-    console.log("LocalStorage saved")
     setTimerPause(false)
   }
 
