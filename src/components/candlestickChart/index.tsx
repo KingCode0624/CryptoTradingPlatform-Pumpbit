@@ -170,12 +170,12 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
             >
               15m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="20m"
+            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="30m"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
             >
-              20m
+              30m
             </button>
             <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="1h"
               onClick={(e) => {
