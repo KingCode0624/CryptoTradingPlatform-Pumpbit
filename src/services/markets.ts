@@ -95,7 +95,6 @@ export async function getOrders(accessToken: string, market: string, chain: stri
         market: market
       }
     })
-
     return orders.data
 
   } catch (err) {

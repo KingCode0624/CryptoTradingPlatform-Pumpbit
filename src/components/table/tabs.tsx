@@ -33,6 +33,7 @@ const TradeTabs = () => {
       const _orders = await getOrders(accessToken, market, chain)
       const _histories = await getHistories(accessToken, market, chain)
 
+      console.log("Orders =>>>>>>>>>", _orders.data.orders)
       setPositions(_positions.data.positions)
       setOrders(_orders.data.orders)
       setOrders(_histories.data.histories)
@@ -44,23 +45,18 @@ const TradeTabs = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       init()
-    }, 1000)
+    }, 3000)
 
     return () => clearInterval(interval)
   }, [])
 
-  const setOrder = async () => {
-    try {
-      const orders = await orderBookContract.methods.increaseOrders(1).call()
-      console.log("Orders => ", orders)
-    } catch (err) {
-
-    }
-  }
-
   useEffect(() => {
     setIsLoading(false)
   }, [language])
+
+  useEffect(() => {
+    console.log("Orders =>", orders)
+  }, [orders])
 
   if (isLoading) return (<></>)
 

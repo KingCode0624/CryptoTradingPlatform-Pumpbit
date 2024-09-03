@@ -67,11 +67,14 @@ export const TableRow = (props: TableRowType) => {
         console.log("Result =>", i, " =>", result)
         _totalPoolLiquidity = _totalPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
 
-        if (account === result.account)
+        if (account === result.account) {
           _myPoolLiquidity = _myPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
+          
+          if (result.liquidityDelta != 0)
+            _result.push(result)
+        }
 
-        if (result.liquidityDelta != 0)
-          _result.push(result)
+
       }
       setLiquidityData(_result)
       setMyLiquidity(_myPoolLiquidity)
