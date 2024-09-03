@@ -4,7 +4,8 @@ import { createChart, ColorType } from "lightweight-charts";
 
 interface PriceDiagramProps {
     selectedPair: TPairInfo;
-    tickData: TTick[]
+    tickData: TTick[];
+    setTickData: any
 }
 
 interface MarketTick {
@@ -17,7 +18,7 @@ interface MarketTick {
 
 
 
-const MarketPriceChart = ({ selectedPair, tickData }: PriceDiagramProps) => {
+const MarketPriceChart = ({ selectedPair, tickData, setTickData }: PriceDiagramProps) => {
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const candlestickSeriesRef = useRef<any>(null);
     const chain: string = "b_square_testnet"
@@ -55,7 +56,7 @@ const MarketPriceChart = ({ selectedPair, tickData }: PriceDiagramProps) => {
                             borderColor: "rgba(197, 203, 206, 0.8)",
                             timeVisible: true,
                             tickMarkFormatter: (time: any) => {
-                                const date = new Date(time * 1000); 
+                                const date = new Date(time * 1000);
                                 const options: any = {
                                     day: '2-digit',
                                     // month: 'short',
@@ -84,6 +85,17 @@ const MarketPriceChart = ({ selectedPair, tickData }: PriceDiagramProps) => {
                             });
                         }
                     };
+                    const handleCrosshairMove = async (param: any) => {
+                        if (!param.time || !param.seriesData) return;
+
+                        const seriesData = param.seriesData.get(candlestickSeriesRef.current);
+                        if (seriesData) {
+                            const { time, open, high, low, close } = seriesData;
+                            setTickData([seriesData])
+                        }
+                    }
+
+                    chart.subscribeCrosshairMove(handleCrosshairMove)
 
                     window.addEventListener("resize", handleResize);
                     return () => {
