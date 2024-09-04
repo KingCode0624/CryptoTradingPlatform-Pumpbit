@@ -114,8 +114,16 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
   }, [selectedPair.market, tickData]);
 
   const setIntervalValue = (e: any) => {
+    localStorage.setItem("chartInterval", e.target.value)
     setChartInterval(e.target.value)
   }
+
+  useEffect(() => {
+    const _chartInterval = localStorage.getItem("chartInterval")
+    if (_chartInterval == null)
+      setIntervalValue({ target: { value: "15m" } })
+    else setIntervalValue({ target: { value: _chartInterval } })
+  }, [])
 
   useEffect(() => {
     setIsloading(false)
@@ -156,49 +164,56 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         <div className="flex flex-wrap ">
           <div className="flex gap-3 flex-wrap   items-center">
             {" "}
-            <button className="bg-button-tab hover:bg-primary px-4 rounded-lg" value="1m"
+            <button className={`${chartInterval == "1m" ? "bg-primary" : "bg-button-tab"} hover:bg-primary px-4 rounded-lg`}
+              value="1m"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
             >
               1m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="5m"
+            <button className={`${chartInterval == "5m" ? "bg-primary" : "bg-button-tab"} hover:bg-primary px-4 rounded-lg`}
+              value="5m"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
             >
               5m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="15m"
+            <button className={`${chartInterval == "15m" ? "bg-primary" : "bg-button-tab"} hover:bg-primary px-4 rounded-lg`}
+              value="15m"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
             >
               15m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="30m"
+            <button className={`${chartInterval == "30m" ? "bg-primary" : "bg-button-tab"} hover:bg-primary px-4 rounded-lg`}
+              value="30m"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
             >
               30m
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="1h"
+            <button className={`${chartInterval == "1h" ? "bg-primary" : "bg-button-tab"} hover:bg-primary px-4 rounded-lg`}
+              value="1h"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
             >
               1H
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="4h"
+            <button className={`${chartInterval == "4h" ? "bg-primary" : "bg-button-tab"} hover:bg-primary px-4 rounded-lg`}
+              value="4h"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
             >
               4H
             </button>
-            <button className="bg-button-tab text-sm hover:bg-primary px-4 rounded-lg" value="1d"
+            <button className={`${chartInterval == "1d" ? "bg-primary" : "bg-button-tab"} hover:bg-primary px-4 rounded-lg`}
+              value="1d"
               onClick={(e) => {
                 setIntervalValue(e)
               }}
