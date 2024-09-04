@@ -20,7 +20,6 @@ export default function Trade() {
   const [base, setBase] = useState<string>("")
   const [quote, setQuote] = useState<string>("")
   useEffect(() => {
-    console.log("MarketPair = >", marketPair)
 
     if (marketPair == "btcusdt") {
       setBase("BTC")

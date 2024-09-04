@@ -26,20 +26,25 @@ const TradeTabs = () => {
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
   const [histories, setHistorys] = useState<any>([])
+  const [isTimerPause, setTimerPause] = useState<boolean>(false)
 
   const ReAuthorization = async () => {
     if (account === undefined) return
     const result = await Authorization(account, web3)
     localStorage.setItem("accessToken", result)
+    setTimerPause(false)
   }
 
   const init = async () => {
     let accessToken: string = localStorage.getItem("accessToken") as string
     try {
       const _positions = await getPosition(accessToken, market, chain)
+
       if (_positions.code == "ERR_BAD_REQUEST") {
+        setTimerPause(true)
         ReAuthorization()
       }
+
       const _orders = await getOrders(accessToken, market, chain)
       const _histories = await getHistories(accessToken, market, chain)
 
@@ -53,12 +58,19 @@ const TradeTabs = () => {
   }
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      init()
-    }, 3000)
+    setTimerPause(false)
+  }, [])
+
+  useEffect(() => {
+    let interval: any = null
+    if (isTimerPause == false) {
+      interval = setInterval(() => {
+        init()
+      }, 3000)
+    } else clearInterval(interval)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [isTimerPause])
 
   useEffect(() => {
     setIsLoading(false)

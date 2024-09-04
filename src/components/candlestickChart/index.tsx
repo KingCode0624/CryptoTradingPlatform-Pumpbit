@@ -222,10 +222,10 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
           <p>{selectedPair.market}</p>
           <div>
             {`
-             O: ${tickData.length > 0 ? tickData[tickData.length - 1].open : ""},
-             H: ${tickData.length > 0 ? tickData[tickData.length - 1].high : ""}, 
-             L: ${tickData.length > 0 ? tickData[tickData.length - 1].low : ""}, 
-             C: ${tickData.length > 0 ? tickData[tickData.length - 1].close : ""}
+             O: ${tickData.length > 0 ? tickData[tickData.length - 1].open.toFixed(2) : ""},
+             H: ${tickData.length > 0 ? tickData[tickData.length - 1].high.toFixed(2) : ""}, 
+             L: ${tickData.length > 0 ? tickData[tickData.length - 1].low.toFixed(2) : ""}, 
+             C: ${tickData.length > 0 ? tickData[tickData.length - 1].close.toFixed(2) : ""}
              `}
           </div>
         </div>
@@ -234,6 +234,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
             <MarketPriceChart
               selectedPair={selectedPair}
               tickData={tickData}
+              setTickData={setTickData}
             /> :
             <MarketDepthChart
               tickData={tickData}
