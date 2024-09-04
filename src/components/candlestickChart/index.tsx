@@ -15,6 +15,7 @@ import {
   Lang_Price,
   Lang_Depth
 } from "@/constants/language";
+import { SetCandleTicketDataProcess } from "@/utils/etcfunction";
 
 interface PriceDiagramProps {
   selectedPair: TPairInfo;
@@ -42,7 +43,7 @@ export const GetMaxandMinPrice = (priceList: any) => {
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
   const { setMarketPrice, setHeaderPrice, language } = useUtilContext()
   const [isLoading, setIsloading] = useState<boolean>(true)
-
+  const [tradingViewHeaderClass, setTradingViewHeaderClass] = useState<string>("text-white")
   const [typeOfGraph, setTypeOfGraph] = useState<string>("Price")
   const chain: string = "b_square_testnet"
   const [chartInterval, setChartInterval] = useState<string>("15m")
@@ -88,14 +89,14 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         // const data2 = response1 ? response1.data : tickData;
         const data2 = uniqueData ? uniqueData : tickData;
 
-        const formattedTicks = data2.map((tick: MarketTick) => ({
+        const _formattedTicks = data2.map((tick: MarketTick) => ({
           time: tick.t / 1000,
           open: Number(tick.o),
           high: Number(tick.h),
           low: Number(tick.l),
           close: Number(tick.c),
         }));
-
+        const formattedTicks = await SetCandleTicketDataProcess(_formattedTicks)
         const result = GetMaxandMinPrice(formattedTicks)
         setHeaderPrice(result)
         setMarketPrice(formattedTicks[formattedTicks.length - 1])
@@ -119,6 +120,12 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
   useEffect(() => {
     setIsloading(false)
   }, [language])
+
+  useEffect(() => {
+    if (tickData[tickData.length - 1].open > tickData[tickData.length - 1].close)
+      setTradingViewHeaderClass("text-rose-500")
+    else setTradingViewHeaderClass("text-semantic-success")
+  }, [tickData])
 
   if (isLoading) return (
     <div>
@@ -218,16 +225,34 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-y-5 px-6">
-        <div className="flex flex-row gap-x-10">
-          <p>{selectedPair.market}</p>
-          <div>
-            {`
-             O: ${tickData.length > 0 ? tickData[tickData.length - 1].open.toFixed(2) : ""},
-             H: ${tickData.length > 0 ? tickData[tickData.length - 1].high.toFixed(2) : ""}, 
-             L: ${tickData.length > 0 ? tickData[tickData.length - 1].low.toFixed(2) : ""}, 
-             C: ${tickData.length > 0 ? tickData[tickData.length - 1].close.toFixed(2) : ""}
-             `}
-          </div>
+        <div className="flex flex-row gap-x-5">
+          <p>{selectedPair.market.toUpperCase()}</p>
+          <p className="flex gap-x-1">
+            O:
+            <p className={tradingViewHeaderClass}>
+              {tickData.length > 0 ? tickData[tickData.length - 1].open.toFixed(2) : ""}
+            </p>
+          </p>
+          <p className="flex gap-x-1">
+            H:
+            <p className={tradingViewHeaderClass}>
+              {tickData.length > 0 ? tickData[tickData.length - 1].high.toFixed(2) : ""}
+            </p>
+          </p>
+          <p className="flex gap-x-1">
+            L:
+            <p className={tradingViewHeaderClass}>
+              {tickData.length > 0 ? tickData[tickData.length - 1].low.toFixed(2) : ""}
+            </p>
+          </p>
+          <p className="flex gap-x-1">
+            C:
+            <p className={tradingViewHeaderClass}>
+              {tickData.length > 0 ? tickData[tickData.length - 1].close.toFixed(2) : ""}
+            </p>
+          </p>
+
+
         </div>
         {
           typeOfGraph === "Price" ?

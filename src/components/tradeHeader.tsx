@@ -60,7 +60,7 @@ export default function TradeHeader() {
         </div>
         <div>
           <p
-            className={`font-bold sm:text-4xl text-sm ${changeDay < 0 ? "text-red-600" : "text-semantic-success"}`}
+            className={`font-bold sm:text-4xl text-sm ${changeDay < 0 ? "text-rose-500" : "text-semantic-success"}`}
           >
             {marketPrice ? String(Number(marketPrice.close).toFixed(2)) : "0"}
           </p>
@@ -73,7 +73,7 @@ export default function TradeHeader() {
               }
             </span>{" "}
             <span
-              className={`block text-lg ${changeDay < 0 ? "text-red-600" : "text-semantic-success"}`}
+              className={`block text-lg ${changeDay < 0 ? "text-rose-500" : "text-semantic-success"}`}
             >
               {changeDay.toFixed(2) + " %"}
             </span>
