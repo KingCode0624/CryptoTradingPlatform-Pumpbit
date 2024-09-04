@@ -453,7 +453,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             <p className="mr-auto text-p-light">
               {language === "EN" ? Lang_PricImpact.en : Lang_PricImpact.ch}
             </p>
-            <p className={`${priceImpact >= 0 ? "text-p-light" : "text-red-600"}`}>{priceImpact.toFixed(4) + "%"}</p>
+            <p className={`${priceImpact >= 0 ? "text-p-light" : "text-rose-500"}`}>{priceImpact.toFixed(4) + "%"}</p>
           </div>
           <div className="flex flex-row">
             <p className="mr-auto text-p-light">

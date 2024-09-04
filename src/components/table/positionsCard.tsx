@@ -30,7 +30,7 @@ export default function PositionsCard(props: any) {
       <div className="w-full p-7">
         <div className="sm:flex sm:justify-start items-baseline gap-10 grid grid-cols-3">
           <h2 className="font-medium sm:text-2xl text-xl">{positions.market_display}</h2>
-          <p className={`font-medium sm:text-xl text-base ${positions.side === "long" ? "text-semantic-success" : "text-red-600"}`}>
+          <p className={`font-medium sm:text-xl text-base ${positions.side === "long" ? "text-semantic-success" : "text-rose-500"}`}>
             {
               positions.side === "long" ? "Long" : positions.side === "short" ? "Short" : "" + " "
             }

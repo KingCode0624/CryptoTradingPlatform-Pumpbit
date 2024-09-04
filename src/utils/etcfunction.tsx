@@ -38,4 +38,25 @@ export const FromPriceX96 = (price: number) => {
   return price * Math.pow(10, marketDecimal) / (Math.pow(2, 96) * Math.pow(10, usdDecimal))
 }
 
+export const SetCandleTicketDataProcess = async (price: any) => {
+  let newPrice: any = []
+
+  for (let i = 0; i < price.length; i++) {
+    if (price[i].low === 0) {
+      const _newPrice = {
+        time: price[i].time,
+        high: price[i].high,
+        open: price[i].open,
+        close: price[i].close,
+        low: price[i].open > price[i].close ? price[i].close : price[i].open
+      }
+
+      newPrice.push(_newPrice)
+    }
+    else newPrice.push(price[i])
+  }
+
+
+  return newPrice
+}
 //end

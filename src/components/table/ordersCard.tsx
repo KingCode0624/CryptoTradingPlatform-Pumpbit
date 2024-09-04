@@ -35,7 +35,7 @@ export default function OrdersCard(props: any) {
       <div className="w-full p-7">
         <div className="sm:flex sm:justify-start items-baseline gap-10 grid grid-cols-2">
           <h2 className="font-medium sm:text-2xl text-xl">{orders.market_display}</h2>
-          <p className={`font-medium sm:text-xl text-base ${orders.side === "short" ? "text-red-600" : "text-semantic-success"}`}>
+          <p className={`font-medium sm:text-xl text-base ${orders.side === "short" ? "text-rose-500" : "text-semantic-success"}`}>
             {orders.side === "short" ? "Short" : "Long"}
           </p>
         </div>
@@ -59,12 +59,6 @@ export default function OrdersCard(props: any) {
             <p className="text-text-secondary text-lg">
               Order Size{" "}
               <span className="block sm:inline text-white">{(toNum(orders.trigger_price) * toWei(orders.size)).toFixed(2)} USDC</span>
-            </p>
-          </div>
-          <div>
-            <p className="text-text-secondary text-lg">
-              Liq. Price{" "}
-              <span className="block sm:inline text-white">39973.59</span>
             </p>
           </div>
         </div>
