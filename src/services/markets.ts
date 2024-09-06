@@ -47,6 +47,7 @@ export async function getMarketTicks(market: string, chain: string, interval: st
         market: market,
         interval: interval,
         chain: chain,
+        count_back: countBack
       },
     });
     return response.data.data;
