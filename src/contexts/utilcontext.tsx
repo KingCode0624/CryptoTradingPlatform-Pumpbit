@@ -49,24 +49,6 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const init = async () => {
         try {
             let result: any = "Account is undefined"
-
-
-            // if (localStorage.getItem("accessToken") == null) {
-
-            //     if (account !== undefined) {
-            //         try {
-            //             result = await Authorization(account, web3)
-            //             const _accessToken = result
-            //             localStorage.setItem("accessToken", _accessToken)
-
-            //         } catch (err) {
-
-            //         }
-            //     }
-            //     else {
-            //         console.log("Acc is undefined")
-            //     }
-            // }
         } catch (err) {
 
         }
@@ -113,8 +95,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }, [account])
 
     useEffect(() => {
-        if (isConnected === false)
-            localStorage.removeItem("accessToken")
+        localStorage.setItem("accessToken", "false")
     }, [isConnected])
 
     return (
