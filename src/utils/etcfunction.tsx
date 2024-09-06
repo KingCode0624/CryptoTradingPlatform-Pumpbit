@@ -59,4 +59,3 @@ export const SetCandleTicketDataProcess = async (price: any) => {
 
   return newPrice
 }
-//end
