@@ -20,7 +20,7 @@ import {
 import { Authorization } from "@/authorization"
 
 const TradeTabs = () => {
-  const { web3, account } = useWeb3()
+  const { web3, account, isConnected } = useWeb3()
   const { language } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [positions, setPositions] = useState<any>([])
@@ -36,6 +36,9 @@ const TradeTabs = () => {
   }
 
   const init = async () => {
+
+    console.log("Timer is on")
+
     let accessToken: string = localStorage.getItem("accessToken") as string
     try {
       const _positions = await getPosition(accessToken, market, chain)
@@ -58,8 +61,9 @@ const TradeTabs = () => {
   }
 
   useEffect(() => {
-    setTimerPause(false)
-  }, [])
+    if (isConnected)
+      setTimerPause(false)
+  }, [isConnected])
 
   useEffect(() => {
     let interval: any = null

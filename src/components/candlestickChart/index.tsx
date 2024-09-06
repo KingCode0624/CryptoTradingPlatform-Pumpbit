@@ -99,9 +99,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
           low: Number(tick.l),
           close: Number(tick.c),
         }));
-        console.log("Tickest=>", _formattedTicks)
         const formattedTicks = await SetCandleTicketDataProcess(_formattedTicks)
-        console.log("Tickest=>", formattedTicks)
         const result = GetMaxandMinPrice(formattedTicks)
         setHeaderPrice(result)
         setMarketPrice(formattedTicks[formattedTicks.length - 1])
