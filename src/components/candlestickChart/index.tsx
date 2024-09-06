@@ -63,6 +63,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
   useEffect(() => {
 
     const fetchData = async () => {
+
       if (!selectedPair.market) {
         console.error("Selected pair market is not defined.");
         return;
@@ -76,9 +77,11 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
 
         const to2 = response1.data[0].t
         const from2 = to2 - 2 * 3600 * 24 * 1000
+
         const response2 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack, from2, to2);
         const newResponse = [...response1.data, ...response2.data]
-
+        // const newResponse = [...response1.data,]
+        
         newResponse.sort((a, b) => a.t - b.t);
 
         const uniqueData = newResponse.filter((value, index, self) =>
@@ -86,7 +89,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
             t.t === value.t
           ))
         )
-        // const data2 = response1 ? response1.data : tickData;
+
         const data2 = uniqueData ? uniqueData : tickData;
 
         const _formattedTicks = data2.map((tick: MarketTick) => ({
@@ -96,7 +99,9 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
           low: Number(tick.l),
           close: Number(tick.c),
         }));
+        console.log("Tickest=>", _formattedTicks)
         const formattedTicks = await SetCandleTicketDataProcess(_formattedTicks)
+        console.log("Tickest=>", formattedTicks)
         const result = GetMaxandMinPrice(formattedTicks)
         setHeaderPrice(result)
         setMarketPrice(formattedTicks[formattedTicks.length - 1])
