@@ -42,7 +42,7 @@ export default function OrdersCard(props: any) {
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 py-3">
           <div className="">
             <p className="text-text-secondary text-lg">
-              Size <span className="block sm:inline text-white">{toWei(orders.size)} BTC</span>
+              Size <span className="block sm:inline text-white">{toWei(orders.size).toFixed(6)} BTC</span>
             </p>
           </div>
           <div>

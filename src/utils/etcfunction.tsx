@@ -1,3 +1,4 @@
+
 import Web3 from 'web3';
 import { b2testnetDecimal, b2testnetChainId } from '@/constants';
 import { useWeb3 } from '@/hooks';
@@ -59,3 +60,4 @@ export const SetCandleTicketDataProcess = async (price: any) => {
 
   return newPrice
 }
+
