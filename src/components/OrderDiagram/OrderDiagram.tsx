@@ -147,7 +147,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       setLiquidationPrice((entryPrice * 1.0041) + (entryPrice / leverage))
 
     setPriceImpact((orderPay / 5000) * 0.001)
-  }, [leverage, orderInitPay])
+  }, [leverage, orderInitPay, selectedOrderType])
 
 
   const CreateIncreaseOrderBook = async () => {
