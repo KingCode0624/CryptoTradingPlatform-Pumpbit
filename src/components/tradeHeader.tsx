@@ -21,7 +21,7 @@ export default function TradeHeader() {
   const [countTime, setCountTime] = useState<any>({ m: 60, s: 0 })
   const init = async () => {
     const result = await getMarketInfo(market, chain)
-    const _changeDay = Number(result.change_in_24h)
+    const _changeDay = Number(result ? result.change_in_24h : 0)
     setChangeDay(_changeDay)
   }
 

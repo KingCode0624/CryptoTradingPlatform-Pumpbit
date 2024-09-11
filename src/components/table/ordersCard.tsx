@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useWeb3 } from "@/hooks";
+import { useToast } from "../ui/toast/use-toast";
 
 const toNum = (price: number) => {
   const decimal: number = 12
@@ -14,6 +16,8 @@ const toWei = (price: number) => {
 
 export default function OrdersCard(props: any) {
 
+  const { account, orderBookContract, web3 } = useWeb3()
+  const { toast } = useToast()
   const [orders, setOrders] = useState<any>({
     market: '',
     market_display: '',
@@ -25,6 +29,28 @@ export default function OrdersCard(props: any) {
     trigger_above: false,
     acceptable_price: ''
   })
+
+  const cancelIncreaseOrder = async () => {
+    try {
+      const gasPrice = await web3.eth.getGasPrice()
+      await orderBookContract.methods.cancelIncreaseOrder(
+        orders.order_index,
+        account
+      ).send({ from: account, gasPrice: gasPrice })
+
+      const { id, dismiss } = toast({
+        title: "Success",
+        description: "Order is canceled successfully"
+      })
+
+    } catch (err) {
+
+      const { id, dismiss } = toast({
+        title: "Warning",
+        description: "Failed Order cancel"
+      })
+    }
+  }
 
   useEffect(() => {
     setOrders(props.order)
@@ -53,7 +79,12 @@ export default function OrdersCard(props: any) {
           </div>
 
           <div className="flex col-span-full justify-end gap-2 order-last lg:order-none lg:col-span-1 lg:justify-start">
-            <button className="px-4 py-1 rounded-full border-2">Cancel</button>
+            <button
+              className="px-4 py-1 rounded-full border"
+              onClick={() => { cancelIncreaseOrder() }}
+            >
+              Cancel
+            </button>
           </div>
           <div>
             <p className="text-text-secondary text-lg">

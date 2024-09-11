@@ -18,6 +18,7 @@ import {
   Lang_History
 } from "@/constants/language";
 import { Authorization } from "@/authorization"
+import { SetOrdersDataProcess } from "@/utils/etcfunction";
 
 const TradeTabs = () => {
   const { web3, account, isConnected } = useWeb3()
@@ -37,8 +38,6 @@ const TradeTabs = () => {
 
   const init = async () => {
 
-    console.log("Timer is on")
-
     let accessToken: string = localStorage.getItem("accessToken") as string
     try {
       const _positions = await getPosition(accessToken, market, chain)
@@ -51,8 +50,10 @@ const TradeTabs = () => {
       const _orders = await getOrders(accessToken, market, chain)
       const _histories = await getHistories(accessToken, market, chain)
 
+
+
       await setPositions(_positions.data.positions)
-      await setOrders(_orders.data.orders)
+      await setOrders(await SetOrdersDataProcess(_orders.data.orders))
       await setHistorys(_histories.data.histories)
 
     } catch (err) {
