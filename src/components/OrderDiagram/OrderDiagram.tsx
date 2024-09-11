@@ -61,7 +61,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const { toast } = useToast()
 
-  const { marketPrice, language, setMarketOrderType } = useUtilContext()
+  const { marketPrice, language, setMarketOrderType, intervalApiTimer } = useUtilContext()
 
   const {
     orderBookContract,
@@ -271,7 +271,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
     const interval = setInterval(() => {
       init();
-    }, 1000);
+    }, intervalApiTimer);
 
     return () => clearInterval(interval);
   }, [])

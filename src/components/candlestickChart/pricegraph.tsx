@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react"
 import { TPairInfo, TTick } from "@/lib/types";
 import { createChart, ColorType } from "lightweight-charts";
-
+import { useUtilContext } from "@/hooks";
 interface PriceDiagramProps {
     selectedPair: TPairInfo;
     tickData: TTick[];
@@ -16,9 +16,8 @@ interface MarketTick {
     c: string;
 }
 
-
-
 const MarketPriceChart = ({ selectedPair, tickData, setTickData }: PriceDiagramProps) => {
+    const { intervalApiTimer } = useUtilContext()
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const candlestickSeriesRef = useRef<any>(null);
     const chain: string = "b_square_testnet"
@@ -118,7 +117,7 @@ const MarketPriceChart = ({ selectedPair, tickData, setTickData }: PriceDiagramP
 
         const interval = setInterval(() => {
             drawGraph();
-        }, 1000);
+        }, intervalApiTimer);
 
         return () => clearInterval(interval);
 

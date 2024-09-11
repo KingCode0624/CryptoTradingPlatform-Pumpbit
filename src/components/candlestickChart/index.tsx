@@ -41,7 +41,7 @@ export const GetMaxandMinPrice = (priceList: any) => {
 
 
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
-  const { setMarketPrice, setHeaderPrice, language } = useUtilContext()
+  const { setMarketPrice, setHeaderPrice, language, intervalApiTimer } = useUtilContext()
   const [isLoading, setIsloading] = useState<boolean>(true)
   const [tradingViewHeaderClass, setTradingViewHeaderClass] = useState<string>("text-white")
   const [typeOfGraph, setTypeOfGraph] = useState<string>("Price")
@@ -111,7 +111,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
 
     const interval = setInterval(() => {
       fetchData();
-    }, 1000);
+    }, intervalApiTimer);
 
     return () => clearInterval(interval);
   }, [selectedPair.market, tickData]);

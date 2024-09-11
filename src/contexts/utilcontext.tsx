@@ -11,10 +11,17 @@ import { useWeb3 } from "@/hooks"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 
+const setExpiryTime = () => {
+    const idleTime = 0.2 // Set expiry time to 5 minutes from now 
+    const expiryTime = Date.now() + idleTime * 60 * 1000;
+    localStorage.setItem("idleTime", String(expiryTime));
+};
+
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     const { account, positionRouterContract, web3, chainId, isConnected } = useWeb3()
-
+    const [intervalApiTimer, setIntervalApiTimer] = useState<number>(60000)
+    const [isIdle, setIsIdle] = useState<boolean>(false)
     const [marketPrice, setMarketPrice] = useState<MarketPriceType>({
         open: 0,
         close: 0,
@@ -46,11 +53,24 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     })
 
 
+
     const init = async () => {
         try {
             let result: any = "Account is undefined"
         } catch (err) {
 
+        }
+    }
+
+    const getIdleTime = () => {
+        const expiryTime = localStorage.getItem("idleTime")
+        if (Number(expiryTime) < Date.now()) {
+            setExpiryTime()
+            setIntervalApiTimer(24 * 3600 * 1000)
+
+            if (isConnected === true) {
+                setIsIdle(true)
+            }
         }
     }
 
@@ -61,12 +81,16 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         language: language,
         marketOrderType: marketOrderType,
         marketPair: marketPair,
+        intervalApiTimer: intervalApiTimer,
+        isIdle: isIdle,
         setMarketOrderType: setMarketOrderType,
         setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
         setMarketPrice: setMarketPrice,
         setLanguage: setLanguage,
         setMarketPair: setMarketPair,
+        setIntervalApiTimer: setIntervalApiTimer,
+        setIsIdle: setIsIdle
 
     }), [
         marketPrice,
@@ -74,11 +98,15 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         sliprate,
         language,
         marketPair,
+        intervalApiTimer,
+        isIdle,
+        setIsIdle,
         setMarketPair,
         setSlipRate,
         setHeaderPrice,
         setMarketPrice,
-        setLanguage
+        setLanguage,
+        setIntervalApiTimer
     ])
 
     useEffect(() => {
@@ -88,6 +116,25 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
             }
             return 'EN';
         })
+        const idleInterval = setInterval(() => {
+            getIdleTime()
+        }, 1000)
+        setExpiryTime();
+        // Set event listeners for user activity
+        window.addEventListener('click', setExpiryTime);
+        window.addEventListener('keypress', setExpiryTime);
+        window.addEventListener('scroll', setExpiryTime);
+        window.addEventListener('mousemove', setExpiryTime);
+
+        // Clean up event listeners on component unmount
+        return () => {
+            window.removeEventListener('click', setExpiryTime);
+            window.removeEventListener('keypress', setExpiryTime);
+            window.removeEventListener('scroll', setExpiryTime);
+            window.removeEventListener('mousemove', setExpiryTime);
+            clearInterval(idleInterval)
+        };
+
     }, []);
 
     useEffect(() => {
@@ -96,7 +143,11 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     useEffect(() => {
         localStorage.setItem("accessToken", "false")
+        if (isConnected == true) {
+            setIntervalApiTimer(1000)
+        }
     }, [isConnected])
+
 
     return (
         <UtilContext.Provider value={value}>
