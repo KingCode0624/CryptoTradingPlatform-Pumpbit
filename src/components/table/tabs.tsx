@@ -22,7 +22,7 @@ import { SetOrdersDataProcess } from "@/utils/etcfunction";
 
 const TradeTabs = () => {
   const { web3, account, isConnected } = useWeb3()
-  const { language } = useUtilContext()
+  const { language, intervalApiTimer } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
@@ -33,18 +33,15 @@ const TradeTabs = () => {
     if (account === undefined) return
     const accessToken: string = localStorage.getItem("accessToken") as string
     const refreshToken: string = localStorage.getItem("refreshToken") as string
-    console.log("RefreshToken =>", typeof refreshToken)
-    console.log("RefreshToken =>", refreshToken)
+   
     if (refreshToken == null || refreshToken == "undefined") {
       const result = await Authorization(account, web3)
-
       await localStorage.setItem("accessToken", result.access_token)
       await localStorage.setItem("refreshToken", result.refresh_token)
       setTimerPause(false)
     }
     else {
       const result: any = await Refresh(refreshToken)
-      console.log("Refresh Token =>", result)
       await localStorage.setItem("accessToken", result.access_token)
       setTimerPause(false)
     }
@@ -55,7 +52,6 @@ const TradeTabs = () => {
     let accessToken: string = localStorage.getItem("accessToken") as string
     try {
       const _positions = await getPosition(accessToken, market, chain)
-      console.log("Position => ", _positions)
       if (_positions.code == "ERR_BAD_REQUEST") {
         setTimerPause(true)
         ReAuthorization()
@@ -76,14 +72,14 @@ const TradeTabs = () => {
   useEffect(() => {
     if (isConnected)
       setTimerPause(false)
-  }, [isConnected])
+  }, [  ])
 
   useEffect(() => {
     let interval: any = null
     if (isTimerPause == false) {
       interval = setInterval(() => {
         init()
-      }, 1000)
+      }, intervalApiTimer)
     } else clearInterval(interval)
 
     return () => clearInterval(interval)

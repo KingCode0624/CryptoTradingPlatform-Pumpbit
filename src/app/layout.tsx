@@ -8,6 +8,8 @@ import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/toast/toaster";
 import HeaderSelector from "@/components/headerSelector";
 import Head from "next/head";
+import { useUtilContext } from "@/hooks";
+import { useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -34,6 +36,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body className={`${inter.className} ${myFont.variable}`}>

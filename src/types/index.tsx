@@ -23,12 +23,16 @@ export type UtilContextType = {
   language: string;
   marketOrderType: string;
   marketPair: string;
+  intervalApiTimer: number;
+  isIdle: boolean;
+  setIsIdle: (id: any) => void;
   setMarketOrderType: (type: string) => void;
   setSlipRate: (rate: number) => void;
   setHeaderPrice: (price: TradeHeaderType) => void;
   setMarketPrice: (price: MarketPriceType) => void;
   setLanguage: (language: string) => void;
   setMarketPair: (pair: string) => void;
+  setIntervalApiTimer: (timer: number) => void;
 }
 
 export type TradeHeaderType = {

@@ -15,7 +15,7 @@ export default function TradeHeader() {
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  const { marketPrice, headerPrice, language, marketOrderType } = useUtilContext()
+  const { marketPrice, headerPrice, language, marketOrderType, intervalApiTimer } = useUtilContext()
   const [changeDay, setChangeDay] = useState<number>(0)
   const [funding, setFunding] = useState<number>(0)
   const [countTime, setCountTime] = useState<any>({ m: 60, s: 0 })
@@ -36,7 +36,7 @@ export default function TradeHeader() {
         return { m: minute, s: second }
       })
       init();
-    }, 1000);
+    }, intervalApiTimer);
     return () => clearInterval(interval);
   }, [])
 

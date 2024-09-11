@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import { TPairInfo, TTick } from "@/lib/types";
+import { useUtilContext } from '@/hooks';
 interface props {
     tickData: TTick[]
 }
 
 const MarketDepthChart = ({ tickData }: props) => {
     const [options, setOptions] = useState<any>()
-
+    const { intervalApiTimer } = useUtilContext()
     useEffect(() => {
         const interval = setInterval(() => {
 
@@ -100,11 +101,9 @@ const MarketDepthChart = ({ tickData }: props) => {
             };
 
             setOptions(_options)
-        }, 1000)
+        }, intervalApiTimer)
         return () => clearInterval(interval)
     }, [])
-
-
 
     return (
         <HighchartsReact
@@ -115,19 +114,3 @@ const MarketDepthChart = ({ tickData }: props) => {
 };
 
 export default MarketDepthChart;
-
-
-// Prepare the series data from tickData
-// useEffect(() => {
-//     const interval = setInterval(() => {
-//         const _seriesData = tickData.map((tick: any) => [
-//             new Date(tick.t).getTime(), // Convert timestamp to milliseconds
-//             parseFloat(tick.c) // Use closing price
-//         ]);
-//         setSeriesData(_seriesData)
-//     }, 1000)
-//     return () => clearInterval(interval)
-// }, [])
-
-
-
