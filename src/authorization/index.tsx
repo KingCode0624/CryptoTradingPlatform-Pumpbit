@@ -1,3 +1,6 @@
+import client from "@/services/client";
+import { resolveObjectURL } from "buffer";
+
 export const getTypedData = async (domain: string, address: string, chain: string, web3: any) => {
     const response = await fetch(`${domain}/v1/auth/login?chain=${chain}&address=${address}`);
     const data = await response.json();
@@ -36,7 +39,7 @@ export const getAuthorization = async (domain: string, address: string, chain: s
     });
 
     const data = await response.json();
-    return data.data.access_token;
+    return data.data;
 }
 
 export const Authorization = async (account: string, web3: any) => {
@@ -59,6 +62,15 @@ export const Authorization = async (account: string, web3: any) => {
     }
 
     return false
+}
+
+export const Refresh = async (refreshToken: string) => {
+    const result = await client.post("/auth/refresh",
+        {
+            token: refreshToken
+        }
+    )
+    return result.data.data
 }
 
 //git

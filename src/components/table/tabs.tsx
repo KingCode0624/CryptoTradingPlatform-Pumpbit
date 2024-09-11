@@ -17,7 +17,7 @@ import {
   Lang_Positions,
   Lang_History
 } from "@/constants/language";
-import { Authorization } from "@/authorization"
+import { Authorization, Refresh } from "@/authorization"
 import { SetOrdersDataProcess } from "@/utils/etcfunction";
 
 const TradeTabs = () => {
@@ -31,9 +31,23 @@ const TradeTabs = () => {
 
   const ReAuthorization = async () => {
     if (account === undefined) return
-    const result = await Authorization(account, web3)
-    localStorage.setItem("accessToken", result)
-    setTimerPause(false)
+    const accessToken: string = localStorage.getItem("accessToken") as string
+    const refreshToken: string = localStorage.getItem("refreshToken") as string
+    console.log("RefreshToken =>", typeof refreshToken)
+    console.log("RefreshToken =>", refreshToken)
+    if (refreshToken == null || refreshToken == "undefined") {
+      const result = await Authorization(account, web3)
+
+      await localStorage.setItem("accessToken", result.access_token)
+      await localStorage.setItem("refreshToken", result.refresh_token)
+      setTimerPause(false)
+    }
+    else {
+      const result: any = await Refresh(refreshToken)
+      console.log("Refresh Token =>", result)
+      await localStorage.setItem("accessToken", result.access_token)
+      setTimerPause(false)
+    }
   }
 
   const init = async () => {
@@ -41,7 +55,7 @@ const TradeTabs = () => {
     let accessToken: string = localStorage.getItem("accessToken") as string
     try {
       const _positions = await getPosition(accessToken, market, chain)
-
+      console.log("Position => ", _positions)
       if (_positions.code == "ERR_BAD_REQUEST") {
         setTimerPause(true)
         ReAuthorization()
@@ -49,8 +63,6 @@ const TradeTabs = () => {
 
       const _orders = await getOrders(accessToken, market, chain)
       const _histories = await getHistories(accessToken, market, chain)
-
-
 
       await setPositions(_positions.data.positions)
       await setOrders(await SetOrdersDataProcess(_orders.data.orders))
@@ -71,7 +83,7 @@ const TradeTabs = () => {
     if (isTimerPause == false) {
       interval = setInterval(() => {
         init()
-      }, 3000)
+      }, 1000)
     } else clearInterval(interval)
 
     return () => clearInterval(interval)
