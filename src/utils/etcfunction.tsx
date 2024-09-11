@@ -3,6 +3,7 @@ import Web3 from 'web3';
 import { b2testnetDecimal, b2testnetChainId } from '@/constants';
 import { useWeb3 } from '@/hooks';
 import { ethers } from 'ethers';
+import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 
 
 export const toWei = (price: number, chainId: any) => {
@@ -61,3 +62,13 @@ export const SetCandleTicketDataProcess = async (price: any) => {
   return newPrice
 }
 
+export const SetOrdersDataProcess = async (data: any) => {
+  let newData: any = []
+  for (let i = 0; i < data.length; i++) {
+    if (Number(data[i].size) != 0) {
+      newData.push(data[i])
+    }
+  }
+
+  return newData
+}

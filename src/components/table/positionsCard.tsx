@@ -63,10 +63,14 @@ export default function PositionsCard(props: any) {
           <div className="flex col-span-full justify-end gap-2 order-last lg:order-none lg:col-span-1 ">
             <Dialog>
               <DialogTrigger asChild>
-                <button className="px-4 py-1 rounded-full border-2">
+                <button className="px-4 py-1 rounded-full border">
                   TP/SL
                 </button>
               </DialogTrigger>
+
+              <button className="px-4 py-1  rounded-full border">
+                Close
+              </button>
               {<TpslSettingModal setIsModalOpen={setIsModalOpen} />}
             </Dialog>
 
