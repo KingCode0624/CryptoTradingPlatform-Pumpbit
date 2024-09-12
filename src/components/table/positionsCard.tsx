@@ -6,6 +6,7 @@ import TpslSettingModal from "../models/tpslSettingModal";
 
 export default function PositionsCard(props: any) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tpslOrders, setTpSlOrders] = useState<any>([])
   const [positions, setPositions] = useState<any>({
     market: "",
     market_display: "",
@@ -21,9 +22,12 @@ export default function PositionsCard(props: any) {
   })
 
   useEffect(() => {
-
     setPositions(props.position)
-  }, [props])
+  }, [props.position])
+
+  useEffect(() => {
+    setTpSlOrders(props.tpSlOrders)
+  }, [props.tpSlOrders])
 
   return (
     <>
@@ -71,11 +75,11 @@ export default function PositionsCard(props: any) {
               <button className="px-4 py-1  rounded-full border">
                 Close
               </button>
-              {<TpslSettingModal setIsModalOpen={setIsModalOpen} />}
+              <TpslSettingModal setIsModalOpen={setIsModalOpen} positions={positions} tpSlOrders={tpslOrders} />
             </Dialog>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-              {<AddTpslModal />}
+              {<AddTpslModal positions={positions} />}
             </Dialog>
           </div>
           <div>

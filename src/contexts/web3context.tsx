@@ -78,7 +78,7 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             if (!isConnected || !ethersProvider) {
                 console.log('Not connected wallet');
             } else {
-                setProvider(ethersProvider);
+                await setProvider(ethersProvider);
                 console.log('Connected wallet');
                 console.log("gasPrice: ", await web3.eth.getGasPrice())
             }
@@ -91,109 +91,109 @@ export const Web3Provider = ({ children }: { children: React.ReactNode }) => {
             let _faucetContract: any
 
             if (chainId === b2testnetChainId) {
-                _orderBookContract = new web3.eth.Contract(
+                _orderBookContract = await new web3.eth.Contract(
                     orderBookAbi,
                     b2testnet_OrderBook_Address
                 );
 
-                _usdcTokenContract = new web3.eth.Contract(
+                _usdcTokenContract = await new web3.eth.Contract(
                     usdcTokenContractAbi,
                     b2testnet_USDC_Address
                 );
 
-                _routerContract = new web3.eth.Contract(
+                _routerContract = await new web3.eth.Contract(
                     routerContractAbi,
                     b2testnet_Router_Address
                 );
 
-                _marketDescriptorDeployerContract = new web3.eth.Contract(
+                _marketDescriptorDeployerContract = await new web3.eth.Contract(
                     marketDescriptorDeployerAbi,
                     b2testnet_MarketDescriptorDeployer_Address
                 );
 
-                _positionRouterContract = new web3.eth.Contract(
+                _positionRouterContract = await new web3.eth.Contract(
                     positionRouterAbi,
                     b2testnet_PositionRouter_Address
                 );
 
-                _faucetContract = new web3.eth.Contract(
+                _faucetContract = await new web3.eth.Contract(
                     FaucetAbi,
                     b2testnet_Faucet_Address
                 );
             }
-            
+
             if (chainId === ailayertestnetChainId) {
-                _orderBookContract = new web3.eth.Contract(
+                _orderBookContract = await new web3.eth.Contract(
                     orderBookAbi,
                     ailayertestnet_OrderBook_Address
                 );
 
-                _usdcTokenContract = new web3.eth.Contract(
+                _usdcTokenContract = await new web3.eth.Contract(
                     usdcTokenContractAbi,
                     ailayertestnet_USDC_Address
                 )
 
-                _routerContract = new web3.eth.Contract(
+                _routerContract = await new web3.eth.Contract(
                     routerContractAbi,
                     ailayertestnet_Router_Address
                 )
 
-                _marketDescriptorDeployerContract = new web3.eth.Contract(
+                _marketDescriptorDeployerContract = await new web3.eth.Contract(
                     marketDescriptorDeployerAbi,
                     ailayertestnet_MarketDescriptorDeployer_Address
                 )
 
-                _positionRouterContract = new web3.eth.Contract(
+                _positionRouterContract = await new web3.eth.Contract(
                     positionRouterAbi,
                     ailayertestnet_PositionRouter_Address
                 )
 
-                _faucetContract = new web3.eth.Contract(
+                _faucetContract = await new web3.eth.Contract(
                     FaucetAbi,
                     ailayertestnet_Faucet_Address
                 )
             }
 
             if (chainId === bevmtestnetChainId) {
-                _orderBookContract = new web3.eth.Contract(
+                _orderBookContract = await new web3.eth.Contract(
                     orderBookAbi,
                     bevmtestnet_OrderBook_Address
                 );
 
-                _usdcTokenContract = new web3.eth.Contract(
+                _usdcTokenContract = await new web3.eth.Contract(
                     usdcTokenContractAbi,
                     bevmtestnet_USDC_Address
                 )
 
-                _routerContract = new web3.eth.Contract(
+                _routerContract = await new web3.eth.Contract(
                     routerContractAbi,
                     bevmtestnet_Router_Address
                 )
 
-                _marketDescriptorDeployerContract = new web3.eth.Contract(
+                _marketDescriptorDeployerContract = await new web3.eth.Contract(
                     marketDescriptorDeployerAbi,
                     bevmtestnet_MarketDescriptorDeployer_Address
                 )
 
-                _positionRouterContract = new web3.eth.Contract(
+                _positionRouterContract = await new web3.eth.Contract(
                     positionRouterAbi,
                     bevmtestnet_PositionRouter_Address
                 )
 
-                _faucetContract = new web3.eth.Contract(
+                _faucetContract = await new web3.eth.Contract(
                     FaucetAbi,
                     bevmtestnet_Faucet_Address
                 )
 
             }
 
-            setOrderBookContract(_orderBookContract);
-            setUsdcTokenContract(_usdcTokenContract)
-            setRouterContract(_routerContract)
-            setMarketDescriptorDeployerContract(_marketDescriptorDeployerContract)
-            setPositionRouterContract(_positionRouterContract)
-            setFaucetContract(_faucetContract)
-            setIsWeb3Loading(true)
+            await setOrderBookContract(_orderBookContract);
+            await setUsdcTokenContract(_usdcTokenContract)
+            await setRouterContract(_routerContract)
+            await setMarketDescriptorDeployerContract(_marketDescriptorDeployerContract)
+            await setPositionRouterContract(_positionRouterContract)
+            await setFaucetContract(_faucetContract)
+            await setIsWeb3Loading(true)
         } catch (err) {
             // console.log(err);
         }

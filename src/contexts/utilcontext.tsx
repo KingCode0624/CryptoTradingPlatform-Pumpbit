@@ -12,8 +12,6 @@ import local from "next/font/local"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 
-
-
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     const { account, positionRouterContract, web3, chainId, isConnected } = useWeb3()

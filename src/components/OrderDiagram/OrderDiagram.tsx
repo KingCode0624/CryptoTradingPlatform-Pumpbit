@@ -18,7 +18,8 @@ import {
   strMarket,
   strLimit,
   strLong,
-  strShort
+  strShort,
+  acceptabelRate
 } from "@/constants";
 import { useToast } from "../ui/toast/use-toast";
 import { getPublicMarket } from "@/services/markets";
@@ -153,7 +154,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
   const CreateIncreaseOrderBook = async () => {
     try {
 
-      const acceptabelRate = 10 // this means 10%
+       // this means 10%
       const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
       let minExecuteFee = getMinexecuteFee()
 
@@ -162,10 +163,14 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       const sizeDelta = BigInt(toWei(estimatedEth, chainId))
       const triggerMarketPrice = BigInt(ToPriceX96(entryPrice))
       const triggerAbove = selectedSide === strLong ? false : true
-      const acceptablePrice = toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId)
+      const acceptablePrice = side == 1 ?
+        toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId) :
+        toWei(currentEthPrice * (1 - acceptabelRate / 100), chainId)
 
       console.log("TriggerMarketPrice => ", triggerMarketPrice)
 
+      console.log("marginDelta =>", marginDelta)
+      console.log("SizeDelta =>", sizeDelta)
       const gasPrice = await web3.eth.getGasPrice()
 
       await orderBookContract.methods.createIncreaseOrder(
