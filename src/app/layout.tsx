@@ -9,7 +9,7 @@ import { Toaster } from "@/components/ui/toast/toaster";
 import HeaderSelector from "@/components/headerSelector";
 import Head from "next/head";
 import { useUtilContext } from "@/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,7 +39,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={`${inter.className} ${myFont.variable}`}>
+      <body className={`${inter.className} ${myFont.variable} relative`}>
         <Providers>
           <div className="bg-gradient-bg min-h-screen min-w-screen relative">
             <div className="bg-donut-pattern  bg-center bg-cover bg-no-repeat">

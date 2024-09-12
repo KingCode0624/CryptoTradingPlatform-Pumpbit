@@ -8,6 +8,7 @@ import {
 import { UtilContextType, MarketPriceType, TradeHeaderType } from "@/types"
 import { Authorization } from "@/authorization"
 import { useWeb3 } from "@/hooks"
+import local from "next/font/local"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 
@@ -49,10 +50,15 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     })
 
     const setExpiryTime = () => {
-        const idleTime = 0.2 // Set expiry time to 5 minutes from now 
+        const idleTime = 3 // Set expiry time to 5 minutes from now 
         const expiryTime = Date.now() + idleTime * 60 * 1000;
         localStorage.setItem("idleTime", String(expiryTime));
-        setIntervalApiTimer(1000)
+        const isIdleProvider = localStorage.getItem("isIdleProvider")
+        if (isIdleProvider === "false") {
+            localStorage.setItem("isIdle", "false")
+            setIntervalApiTimer(1000)
+        }
+
     };
 
     const init = async () => {
@@ -65,12 +71,15 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     const getIdleTime = () => {
         const expiryTime = localStorage.getItem("idleTime")
+        const isIdleProvider = localStorage.getItem("isIdleProvider")
         if (Number(expiryTime) < Date.now()) {
             setExpiryTime()
             setIntervalApiTimer(24 * 3600 * 1000)
 
             if (isConnected === true) {
                 setIsIdle(true)
+                localStorage.setItem("isIdle", "true")
+                localStorage.setItem("isIdleProvider", "true")
             }
         }
     }

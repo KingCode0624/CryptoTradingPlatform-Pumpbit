@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   RainbowKitProvider,
   getDefaultWallets,
@@ -27,6 +27,8 @@ import {
   chains,
   transports
 } from "@/utils/network";
+import Reconnect from "@/components/reconnect";
+import { useUtilContext } from "@/hooks";
 
 const projectId = "57826bfdbc6cd9752e192a296fbbd40d"
 
@@ -65,6 +67,23 @@ export const config = createConfig({
 const queryClient = new QueryClient();
 
 const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isModal, setIsModal] = useState<boolean>(false)
+
+  const handleReConnect = () => {
+    setIsModal(false)
+    localStorage.setItem("isIdleProvider", "false")
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const isIdle = localStorage.getItem("isIdle")
+      if (isIdle === "true")
+        setIsModal(true)
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
@@ -72,6 +91,12 @@ const Providers: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Web3Provider>
             <UtilContextProvider>
               {children}
+              {
+                isModal ? (<div className="absolute top-0 left-0 w-full min-h-full bg-[black] bg-opacity-30 flex items-center ">
+                  <Reconnect onClick={handleReConnect} />
+                </div>)
+                  : <div />
+              }
             </UtilContextProvider>
           </Web3Provider>
         </RainbowKitProvider>
