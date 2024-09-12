@@ -20,14 +20,36 @@ import { Authorization, Refresh } from "@/authorization"
 import { SetOrdersDataProcess } from "@/utils/etcfunction";
 
 const TradeTabs = () => {
-  const { web3, account, isConnected } = useWeb3()
+  const { web3, account, isConnected, orderBookContract, isWeb3Loading } = useWeb3()
   const { language, intervalApiTimer } = useUtilContext()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
   const [histories, setHistorys] = useState<any>([])
   const [isTimer, setTimer] = useState<boolean>(false)
   const [intervalApiTimerInPosition, setIntervalApiTimerInPosition] = useState<number>(100000)
+  const [tpSlOrders, setTpSlOrders] = useState<any>([])
+
+  const getTpSlLists = async () => {
+    console.log("Data Loading ....")
+
+    const index = await orderBookContract.methods.ordersIndexNext().call()
+    let _tpslOrders: any = []
+    for (let i = 0; i < Number(index); i++) {
+      const __tpslOrder = await orderBookContract.methods.decreaseOrders(i).call()
+      if (__tpslOrder.receiver == account) {
+        _tpslOrders.push(__tpslOrder)
+      }
+    }
+
+    setTpSlOrders(_tpslOrders)
+  }
+
+  useEffect(() => {
+    if (isWeb3Loading == true) {
+      getTpSlLists()
+    }
+  }, [isWeb3Loading,])
 
   const initAuthorization = async () => {
     if (account === undefined) return
@@ -66,8 +88,9 @@ const TradeTabs = () => {
   }
 
   const getDatas = async () => {
+    await setIsLoading(true)
     let accessToken: string = localStorage.getItem("accessToken") as string
-    console.log("Data is loading")
+    console.log("Back-End Data is loading ...")
     try {
       const _positions = await getPosition(accessToken, market, chain)
       if (_positions.code == "ERR_BAD_REQUEST") {
@@ -100,8 +123,7 @@ const TradeTabs = () => {
 
   }, [intervalApiTimerInPosition])
 
-
-  if (isLoading) return (<></>)
+  if (isLoading == false) return (<></>)
 
   return (
     <div>
@@ -129,7 +151,7 @@ const TradeTabs = () => {
               {
                 positions.length > 0 ?
                   positions.map((item: any, idx: any) => (
-                    <PositionsCard key={idx} position={item} />
+                    <PositionsCard key={idx} position={item} tpSlOrders={tpSlOrders} />
                   )) : <></>
               }
             </div>

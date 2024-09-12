@@ -5,6 +5,7 @@ export const strMarket = "Market"
 export const strLimit = "Limit"
 export const strLong = "Long"
 export const strShort = "Short"
+export const acceptabelRate = 10
 
 export const b2testnet_USDC_Address = "0xB33A5c53d7039C2fb8eE49be83070115E2ee50Fb"
 export const b2testnet_Router_Address = "0x174468500B2c210e36e45ad754108D5dD497f73D"
