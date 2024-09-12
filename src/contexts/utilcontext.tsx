@@ -11,11 +11,7 @@ import { useWeb3 } from "@/hooks"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 
-const setExpiryTime = () => {
-    const idleTime = 0.2 // Set expiry time to 5 minutes from now 
-    const expiryTime = Date.now() + idleTime * 60 * 1000;
-    localStorage.setItem("idleTime", String(expiryTime));
-};
+
 
 export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
@@ -52,7 +48,12 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return "btcusdt"
     })
 
-
+    const setExpiryTime = () => {
+        const idleTime = 0.2 // Set expiry time to 5 minutes from now 
+        const expiryTime = Date.now() + idleTime * 60 * 1000;
+        localStorage.setItem("idleTime", String(expiryTime));
+        setIntervalApiTimer(1000)
+    };
 
     const init = async () => {
         try {
@@ -148,6 +149,9 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
     }, [isConnected])
 
+    useEffect(() => {
+        console.log("IntervalTimer =>", intervalApiTimer)
+    }, [intervalApiTimer])
 
     return (
         <UtilContext.Provider value={value}>

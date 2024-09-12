@@ -6,7 +6,6 @@ import HistoryCard from "./historyCard";
 import { TabsList, Tabs, TabsTrigger, TabsContent } from "../ui/tabs";
 import {
   getPosition,
-  getMarketInfo,
   getOrders,
   getHistories
 } from '@/services/markets'
@@ -27,36 +26,53 @@ const TradeTabs = () => {
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
   const [histories, setHistorys] = useState<any>([])
-  const [isTimerPause, setTimerPause] = useState<boolean>(false)
+  const [isTimer, setTimer] = useState<boolean>(false)
+  const [intervalApiTimerInPosition, setIntervalApiTimerInPosition] = useState<number>(100000)
 
-  const ReAuthorization = async () => {
+  const initAuthorization = async () => {
     if (account === undefined) return
-    const accessToken: string = localStorage.getItem("accessToken") as string
-    const refreshToken: string = localStorage.getItem("refreshToken") as string
-   
-    if (refreshToken == null || refreshToken == "undefined") {
-      const result = await Authorization(account, web3)
-      await localStorage.setItem("accessToken", result.access_token)
-      await localStorage.setItem("refreshToken", result.refresh_token)
-      setTimerPause(false)
-    }
-    else {
-      const result: any = await Refresh(refreshToken)
-      await localStorage.setItem("accessToken", result.access_token)
-      setTimerPause(false)
-    }
+    const result = await Authorization(account, web3)
+    await localStorage.setItem("accessToken", result.access_token)
+    await localStorage.setItem("refreshToken", result.refresh_token)
   }
 
-  const init = async () => {
+  const reFreshAuthorization = async (refreshToken: string) => {
+    const result: any = await Refresh(refreshToken)
+    await localStorage.setItem("accessToken", result.access_token)
+  }
 
+  const ReAuthorization = async () => {
+
+    if (account === undefined) return
+
+    const accessToken: string = localStorage.getItem("accessToken") as string
+    const refreshToken: string = localStorage.getItem("refreshToken") as string
+
+    if (refreshToken == null || refreshToken == "undefined") {
+      await initAuthorization()
+      await setTimer(false)
+    }
+    else {
+      try {
+        await reFreshAuthorization(refreshToken)
+        await setTimer(false)
+      } catch (error) {
+        await initAuthorization()
+      }
+    }
+    console.log("Authorization is finished")
+    await setIntervalApiTimerInPosition(intervalApiTimer)
+    setIsLoading(false)
+  }
+
+  const getDatas = async () => {
     let accessToken: string = localStorage.getItem("accessToken") as string
+    console.log("Data is loading")
     try {
       const _positions = await getPosition(accessToken, market, chain)
       if (_positions.code == "ERR_BAD_REQUEST") {
-        setTimerPause(true)
-        ReAuthorization()
+        await setTimer(true)
       }
-
       const _orders = await getOrders(accessToken, market, chain)
       const _histories = await getHistories(accessToken, market, chain)
 
@@ -65,29 +81,24 @@ const TradeTabs = () => {
       await setHistorys(_histories.data.histories)
 
     } catch (err) {
-
+      console.log("Error =>", err)
     }
   }
 
   useEffect(() => {
-    if (isConnected)
-      setTimerPause(false)
-  }, [  ])
+    if (isConnected == true) {
+      ReAuthorization()
+    }
+  }, [intervalApiTimer])
 
   useEffect(() => {
-    let interval: any = null
-    if (isTimerPause == false) {
-      interval = setInterval(() => {
-        init()
-      }, intervalApiTimer)
-    } else clearInterval(interval)
+    const interval = setInterval(() => {
+      getDatas()
+    }, intervalApiTimerInPosition)
 
     return () => clearInterval(interval)
-  }, [isTimerPause])
 
-  useEffect(() => {
-    setIsLoading(false)
-  }, [language])
+  }, [intervalApiTimerInPosition])
 
 
   if (isLoading) return (<></>)
