@@ -36,7 +36,7 @@ const TradeTabs = () => {
     const index = await orderBookContract.methods.ordersIndexNext().call()
     console.log("Index =>", index)
     let _tpslOrders: any = []
-    for (let i = 1890; i < Number(index); i++) {
+    for (let i = 1700; i < Number(index); i++) {
       const __tpslOrder = await orderBookContract.methods.decreaseOrders(i).call()
       if (__tpslOrder.receiver == account) {
         _tpslOrders.push(__tpslOrder)
