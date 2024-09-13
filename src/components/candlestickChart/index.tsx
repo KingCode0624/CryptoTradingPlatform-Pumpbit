@@ -81,7 +81,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         const response2 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack, from2, to2);
         const newResponse = [...response1.data, ...response2.data]
         // const newResponse = [...response1.data,]
-        
+
         newResponse.sort((a, b) => a.t - b.t);
 
         const uniqueData = newResponse.filter((value, index, self) =>
@@ -114,7 +114,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
     }, intervalApiTimer);
 
     return () => clearInterval(interval);
-  }, [selectedPair.market, tickData]);
+  }, [selectedPair.market, tickData, intervalApiTimer]);
 
   const setIntervalValue = (e: any) => {
     localStorage.setItem("chartInterval", e.target.value)
