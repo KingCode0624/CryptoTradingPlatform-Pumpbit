@@ -227,7 +227,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
             <p className="text-sm  "> {parseFloat(positions.margin) * size} BTC</p>
             <p className="text-sm  ml-2"> {size}%</p>
           </div>
-          <SliderRoot step={1} min={1} max={100} defaultValue={[30]}
+          <SliderRoot step={1} min={1} max={100} defaultValue={[0]}
             onValueChange={(num: number[]) => setSize(num[0])}
           >
             <SliderTrack>

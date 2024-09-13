@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DialogContent, DialogTitle } from ".";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useWeb3 } from "@/hooks";
+import { toInt } from "@/utils/etcfunction";
 
 interface TpslSettingProps {
   setIsModalOpen: (config: boolean) => void;
@@ -22,18 +23,23 @@ interface TpslSettingProps {
 }
 
 const TpSlLists = (props: any) => {
+
+  useEffect(() => {
+
+  }, [])
+
   return (
     <div className="flex justify-between mt-4 ">
       <div>
         <p className="text-text-secondary">
           TP trigger price
-          <span className="block text-white text-sm pt-3">294.12</span>
+          <span className="block text-white text-sm pt-3">{props.newTpSlTriggers.tpTriger}</span>
         </p>
       </div>
       <div>
         <p className="text-text-secondary">
           SL trigger price
-          <span className="block text-white text-sm pt-3">294.12</span>
+          <span className="block text-white text-sm pt-3">{props.newTpSlTriggers.slTriger}</span>
         </p>
       </div>
       <div>
@@ -53,12 +59,28 @@ const TpSlLists = (props: any) => {
 }
 
 export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders }: TpslSettingProps) {
-  const { orderBookContract, account } = useWeb3()
+  const { orderBookContract, account, chainId } = useWeb3()
 
+  const [newTpSlTriggers, setNewTpSlTriggers] = useState<any>([])
   useEffect(() => {
     console.log("TPSL OK =>", tpSlOrders)
+
+    let _newTpSlOrders: any = []
+    for (let i = 0; i < tpSlOrders.length / 2; i++) {
+      const tpTriger = toInt(tpSlOrders[2 * i].triggerMarketPriceX96, chainId)
+      const slTriger = toInt(tpSlOrders[2 * i + 1].triggerMarketPriceX96, chainId)
+      _newTpSlOrders.push({
+        tpTriger: tpTriger,
+        slTriger: slTriger
+      })
+    }
+
+    setNewTpSlTriggers(_newTpSlOrders)
   }, [tpSlOrders])
 
+  useEffect(() => {
+    console.log("New TPSL =>", newTpSlTriggers)
+  }, [newTpSlTriggers])
   return (
     <div>
       <DialogContent className=" bg-gradient-bg flex flex-col gap-y-3 text-white  max-w-xl">
@@ -113,8 +135,8 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
           </div>
         </div>
         {
-          tpSlOrders.map((itx: any, idx: any) => (
-            <TpSlLists item={itx} key={idx} />
+          newTpSlTriggers.map((itx: any, idx: any) => (
+            <TpSlLists newTpSlTriggers={itx} key={idx} />
           ))
         }
 
