@@ -37,8 +37,8 @@ export default function AddTpslModal({ positions }: TypePosition) {
   const { marketDescriptorDeployerContract, orderBookContract, chainId, account, web3 } = useWeb3()
   const { marketPrice } = useUtilContext()
   const { toast } = useToast()
-  const [tp, setTp] = useState<number>()
-  const [sl, setSl] = useState<number>()
+  const [tp, setTp] = useState<number>(0)
+  const [sl, setSl] = useState<number>(0)
   const [size, setSize] = useState<number>(0)
   const [currentCoinPrice, setCurrentCoinPrice] = useState<number>(0)
   const cancelBtn = useRef<HTMLButtonElement | null>(null);
@@ -63,8 +63,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
 
   const createTakeProfitStopLossOrder = async () => {
     try {
-
-      if (typeof tp !== 'number' || typeof sl !== 'number') return
+      setIsAnimaion(true)
 
       const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
       const minExecuteFee = await orderBookContract.methods.minExecutionFee().call()
@@ -135,6 +134,12 @@ export default function AddTpslModal({ positions }: TypePosition) {
   useEffect(() => {
     setCurrentCoinPrice(marketPrice.close)
   }, [marketPrice])
+
+  useEffect(() => {
+    console.log("Tp =>", tp)
+    console.log("sl =>", sl)
+  }, [tp, sl])
+
   return (
     <div>
       <DialogContent className=" bg-gradient-bg flex flex-col gap-y-3 text-white  max-w-lg">
@@ -174,7 +179,6 @@ export default function AddTpslModal({ positions }: TypePosition) {
                 <input
                   className="text-white text-lg bg-black border-none bg-opacity-0 focus:outline-0"
                   type="text"
-                  value={tp}
                   onChange={handleSetTp}
                   placeholder="TP Trigger Price"
                 />
@@ -201,7 +205,6 @@ export default function AddTpslModal({ positions }: TypePosition) {
                 <input
                   className="text-white text-lg bg-black border-none bg-opacity-0 focus:outline-0"
                   type="text"
-                  value={sl}
                   onChange={handleSetSl}
                   placeholder="SL Trigger Price"
                 />
@@ -242,6 +245,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
             <button
               ref={cancelBtn}
               className="border border-border bg-transparent px-10 py-3 rounded-full w-full"
+              onClick={() => setIsAnimaion(false)}
             >
               {" "}
               Cancel
@@ -251,7 +255,6 @@ export default function AddTpslModal({ positions }: TypePosition) {
           <button
             className="border border-border bg-button-primary px-10 py-3 rounded-full w-full"
             onClick={() => {
-              setIsAnimaion(true)
               createTakeProfitStopLossOrder()
             }}
           >
