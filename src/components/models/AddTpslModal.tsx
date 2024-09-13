@@ -37,8 +37,8 @@ export default function AddTpslModal({ positions }: TypePosition) {
   const { marketDescriptorDeployerContract, orderBookContract, chainId, account, web3 } = useWeb3()
   const { marketPrice } = useUtilContext()
   const { toast } = useToast()
-  const [tp, setTp] = useState<number>(0)
-  const [sl, setSl] = useState<number>(0)
+  const [tp, setTp] = useState<number>()
+  const [sl, setSl] = useState<number>()
   const [size, setSize] = useState<number>(0)
   const [currentCoinPrice, setCurrentCoinPrice] = useState<number>(0)
   const cancelBtn = useRef<HTMLButtonElement | null>(null);
@@ -63,6 +63,9 @@ export default function AddTpslModal({ positions }: TypePosition) {
 
   const createTakeProfitStopLossOrder = async () => {
     try {
+
+      if (typeof tp !== 'number' || typeof sl !== 'number') return
+
       const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
       const minExecuteFee = await orderBookContract.methods.minExecutionFee().call()
       const usd = await orderBookContract.methods.usd().call()
@@ -173,10 +176,11 @@ export default function AddTpslModal({ positions }: TypePosition) {
                   type="text"
                   value={tp}
                   onChange={handleSetTp}
+                  placeholder="TP Trigger Price"
                 />
               </div>
               <div className="flex gap-x-2 items-center">
-                <p className="text-lg">300%</p>
+                <p className="text-lg">USDT</p>
               </div>
             </div>
           </div>
@@ -184,7 +188,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
         <div>
           <p className="text-text-secondary text-justify pr-12">
             When the price reaches
-            <span className="text-white">43,000.00</span>
+            <span className="text-white">{tp}</span>
             {" "}
             , it will trigger a Market order, and the estimated PnL will be{" "}
             <span className="text-semantic-success">29.31 USDC</span>
@@ -199,10 +203,11 @@ export default function AddTpslModal({ positions }: TypePosition) {
                   type="text"
                   value={sl}
                   onChange={handleSetSl}
+                  placeholder="SL Trigger Price"
                 />
               </div>
               <div className="flex gap-x-2 items-center">
-                <p className="text-lg">300%</p>
+                <p className="text-lg">USDT</p>
               </div>
             </div>
           </div>
@@ -210,7 +215,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
         <div>
           <p className="text-text-secondary text-justify pr-12">
             When the price reaches
-            <span className="text-white">43,000.00</span>
+            <span className="text-white">{sl}</span>
             {" "}
             , it will trigger a Market order, and the estimated PnL will be{" "}
             <span className="text-semantic-danger">29.31 USDC</span>
@@ -219,8 +224,8 @@ export default function AddTpslModal({ positions }: TypePosition) {
         <div className="flex flex-col gap-y-5">
           <div className="flex flex-row">
             <p className="mr-auto leading-relaxed text-lg">size</p>
-            <p className="text-sm  "> 10.11BTC</p>
-            <p className="text-sm  ml-2"> 20%</p>
+            <p className="text-sm  "> {parseFloat(positions.margin) * size} BTC</p>
+            <p className="text-sm  ml-2"> {size}%</p>
           </div>
           <SliderRoot step={1} min={1} max={100} defaultValue={[30]}
             onValueChange={(num: number[]) => setSize(num[0])}
