@@ -18,6 +18,7 @@ export default function OrdersCard(props: any) {
 
   const { account, orderBookContract, web3 } = useWeb3()
   const { toast } = useToast()
+  const [isAnimation, setIsAnimation] = useState<boolean>(false)
   const [orders, setOrders] = useState<any>({
     market: '',
     market_display: '',
@@ -32,6 +33,7 @@ export default function OrdersCard(props: any) {
 
   const cancelIncreaseOrder = async () => {
     try {
+      setIsAnimation(true)
       const gasPrice = await web3.eth.getGasPrice()
       await orderBookContract.methods.cancelIncreaseOrder(
         orders.order_index,
@@ -42,13 +44,13 @@ export default function OrdersCard(props: any) {
         title: "Success",
         description: "Order is canceled successfully"
       })
-
+      setIsAnimation(false)
     } catch (err) {
-
       const { id, dismiss } = toast({
         title: "Warning",
         description: "Failed Order cancel"
       })
+      setIsAnimation(false)
     }
   }
 
@@ -80,10 +82,17 @@ export default function OrdersCard(props: any) {
 
           <div className="flex col-span-full justify-end gap-2 order-last lg:order-none lg:col-span-1 lg:justify-start">
             <button
-              className="px-4 py-1 rounded-full border"
+              className="px-4 py-1 rounded-full border w-[150px]"
               onClick={() => { cancelIncreaseOrder() }}
             >
-              Cancel
+              {!isAnimation && "Cancel"}
+              {
+                isAnimation &&
+                <div className="w-[100%] h-[100%] stage">
+                  <div className='dot-typing'>
+                  </div>
+                </div>
+              }
             </button>
           </div>
           <div>
