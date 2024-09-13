@@ -36,10 +36,24 @@ const TradeTabs = () => {
     const index = await orderBookContract.methods.ordersIndexNext().call()
     console.log("Index =>", index)
     let _tpslOrders: any = []
-    for (let i = 1850; i < Number(index); i++) {
+    for (let i = 1890; i < Number(index); i++) {
+      console.log("Index =>", i)
       const __tpslOrder = await orderBookContract.methods.decreaseOrders(i).call()
+      console.log("Oder =>", __tpslOrder)
       if (__tpslOrder.receiver == account) {
-        _tpslOrders.push(__tpslOrder)
+        _tpslOrders.push({
+          index: i,
+          acceptableTradePriceX96: __tpslOrder.acceptableTradePriceX96,
+          account: __tpslOrder.account,
+          executionFee: __tpslOrder.executionFee,
+          marginDelta: __tpslOrder.marginDelta,
+          market: __tpslOrder.market,
+          receiver: __tpslOrder.receiver,
+          side: __tpslOrder.side,
+          sizeDelta: __tpslOrder.sizeDelta,
+          triggerAbove: __tpslOrder.triggerAbove,
+          triggerMarketPriceX96: __tpslOrder.triggerMarketPriceX96
+        })
       }
     }
 

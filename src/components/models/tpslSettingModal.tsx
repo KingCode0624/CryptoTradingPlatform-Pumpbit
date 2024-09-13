@@ -23,10 +23,26 @@ interface TpslSettingProps {
 }
 
 const TpSlLists = (props: any) => {
+  const { orderBookContract, account, web3 } = useWeb3()
+  const handleCancelTpSlDecreaseOrder = async () => {
+    try {
+      const minExecutionFee = await orderBookContract.methods.minExecutionFee().call()
+      const gasPrice = await web3.eth.getGasPrice()
+      console.log("Index1 =>", props.newTpSlTriggers.index1)
+      console.log("Index2 =>", props.newTpSlTriggers.index2)
 
-  useEffect(() => {
+      await orderBookContract.methods.cancelDecreaseOrdersBatch(
+        [
+          props.newTpSlTriggers.index1,
+          props.newTpSlTriggers.index2,
+        ]
+      ).send({ from: account, gasPrice: gasPrice })
+    } catch (error) {
 
-  }, [])
+    }
+
+
+  }
 
   return (
     <div className="flex justify-between mt-4 ">
@@ -45,13 +61,18 @@ const TpSlLists = (props: any) => {
       <div>
         <p className="text-text-secondary text-sm">
           Amount
-          <span className="block text-white text-sm pt-3">12.4122</span>
+          <span className="block text-white text-sm pt-3">{props.newTpSlTriggers.size}</span>
         </p>
       </div>
       <div>
         <div className="text-text-secondary text-base">
           Action
-          <RiDeleteBin6Line className="block  ml-3 text-white text-3xl pt-2 hover:cursor-pointer" />
+          <RiDeleteBin6Line
+            className="block  ml-3 text-white text-3xl pt-2 hover:cursor-pointer"
+            onClick={() => {
+              handleCancelTpSlDecreaseOrder()
+            }}
+          />
         </div>
       </div>
     </div>
@@ -69,9 +90,15 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
     for (let i = 0; i < tpSlOrders.length / 2; i++) {
       const tpTriger = toInt(tpSlOrders[2 * i].triggerMarketPriceX96, chainId)
       const slTriger = toInt(tpSlOrders[2 * i + 1].triggerMarketPriceX96, chainId)
+      const size = toInt(tpSlOrders[2 * i + 1].sizeDelta, chainId)
+      const index1 = tpSlOrders[2 * i].index
+      const index2 = tpSlOrders[2 * i + 1].index
       _newTpSlOrders.push({
         tpTriger: tpTriger,
-        slTriger: slTriger
+        slTriger: slTriger,
+        size: size,
+        index1: index1,
+        index2: index2
       })
     }
 
