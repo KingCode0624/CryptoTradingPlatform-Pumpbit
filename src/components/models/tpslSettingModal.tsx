@@ -28,9 +28,6 @@ const TpSlLists = (props: any) => {
     try {
       const minExecutionFee = await orderBookContract.methods.minExecutionFee().call()
       const gasPrice = await web3.eth.getGasPrice()
-      console.log("Index1 =>", props.newTpSlTriggers.index1)
-      console.log("Index2 =>", props.newTpSlTriggers.index2)
-
       await orderBookContract.methods.cancelDecreaseOrdersBatch(
         [
           props.newTpSlTriggers.index1,
@@ -38,10 +35,7 @@ const TpSlLists = (props: any) => {
         ]
       ).send({ from: account, gasPrice: gasPrice })
     } catch (error) {
-
     }
-
-
   }
 
   return (
@@ -84,8 +78,8 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
 
   const [newTpSlTriggers, setNewTpSlTriggers] = useState<any>([])
   useEffect(() => {
-    console.log("TPSL OK =>", tpSlOrders)
-
+    if (tpSlOrders.length == 0) return
+    console.log("TpSl Trigger Price is loaded!")
     let _newTpSlOrders: any = []
     for (let i = 0; i < tpSlOrders.length / 2; i++) {
       const tpTriger = toInt(tpSlOrders[2 * i].triggerMarketPriceX96, chainId)
@@ -101,13 +95,9 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
         index2: index2
       })
     }
-
     setNewTpSlTriggers(_newTpSlOrders)
   }, [tpSlOrders])
 
-  useEffect(() => {
-    console.log("New TPSL =>", newTpSlTriggers)
-  }, [newTpSlTriggers])
   return (
     <div>
       <DialogContent className=" bg-gradient-bg flex flex-col gap-y-3 text-white  max-w-xl">

@@ -29,17 +29,15 @@ const TradeTabs = () => {
   const [isTimer, setTimer] = useState<boolean>(false)
   const [intervalApiTimerInPosition, setIntervalApiTimerInPosition] = useState<number>(100000)
   const [tpSlOrders, setTpSlOrders] = useState<any>([])
-
+  const [isPositionsLoading, setIsPositionsLoading] = useState<boolean>(false)
   const getTpSlLists = async () => {
-    console.log("Data Loading ....")
+    console.log("Blockchain Data Loading ....")
 
     const index = await orderBookContract.methods.ordersIndexNext().call()
-    console.log("Index =>", index)
+
     let _tpslOrders: any = []
     for (let i = 1890; i < Number(index); i++) {
-      console.log("Index =>", i)
       const __tpslOrder = await orderBookContract.methods.decreaseOrders(i).call()
-      console.log("Oder =>", __tpslOrder)
       if (__tpslOrder.receiver == account) {
         _tpslOrders.push({
           index: i,
@@ -64,7 +62,7 @@ const TradeTabs = () => {
     if (isWeb3Loading == true) {
       getTpSlLists()
     }
-  }, [isWeb3Loading,])
+  }, [isPositionsLoading])
 
   const initAuthorization = async () => {
     if (account === undefined) return
@@ -111,12 +109,16 @@ const TradeTabs = () => {
       if (_positions.code == "ERR_BAD_REQUEST") {
         await setTimer(true)
       }
-      const _orders = await getOrders(accessToken, market, chain)
-      const _histories = await getHistories(accessToken, market, chain)
+      else {
+        const _orders = await getOrders(accessToken, market, chain)
+        const _histories = await getHistories(accessToken, market, chain)
 
-      await setPositions(_positions.data.positions)
-      await setOrders(await SetOrdersDataProcess(_orders.data.orders))
-      await setHistorys(_histories.data.histories)
+        await setPositions(_positions.data.positions)
+        await setOrders(await SetOrdersDataProcess(_orders.data.orders))
+        await setHistorys(_histories.data.histories)
+        await setIsPositionsLoading(true)
+      }
+
 
     } catch (err) {
       console.log("Error =>", err)
