@@ -78,7 +78,8 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
 
   const [newTpSlTriggers, setNewTpSlTriggers] = useState<any>([])
   useEffect(() => {
-    if (tpSlOrders.length > 0) console.log("TpSl Trigger Price is loaded!")
+    if (tpSlOrders.length == 0) return
+    console.log("TpSl Trigger Price is loaded!")
     let _newTpSlOrders: any = []
     for (let i = 0; i < tpSlOrders.length / 2; i++) {
       const tpTriger = toInt(tpSlOrders[2 * i].triggerMarketPriceX96, chainId)
