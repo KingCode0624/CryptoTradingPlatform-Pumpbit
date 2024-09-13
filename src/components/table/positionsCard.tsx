@@ -3,10 +3,15 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogTrigger } from "../models";
 import AddTpslModal from "../models/AddTpslModal";
 import TpslSettingModal from "../models/tpslSettingModal";
-
+import { useUtilContext, useWeb3 } from "@/hooks";
+import { useToast } from "../ui/toast/use-toast";
 export default function PositionsCard(props: any) {
+  const { toast } = useToast()
+  const { positionRouterContract, account, web3, marketDescriptorDeployerContract } = useWeb3()
+  const { marketPair } = useUtilContext()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tpslOrders, setTpSlOrders] = useState<any>([])
+  const [isAnimation, setIsAnimation] = useState<boolean>(false)
   const [positions, setPositions] = useState<any>({
     market: "",
     market_display: "",
@@ -28,6 +33,40 @@ export default function PositionsCard(props: any) {
   useEffect(() => {
     setTpSlOrders(props.tpSlOrders)
   }, [props.tpSlOrders])
+
+  const closePosition = async () => {
+    try {
+      setIsAnimation(true)
+      const market = marketPair == "btcusdt" ?
+        await marketDescriptorDeployerContract.methods.descriptors("BTC").call() :
+        await marketDescriptorDeployerContract.methods.descriptors("ETH").call()
+
+      const side = positions.side == "long" ? 1 : 2
+      const minExecutionFee = await positionRouterContract.methods.minExecutionFee().call()
+      const gasPrice = await web3.eth.getGasPrice()
+
+      await positionRouterContract.methods.createClosePositionsBatch(
+        [{
+          market: market,
+          side: side
+        }],
+        account
+      ).send({ from: account, value: minExecutionFee, gasPrice: gasPrice })
+
+      const { id, dismiss } = toast({
+        title: "Success",
+        description: "Position was closed successfully."
+      })
+      setIsAnimation(false)
+    } catch (error) {
+      console.log("Error =>", error)
+      const { id, dismiss } = toast({
+        title: "Warning",
+        description: "Failed Closing position."
+      })
+      setIsAnimation(false)
+    }
+  }
 
   return (
     <>
@@ -67,13 +106,25 @@ export default function PositionsCard(props: any) {
           <div className="flex col-span-full justify-end gap-2 order-last lg:order-none lg:col-span-1 ">
             <Dialog>
               <DialogTrigger asChild>
-                <button className="px-4 py-1 rounded-full border">
+                <button className="px-4 py-1 rounded-full border w-[150px]">
                   TP/SL
                 </button>
               </DialogTrigger>
 
-              <button className="px-4 py-1  rounded-full border">
-                Close
+              <button
+                className="px-4 py-1 rounded-full border w-[150px]"
+                onClick={() => {
+                  closePosition()
+                }}
+              >
+                {!isAnimation && "Close"}
+                {
+                  isAnimation &&
+                  <div className="w-[100%] h-[100%] stage">
+                    <div className='dot-typing'>
+                    </div>
+                  </div>
+                }
               </button>
               <TpslSettingModal setIsModalOpen={setIsModalOpen} positions={positions} tpSlOrders={tpslOrders} />
             </Dialog>

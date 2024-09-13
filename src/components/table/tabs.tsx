@@ -119,7 +119,6 @@ const TradeTabs = () => {
         await setIsPositionsLoading(true)
       }
 
-
     } catch (err) {
       console.log("Error =>", err)
     }
