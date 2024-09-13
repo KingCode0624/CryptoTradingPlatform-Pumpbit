@@ -31,7 +31,7 @@ const TradeTabs = () => {
   const [tpSlOrders, setTpSlOrders] = useState<any>([])
   const [isPositionsLoading, setIsPositionsLoading] = useState<boolean>(false)
   const getTpSlLists = async () => {
-    console.log("Data Loading ....")
+    console.log("Blockchain Data Loading ....")
 
     const index = await orderBookContract.methods.ordersIndexNext().call()
 
