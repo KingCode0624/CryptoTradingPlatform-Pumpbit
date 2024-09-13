@@ -128,17 +128,8 @@ export default function AddTpslModal({ positions }: TypePosition) {
   }
 
   useEffect(() => {
-    console.log("Size =>", size)
-  }, [size])
-
-  useEffect(() => {
     setCurrentCoinPrice(marketPrice.close)
   }, [marketPrice])
-
-  useEffect(() => {
-    console.log("Tp =>", tp)
-    console.log("sl =>", sl)
-  }, [tp, sl])
 
   return (
     <div>

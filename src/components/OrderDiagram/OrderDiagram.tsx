@@ -139,7 +139,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     else if (leverage > 20) feeRate = 0.1
     else if (leverage > 0) feeRate = 0.2
 
-    console.log("FeeRate => ", feeRate)
     setFees(orderInitPay * feeRate / 100)
 
     if (selectedSide == strLong)
@@ -167,10 +166,6 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
         toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId) :
         toWei(currentEthPrice * (1 - acceptabelRate / 100), chainId)
 
-      console.log("TriggerMarketPrice => ", triggerMarketPrice)
-
-      console.log("marginDelta =>", marginDelta)
-      console.log("SizeDelta =>", sizeDelta)
       const gasPrice = await web3.eth.getGasPrice()
 
       await orderBookContract.methods.createIncreaseOrder(

@@ -48,7 +48,7 @@ export default function NftMint() {
               </div>
               <ButtonMintLight
                 title="Mint"
-                onClick={() => console.log("clicked!")}
+                onClick={() => {}}
               />
             </div>
           </div>

@@ -49,7 +49,7 @@ export default function Home() {
         <div className="flex  pt-20 justify-center  lg:justify-between items-center">
           <ButtonMint
             title="Mint Now"
-            onClick={() => console.log("button clicked!")}
+            onClick={() => { }}
           />
           <Link
             href="https://pumpbit.gitbook.io/pumpbit-whitepaper"
