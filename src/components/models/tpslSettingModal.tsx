@@ -24,8 +24,10 @@ interface TpslSettingProps {
 
 const TpSlLists = (props: any) => {
   const { orderBookContract, account, web3 } = useWeb3()
+  const [isAnimation, setIsAnimation] = useState<boolean>(false)
   const handleCancelTpSlDecreaseOrder = async () => {
     try {
+      setIsAnimation(true)
       const minExecutionFee = await orderBookContract.methods.minExecutionFee().call()
       const gasPrice = await web3.eth.getGasPrice()
       await orderBookContract.methods.cancelDecreaseOrdersBatch(
@@ -34,7 +36,9 @@ const TpSlLists = (props: any) => {
           props.newTpSlTriggers.index2,
         ]
       ).send({ from: account, gasPrice: gasPrice })
+      setIsAnimation(false)
     } catch (error) {
+      setIsAnimation(false)
     }
   }
 
@@ -61,12 +65,24 @@ const TpSlLists = (props: any) => {
       <div>
         <div className="text-text-secondary text-base">
           Action
-          <RiDeleteBin6Line
-            className="block  ml-3 text-white text-3xl pt-2 hover:cursor-pointer"
-            onClick={() => {
-              handleCancelTpSlDecreaseOrder()
-            }}
-          />
+          {
+            isAnimation == false ?
+              (
+                <RiDeleteBin6Line
+                  className="block  ml-3 text-white text-3xl pt-2 hover:cursor-pointer"
+                  onClick={() => {
+                    handleCancelTpSlDecreaseOrder()
+                  }}
+                />
+              ) :
+              (
+                <div className="stage">
+                  <div className='dot-typing'>
+                  </div>
+                </div>
+              )
+          }
+
         </div>
       </div>
     </div>
