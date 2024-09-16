@@ -49,7 +49,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [istpslDataSync, setIsTpSlDataSync] = useState<boolean>(true)
 
     const setExpiryTime = () => {
-        const idleTime = 0.07 // Set expiry time to 5 minutes from now 
+        const idleTime = 3 // Set expiry time to 5 minutes from now 
         const expiryTime = Date.now() + idleTime * 60 * 1000;
         localStorage.setItem("idleTime", String(expiryTime));
         const isIdleProvider = localStorage.getItem("isIdleProvider")
