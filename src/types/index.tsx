@@ -26,6 +26,8 @@ export type UtilContextType = {
   intervalApiTimer: number;
   isIdle: boolean;
   isAuthorization: boolean;
+  tpslGlobalList: any;
+  istpslDataSync: boolean;
   setIsIdle: (id: any) => void;
   setMarketOrderType: (type: string) => void;
   setSlipRate: (rate: number) => void;
@@ -35,6 +37,8 @@ export type UtilContextType = {
   setMarketPair: (pair: string) => void;
   setIntervalApiTimer: (timer: number) => void;
   setIsAuthorization: (id: boolean) => void;
+  setTpslGlobalList: (id: any) => void;
+  setIsTpSlDataSync: (id: boolean) => void;
 }
 
 export type TradeHeaderType = {

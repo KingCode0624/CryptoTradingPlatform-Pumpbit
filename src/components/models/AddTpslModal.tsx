@@ -35,7 +35,13 @@ interface TypePosition {
 }
 export default function AddTpslModal({ positions }: TypePosition) {
   const { marketDescriptorDeployerContract, orderBookContract, chainId, account, web3 } = useWeb3()
-  const { marketPrice } = useUtilContext()
+  const {
+    marketPrice,
+    tpslGlobalList,
+    istpslDataSync,
+    setTpslGlobalList,
+    setIsTpSlDataSync
+  } = useUtilContext()
   const { toast } = useToast()
   const [tp, setTp] = useState<number>(0)
   const [sl, setSl] = useState<number>(0)
@@ -45,6 +51,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
   const [isAnimation, setIsAnimaion] = useState<boolean>(false)
   const [tpPricePnL, setTpPricePnL] = useState<number>(0)
   const [slPricePnL, setSlPricePnL] = useState<number>(0)
+
   const handleSetTp = (e: any) => {
     const inputValue = e.target.value;
     if (positions.side == "") return
@@ -75,6 +82,22 @@ export default function AddTpslModal({ positions }: TypePosition) {
     } else {
       setTp(0);
     }
+  }
+
+  const TpSlDataSync = async () => {
+    let newTpSlList: any = []
+    for (let i = 0; i < tpslGlobalList.length; i++) {
+      newTpSlList.push(tpslGlobalList[i])
+    }
+    newTpSlList.unshift({
+      tpTriger: tp,
+      slTriger: sl,
+      size: size,
+      index1: 0,
+      index2: 0
+    })
+    await setTpslGlobalList(newTpSlList)
+    await setIsTpSlDataSync(true)
   }
 
   const createTakeProfitStopLossOrder = async () => {
@@ -111,7 +134,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
           toWei(currentCoinPrice * (1 - acceptabelRate / 100), chainId),
         ]
 
-      await orderBookContract.methods.createTakeProfitAndStopLossOrders(
+      const newIndex = await orderBookContract.methods.createTakeProfitAndStopLossOrders(
         market,
         side,
         marginDeltas,
@@ -121,10 +144,13 @@ export default function AddTpslModal({ positions }: TypePosition) {
         account
       ).send({ from: account, value: (minExecuteFee * BigInt(2)), gasPrice: gasPrice })
 
+      console.log("NewIndex =>", newIndex)
       const { id, dismiss } = toast({
         title: "Success",
         description: "TP and SL was added Success"
       })
+
+      TpSlDataSync()
 
       if (cancelBtn.current) { // Type Guard
         cancelBtn.current.click();
@@ -167,7 +193,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
             <div>
               <p className="text-text-secondary text-sm">
                 Current Price
-                <span className="block text-white text-sm pt-2">12.4122</span>
+                <span className="block text-white text-sm pt-2">{marketPrice.close.toFixed(2)}</span>
               </p>
             </div>
             <div>

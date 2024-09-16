@@ -21,23 +21,29 @@ import { SetOrdersDataProcess } from "@/utils/etcfunction";
 
 const TradeTabs = () => {
   const { web3, account, isConnected, orderBookContract, isWeb3Loading } = useWeb3()
-  const { language, intervalApiTimer, setIntervalApiTimer, setIsAuthorization, isAuthorization } = useUtilContext()
+  const {
+    language,
+    intervalApiTimer,
+    setIntervalApiTimer,
+    setIsAuthorization,
+    isAuthorization,
+    istpslDataSync,
+    setIsTpSlDataSync
+  } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
   const [histories, setHistorys] = useState<any>([])
   const [isTimer, setTimer] = useState<boolean>(false)
-  const [intervalApiTimerInPosition, setIntervalApiTimerInPosition] = useState<number>(100000)
   const [tpSlOrders, setTpSlOrders] = useState<any>([])
   const [isPositionsLoading, setIsPositionsLoading] = useState<boolean>(false)
-  
+
   const getTpSlLists = async () => {
     console.log("Blockchain Data Loading ....")
-
     const index = await orderBookContract.methods.ordersIndexNext().call()
 
     let _tpslOrders: any = []
-    for (let i = 1890; i < Number(index); i++) {
+    for (let i = Number(index) - 1; i > 2040; i--) {
       const __tpslOrder = await orderBookContract.methods.decreaseOrders(i).call()
       if (__tpslOrder.receiver == account) {
         _tpslOrders.push({
@@ -55,14 +61,17 @@ const TradeTabs = () => {
         })
       }
     }
-    setTpSlOrders(_tpslOrders)
+    console.log("Blockchain Data Loaing is finished")
+    await setIsTpSlDataSync(false)
+    await setTpSlOrders(_tpslOrders)
   }
 
   useEffect(() => {
-    if (isWeb3Loading == true) {
-      getTpSlLists()
-    }
-  }, [isPositionsLoading])
+    if (istpslDataSync == true)
+      if (isWeb3Loading == true) {
+        getTpSlLists()
+      }
+  }, [isPositionsLoading, istpslDataSync])
 
   const initAuthorization = async () => {
     if (account === undefined) return
@@ -95,10 +104,8 @@ const TradeTabs = () => {
         await initAuthorization()
       }
     }
-
-    console.log("Authorization is finished")
-
-    await setIntervalApiTimerInPosition(intervalApiTimer)
+    console.log("Authorization is finished", intervalApiTimer)
+    await setIntervalApiTimer(1000)
     await setIsLoading(false)
     await setIsAuthorization(true)
   }
@@ -106,7 +113,6 @@ const TradeTabs = () => {
   const getDatas = async () => {
     await setIsLoading(true)
     let accessToken: string = localStorage.getItem("accessToken") as string
-    console.log("Back-End Data is loading ...")
     try {
       const _positions = await getPosition(accessToken, market, chain)
       if (_positions.code == "ERR_BAD_REQUEST") {
@@ -138,12 +144,10 @@ const TradeTabs = () => {
       if (isAuthorization == true) {
         getDatas()
       }
-
-    }, intervalApiTimerInPosition)
+    }, intervalApiTimer)
 
     return () => clearInterval(interval)
-
-  }, [intervalApiTimerInPosition, isAuthorization])
+  }, [intervalApiTimer, isAuthorization])
 
   if (isLoading == false) return (<></>)
 
