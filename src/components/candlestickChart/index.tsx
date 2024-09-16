@@ -41,7 +41,7 @@ export const GetMaxandMinPrice = (priceList: any) => {
 
 
 export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
-  const { setMarketPrice, setHeaderPrice, language, intervalApiTimer } = useUtilContext()
+  const { setMarketPrice, setHeaderPrice, language, intervalApiTimer, isAuthorization } = useUtilContext()
   const [isLoading, setIsloading] = useState<boolean>(true)
   const [tradingViewHeaderClass, setTradingViewHeaderClass] = useState<string>("text-white")
   const [typeOfGraph, setTypeOfGraph] = useState<string>("Price")
@@ -59,62 +59,61 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
     },
   ]);
 
+  const fetchData = async () => {
+
+    if (!selectedPair.market) {
+      console.error("Selected pair market is not defined.");
+      return;
+    }
+
+    try {
+      const currentDate = new Date();
+      let to = currentDate.getTime()
+      let from = to - 2 * 3600 * 24 * 1000
+      const response1 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack, from, to);
+
+      const to2 = response1.data[0].t
+      const from2 = to2 - 2 * 3600 * 24 * 1000
+
+      const response2 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack, from2, to2);
+      const newResponse = [...response1.data, ...response2.data]
+      // const newResponse = [...response1.data,]
+
+      newResponse.sort((a, b) => a.t - b.t);
+
+      const uniqueData = newResponse.filter((value, index, self) =>
+        index === self.findIndex((t) => (
+          t.t === value.t
+        ))
+      )
+
+      const data2 = uniqueData ? uniqueData : tickData;
+
+      const _formattedTicks = data2.map((tick: MarketTick) => ({
+        time: tick.t / 1000,
+        open: Number(tick.o),
+        high: Number(tick.h),
+        low: Number(tick.l),
+        close: Number(tick.c),
+      }));
+      const formattedTicks = await SetCandleTicketDataProcess(_formattedTicks)
+      const result = GetMaxandMinPrice(formattedTicks)
+      setHeaderPrice(result)
+      setMarketPrice(formattedTicks[formattedTicks.length - 1])
+      setTickData(formattedTicks);
+
+    } catch (err) {
+    }
+  };
 
   useEffect(() => {
-
-    const fetchData = async () => {
-
-      if (!selectedPair.market) {
-        console.error("Selected pair market is not defined.");
-        return;
-      }
-
-      try {
-        const currentDate = new Date();
-        let to = currentDate.getTime()
-        let from = to - 2 * 3600 * 24 * 1000
-        const response1 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack, from, to);
-
-        const to2 = response1.data[0].t
-        const from2 = to2 - 2 * 3600 * 24 * 1000
-
-        const response2 = await getMarketTicks(selectedPair.market, chain, chartInterval, countBack, from2, to2);
-        const newResponse = [...response1.data, ...response2.data]
-        // const newResponse = [...response1.data,]
-
-        newResponse.sort((a, b) => a.t - b.t);
-
-        const uniqueData = newResponse.filter((value, index, self) =>
-          index === self.findIndex((t) => (
-            t.t === value.t
-          ))
-        )
-
-        const data2 = uniqueData ? uniqueData : tickData;
-
-        const _formattedTicks = data2.map((tick: MarketTick) => ({
-          time: tick.t / 1000,
-          open: Number(tick.o),
-          high: Number(tick.h),
-          low: Number(tick.l),
-          close: Number(tick.c),
-        }));
-        const formattedTicks = await SetCandleTicketDataProcess(_formattedTicks)
-        const result = GetMaxandMinPrice(formattedTicks)
-        setHeaderPrice(result)
-        setMarketPrice(formattedTicks[formattedTicks.length - 1])
-        setTickData(formattedTicks);
-
-      } catch (err) {
-      }
-    };
-
     const interval = setInterval(() => {
-      fetchData();
+      if (isAuthorization == true) {
+        fetchData();
+      }
     }, intervalApiTimer);
-
     return () => clearInterval(interval);
-  }, [selectedPair.market, tickData, intervalApiTimer]);
+  }, [selectedPair.market, tickData, intervalApiTimer, isAuthorization]);
 
   const setIntervalValue = (e: any) => {
     localStorage.setItem("chartInterval", e.target.value)
