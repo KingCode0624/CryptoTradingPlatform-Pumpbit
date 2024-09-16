@@ -28,7 +28,8 @@ const TradeTabs = () => {
     setIsAuthorization,
     isAuthorization,
     istpslDataSync,
-    setIsTpSlDataSync
+    setIsTpSlDataSync,
+    isIdle
   } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [positions, setPositions] = useState<any>([])
@@ -37,6 +38,7 @@ const TradeTabs = () => {
   const [isTimer, setTimer] = useState<boolean>(false)
   const [tpSlOrders, setTpSlOrders] = useState<any>([])
   const [isPositionsLoading, setIsPositionsLoading] = useState<boolean>(false)
+  const [isApiIdle, setIsApiIdle] = useState<boolean>(false)
 
   const getTpSlLists = async () => {
     console.log("Blockchain Data Loading ....")
@@ -109,8 +111,9 @@ const TradeTabs = () => {
     await setIsLoading(false)
     await setIsAuthorization(true)
   }
-
   const getDatas = async () => {
+    if (isApiIdle == true) return
+    console.log("Back-End Loading ...")
     await setIsLoading(true)
     let accessToken: string = localStorage.getItem("accessToken") as string
     try {
@@ -147,8 +150,11 @@ const TradeTabs = () => {
     }, intervalApiTimer)
 
     return () => clearInterval(interval)
-  }, [intervalApiTimer, isAuthorization])
+  }, [intervalApiTimer, isAuthorization, isApiIdle])
 
+  useEffect(() => {
+    setIsApiIdle(isIdle)
+  }, [isIdle])
   if (isLoading == false) return (<></>)
 
   return (
