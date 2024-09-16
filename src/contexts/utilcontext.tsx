@@ -6,9 +6,7 @@ import {
     useMemo,
 } from "react"
 import { UtilContextType, MarketPriceType, TradeHeaderType } from "@/types"
-import { Authorization } from "@/authorization"
 import { useWeb3 } from "@/hooks"
-import local from "next/font/local"
 
 const UtilContext = createContext<UtilContextType | null>(null)
 
@@ -46,6 +44,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         }
         return "btcusdt"
     })
+    const [isAuthorization, setIsAuthorization] = useState<boolean>(false)
 
     const setExpiryTime = () => {
         const idleTime = 3 // Set expiry time to 5 minutes from now 
@@ -91,6 +90,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         marketPair: marketPair,
         intervalApiTimer: intervalApiTimer,
         isIdle: isIdle,
+        isAuthorization: isAuthorization,
         setMarketOrderType: setMarketOrderType,
         setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
@@ -98,8 +98,8 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setLanguage: setLanguage,
         setMarketPair: setMarketPair,
         setIntervalApiTimer: setIntervalApiTimer,
-        setIsIdle: setIsIdle
-
+        setIsIdle: setIsIdle,
+        setIsAuthorization: setIsAuthorization
     }), [
         marketPrice,
         headerPrice,
@@ -108,13 +108,15 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         marketPair,
         intervalApiTimer,
         isIdle,
+        isAuthorization,
         setIsIdle,
         setMarketPair,
         setSlipRate,
         setHeaderPrice,
         setMarketPrice,
         setLanguage,
-        setIntervalApiTimer
+        setIntervalApiTimer,
+        setIsAuthorization
     ])
 
     useEffect(() => {
@@ -133,7 +135,6 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         window.addEventListener('keypress', setExpiryTime);
         window.addEventListener('scroll', setExpiryTime);
         window.addEventListener('mousemove', setExpiryTime);
-
         // Clean up event listeners on component unmount
         return () => {
             window.removeEventListener('click', setExpiryTime);
@@ -142,7 +143,6 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
             window.removeEventListener('mousemove', setExpiryTime);
             clearInterval(idleInterval)
         };
-
     }, []);
 
     useEffect(() => {

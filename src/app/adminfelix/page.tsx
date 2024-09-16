@@ -1,5 +1,5 @@
 "use client"
-import { useWeb3 } from "@/hooks"
+import { useUtilContext, useWeb3 } from "@/hooks"
 import {
     b2testnet_Faucet_Address,
     ailayertestnet_Faucet_Address,
@@ -8,10 +8,11 @@ import {
     bevmtestnet_Faucet_Address,
 } from "@/constants"
 import { ethers } from "ethers"
+import { useEffect } from "react"
 
 const Admin = () => {
     const { faucetContract, usdcTokenContract, chainId, account, web3 } = useWeb3()
-
+    const { setIsAuthorization, isAuthorization } = useUtilContext()
     const transferToken = async () => {
         let _faucetAddr: string = ""
         if (chainId === ailayertestnetChainId)
@@ -50,6 +51,10 @@ const Admin = () => {
         }
     }
 
+    useEffect(() => {
+        console.log("IsAUth =>", isAuthorization)
+    }, [isAuthorization])
+
     return (
         <div>
             <button
@@ -70,6 +75,13 @@ const Admin = () => {
                 className="mt-[300px] ml-[300px]"
                 onClick={() => getBalance()}>
                 balance
+            </button>
+            <button
+                className="mt-[300px] ml-[300px]"
+                onClick={() => {
+                    setIsAuthorization(!isAuthorization)
+                }}>
+                IsTrue
             </button>
         </div>
     )

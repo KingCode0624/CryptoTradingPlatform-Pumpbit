@@ -21,7 +21,7 @@ import { SetOrdersDataProcess } from "@/utils/etcfunction";
 
 const TradeTabs = () => {
   const { web3, account, isConnected, orderBookContract, isWeb3Loading } = useWeb3()
-  const { language, intervalApiTimer } = useUtilContext()
+  const { language, intervalApiTimer, setIntervalApiTimer, setIsAuthorization, isAuthorization } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [positions, setPositions] = useState<any>([])
   const [orders, setOrders] = useState<any>([])
@@ -30,6 +30,7 @@ const TradeTabs = () => {
   const [intervalApiTimerInPosition, setIntervalApiTimerInPosition] = useState<number>(100000)
   const [tpSlOrders, setTpSlOrders] = useState<any>([])
   const [isPositionsLoading, setIsPositionsLoading] = useState<boolean>(false)
+  
   const getTpSlLists = async () => {
     console.log("Blockchain Data Loading ....")
 
@@ -54,7 +55,6 @@ const TradeTabs = () => {
         })
       }
     }
-
     setTpSlOrders(_tpslOrders)
   }
 
@@ -77,7 +77,7 @@ const TradeTabs = () => {
   }
 
   const ReAuthorization = async () => {
-
+    await setIsAuthorization(false)
     if (account === undefined) return
 
     const accessToken: string = localStorage.getItem("accessToken") as string
@@ -95,9 +95,12 @@ const TradeTabs = () => {
         await initAuthorization()
       }
     }
+
     console.log("Authorization is finished")
+
     await setIntervalApiTimerInPosition(intervalApiTimer)
-    setIsLoading(false)
+    await setIsLoading(false)
+    await setIsAuthorization(true)
   }
 
   const getDatas = async () => {
@@ -132,12 +135,15 @@ const TradeTabs = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      getDatas()
+      if (isAuthorization == true) {
+        getDatas()
+      }
+
     }, intervalApiTimerInPosition)
 
     return () => clearInterval(interval)
 
-  }, [intervalApiTimerInPosition])
+  }, [intervalApiTimerInPosition, isAuthorization])
 
   if (isLoading == false) return (<></>)
 
