@@ -5,6 +5,7 @@ import AddTpslModal from "../models/AddTpslModal";
 import TpslSettingModal from "../models/tpslSettingModal";
 import { useUtilContext, useWeb3 } from "@/hooks";
 import { useToast } from "../ui/toast/use-toast";
+import RectProgressBar from "../rectprogressbar";
 export default function PositionsCard(props: any) {
   const { toast } = useToast()
   const { positionRouterContract, account, web3, marketDescriptorDeployerContract } = useWeb3()
@@ -81,7 +82,10 @@ export default function PositionsCard(props: any) {
               " " + positions.leverage + "x"
             }
           </p>
-          <p className="font-medium sm:text-xl text-base ">63.95%</p>
+          <p className="font-medium sm:text-xl text-base flex justify-center items-center gap-1">
+            <RectProgressBar percent={63} />
+            63.95%
+          </p>
         </div>
         <div className="grid grid-cols-3 lg:grid-cols-4 gap-3 py-3">
           <div className="">
@@ -98,7 +102,7 @@ export default function PositionsCard(props: any) {
           <div>
             <p className="text-text-secondary ">
               Unrealized PNL{" "}
-              <span className="block sm:inline text-semantic-success md:text-lg text-xs">
+              <span className="block sm:inline text-semantic-danger md:text-lg text-xs">
                 {positions.unrealized_pnl}
               </span>
             </p>
@@ -148,7 +152,7 @@ export default function PositionsCard(props: any) {
           <div>
             <p className="text-text-secondary text-lg">
               Net Funcding{" "}
-              <span className="block sm:inline text-semantic-danger">
+              <span className="block sm:inline text-semantic-success">
                 {positions.net_funding}
               </span>
             </p>
