@@ -3,6 +3,7 @@ import { DialogContent, DialogTitle } from ".";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useWeb3 } from "@/hooks";
 import { toInt } from "@/utils/etcfunction";
+import { useToast } from "../ui/toast/use-toast";
 
 interface TpslSettingProps {
   setIsModalOpen: (config: boolean) => void;
@@ -23,8 +24,11 @@ interface TpslSettingProps {
 }
 
 const TpSlLists = (props: any) => {
+
+  const { toast } = useToast()
   const { orderBookContract, account, web3 } = useWeb3()
   const [isAnimation, setIsAnimation] = useState<boolean>(false)
+  
   const handleCancelTpSlDecreaseOrder = async () => {
     try {
       setIsAnimation(true)
@@ -37,8 +41,18 @@ const TpSlLists = (props: any) => {
         ]
       ).send({ from: account, gasPrice: gasPrice })
       setIsAnimation(false)
+
+      const { id, dismiss } = toast({
+        title: "Success",
+        description: "TP/SL Trigger Price was closed successfully."
+      })
+
     } catch (error) {
       setIsAnimation(false)
+      const { id, dismiss } = toast({
+        title: "Warning",
+        description: "Faild of Tp/Sl Trigger closing"
+      })
     }
   }
 
@@ -136,7 +150,7 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
             </div>
             <div>
               <p className="text-text-secondary text-sm">
-                Last Price
+                Current Price
                 <span className="block text-white text-sm pt-2">12.4122</span>
               </p>
             </div>

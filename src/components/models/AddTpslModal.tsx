@@ -43,10 +43,19 @@ export default function AddTpslModal({ positions }: TypePosition) {
   const [currentCoinPrice, setCurrentCoinPrice] = useState<number>(0)
   const cancelBtn = useRef<HTMLButtonElement | null>(null);
   const [isAnimation, setIsAnimaion] = useState<boolean>(false)
+  const [tpPricePnL, setTpPricePnL] = useState<number>(0)
+  const [slPricePnL, setSlPricePnL] = useState<number>(0)
   const handleSetTp = (e: any) => {
     const inputValue = e.target.value;
+    if (positions.side == "") return
+
     if (!isNaN(Number(inputValue))) {
       setTp(inputValue);
+      if (positions.side == "long") {
+        setTpPricePnL(tp - Number(positions.entry_price) * Number(positions.size))
+      } else {
+        setTpPricePnL(Number(positions.entry_price) - tp * Number(positions.size))
+      }
     } else {
       setTp(0);
     }
@@ -54,8 +63,15 @@ export default function AddTpslModal({ positions }: TypePosition) {
 
   const handleSetSl = (e: any) => {
     const inputValue = e.target.value;
+    if (positions.side == "") return
+
     if (!isNaN(Number(inputValue))) {
       setSl(inputValue);
+      if (positions.side == "long") {
+        setSlPricePnL(sl - Number(positions.entry_price) * Number(positions.size))
+      } else {
+        setSlPricePnL(Number(positions.entry_price) - sl * Number(positions.size))
+      }
     } else {
       setTp(0);
     }
@@ -150,7 +166,7 @@ export default function AddTpslModal({ positions }: TypePosition) {
             </div>
             <div>
               <p className="text-text-secondary text-sm">
-                Last Price
+                Current Price
                 <span className="block text-white text-sm pt-2">12.4122</span>
               </p>
             </div>
@@ -183,10 +199,10 @@ export default function AddTpslModal({ positions }: TypePosition) {
         <div>
           <p className="text-text-secondary text-justify pr-12">
             When the price reaches
-            <span className="text-white">{tp}</span>
+            <span className="text-white">{" " + tp}</span>
             {" "}
             , it will trigger a Market order, and the estimated PnL will be{" "}
-            <span className="text-semantic-success">29.31 USDC</span>
+            <span className="text-semantic-success">{tpPricePnL.toFixed(2)} USDC</span>
           </p>
         </div>
         <div className="rounded-3xl border border-p-light  p-5 mt-3">
@@ -209,10 +225,10 @@ export default function AddTpslModal({ positions }: TypePosition) {
         <div>
           <p className="text-text-secondary text-justify pr-12">
             When the price reaches
-            <span className="text-white">{sl}</span>
+            <span className="text-white">{" " + sl}</span>
             {" "}
             , it will trigger a Market order, and the estimated PnL will be{" "}
-            <span className="text-semantic-danger">29.31 USDC</span>
+            <span className="text-semantic-danger">{slPricePnL.toFixed(2)} USDC</span>
           </p>
         </div>
         <div className="flex flex-col gap-y-5">
