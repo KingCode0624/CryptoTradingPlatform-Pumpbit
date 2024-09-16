@@ -108,9 +108,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      console.log("Tick Timer123 =>", intervalApiTimer)
       if (isAuthorization == true) {
-        console.log("Tick =>", isAuthorization)
         fetchData();
       }
     }, intervalApiTimer);
