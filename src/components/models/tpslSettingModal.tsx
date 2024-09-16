@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { DialogContent, DialogTitle } from ".";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { useWeb3 } from "@/hooks";
+import { useUtilContext, useWeb3 } from "@/hooks";
 import { toInt } from "@/utils/etcfunction";
 import { useToast } from "../ui/toast/use-toast";
 
@@ -26,9 +26,24 @@ interface TpslSettingProps {
 const TpSlLists = (props: any) => {
 
   const { toast } = useToast()
+  const {
+    tpslGlobalList,
+    istpslDataSync,
+    setTpslGlobalList,
+    setIsTpSlDataSync } = useUtilContext()
   const { orderBookContract, account, web3 } = useWeb3()
   const [isAnimation, setIsAnimation] = useState<boolean>(false)
-  
+
+  const TpSlDataSync = async (index1: number, index2: number) => {
+    let newTpSlList: any = []
+    for (let i = 0; i < tpslGlobalList.length; i++) {
+      if (tpslGlobalList[i].index1 != index1)
+        newTpSlList.push(tpslGlobalList[i])
+    }
+    await setTpslGlobalList(newTpSlList)
+    await setIsTpSlDataSync(true)
+  }
+
   const handleCancelTpSlDecreaseOrder = async () => {
     try {
       setIsAnimation(true)
@@ -42,6 +57,10 @@ const TpSlLists = (props: any) => {
       ).send({ from: account, gasPrice: gasPrice })
       setIsAnimation(false)
 
+      TpSlDataSync(
+        props.newTpSlTriggers.index1,
+        props.newTpSlTriggers.index2
+      )
       const { id, dismiss } = toast({
         title: "Success",
         description: "TP/SL Trigger Price was closed successfully."
@@ -104,19 +123,22 @@ const TpSlLists = (props: any) => {
 }
 
 export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders }: TpslSettingProps) {
-  const { orderBookContract, account, chainId } = useWeb3()
-
+  const { orderBookContract, account, chainId, web3 } = useWeb3()
+  const { marketPrice, tpslGlobalList, setTpslGlobalList } = useUtilContext()
   const [newTpSlTriggers, setNewTpSlTriggers] = useState<any>([])
+  const [isAnimation, setIsAnimation] = useState<boolean>(false)
+  const { toast } = useToast()
+
   useEffect(() => {
     if (tpSlOrders.length == 0) return
     console.log("TpSl Trigger Price is loaded!")
     let _newTpSlOrders: any = []
     for (let i = 0; i < tpSlOrders.length / 2; i++) {
-      const tpTriger = toInt(tpSlOrders[2 * i].triggerMarketPriceX96, chainId)
-      const slTriger = toInt(tpSlOrders[2 * i + 1].triggerMarketPriceX96, chainId)
+      const tpTriger = toInt(tpSlOrders[2 * i + 1].triggerMarketPriceX96, chainId)
+      const slTriger = toInt(tpSlOrders[2 * i].triggerMarketPriceX96, chainId)
       const size = toInt(tpSlOrders[2 * i + 1].sizeDelta, chainId)
-      const index1 = tpSlOrders[2 * i].index
-      const index2 = tpSlOrders[2 * i + 1].index
+      const index1 = tpSlOrders[2 * i + 1].index
+      const index2 = tpSlOrders[2 * i].index
       _newTpSlOrders.push({
         tpTriger: tpTriger,
         slTriger: slTriger,
@@ -125,8 +147,50 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
         index2: index2
       })
     }
-    setNewTpSlTriggers(_newTpSlOrders)
+    // setNewTpSlTriggers(_newTpSlOrders)
+    setTpslGlobalList(_newTpSlOrders)
   }, [tpSlOrders])
+
+  useEffect(() => {
+    setNewTpSlTriggers(tpslGlobalList)
+  }, [tpslGlobalList])
+
+  const handleSetAllTriggerCancel = async () => {
+    try {
+      if (newTpSlTriggers.length == 0) {
+        const { id, dismiss } = toast({
+          title: "Warning",
+          description: "There is no or Loading...."
+        })
+        return
+      }
+      setIsAnimation(true)
+      const minExecutionFee = await orderBookContract.methods.minExecutionFee().call()
+      const gasPrice = await web3.eth.getGasPrice()
+      let tpslIndexList: number[] = []
+      console.log("Cancel All =>", newTpSlTriggers)
+      for (let i = 0; i < newTpSlTriggers.length; i++) {
+        tpslIndexList.push(Number(newTpSlTriggers[i].index1))
+        tpslIndexList.push(Number(newTpSlTriggers[i].index2))
+      }
+      await orderBookContract.methods.cancelDecreaseOrdersBatch(
+        tpslIndexList
+      ).send({ from: account, gasPrice: gasPrice })
+      setIsAnimation(false)
+
+      const { id, dismiss } = toast({
+        title: "Success",
+        description: "All TP/SL Trigger Price was closed successfully."
+      })
+
+    } catch (error) {
+      setIsAnimation(false)
+      const { id, dismiss } = toast({
+        title: "Warning",
+        description: "Faild of Tp/Sl Trigger closing"
+      })
+    }
+  }
 
   return (
     <div>
@@ -151,7 +215,7 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
             <div>
               <p className="text-text-secondary text-sm">
                 Current Price
-                <span className="block text-white text-sm pt-2">12.4122</span>
+                <span className="block text-white text-sm pt-2">{marketPrice.close.toFixed(2)}</span>
               </p>
             </div>
             <div>
@@ -170,7 +234,23 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
             </p>
           </div>
           <div>
-            <p className="text-white text-sm font-semibold ">Cancel all</p>
+            <button
+              className="text-white text-sm font-semibold "
+              onClick={() => {
+                handleSetAllTriggerCancel()
+              }}
+            >
+              {
+                !isAnimation ?
+                  "Cancel All" :
+                  (
+                    <div className="stage">
+                      <div className='dot-typing'>
+                      </div>
+                    </div>
+                  )
+              }
+            </button>
           </div>
           <div>
             <button

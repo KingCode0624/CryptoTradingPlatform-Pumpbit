@@ -45,6 +45,8 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return "btcusdt"
     })
     const [isAuthorization, setIsAuthorization] = useState<boolean>(false)
+    const [tpslGlobalList, setTpslGlobalList] = useState<any>([])
+    const [istpslDataSync, setIsTpSlDataSync] = useState<boolean>(true)
 
     const setExpiryTime = () => {
         const idleTime = 3 // Set expiry time to 5 minutes from now 
@@ -91,6 +93,8 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         intervalApiTimer: intervalApiTimer,
         isIdle: isIdle,
         isAuthorization: isAuthorization,
+        tpslGlobalList: tpslGlobalList,
+        istpslDataSync: istpslDataSync,
         setMarketOrderType: setMarketOrderType,
         setSlipRate: setSlipRate,
         setHeaderPrice: setHeaderPrice,
@@ -99,7 +103,9 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setMarketPair: setMarketPair,
         setIntervalApiTimer: setIntervalApiTimer,
         setIsIdle: setIsIdle,
-        setIsAuthorization: setIsAuthorization
+        setIsAuthorization: setIsAuthorization,
+        setTpslGlobalList: setTpslGlobalList,
+        setIsTpSlDataSync: setIsTpSlDataSync,
     }), [
         marketPrice,
         headerPrice,
@@ -109,6 +115,8 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         intervalApiTimer,
         isIdle,
         isAuthorization,
+        tpslGlobalList,
+        istpslDataSync,
         setIsIdle,
         setMarketPair,
         setSlipRate,
@@ -116,7 +124,9 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setMarketPrice,
         setLanguage,
         setIntervalApiTimer,
-        setIsAuthorization
+        setIsAuthorization,
+        setTpslGlobalList,
+        setIsTpSlDataSync
     ])
 
     useEffect(() => {
@@ -148,13 +158,6 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     useEffect(() => {
         init();
     }, [account])
-
-    useEffect(() => {
-        localStorage.setItem("accessToken", "false")
-        if (isConnected == true) {
-            setIntervalApiTimer(1000)
-        }
-    }, [isConnected])
 
     useEffect(() => {
         console.log("IntervalTimer =>", intervalApiTimer)
