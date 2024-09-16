@@ -154,13 +154,13 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
           }
         </button>
 
-        <button
+        {/* <button
           onClick={() => setTypeOfGraph("Depth")}
         >
           {
             language === "EN" ? Lang_Depth.en : Lang_Depth.ch
           }
-        </button>
+        </button> */}
       </div>
       <hr className="border border-border  " />
       <div className=" flex justify-between py-2 px-5">
