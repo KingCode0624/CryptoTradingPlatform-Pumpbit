@@ -161,7 +161,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     useEffect(() => {
         console.log("IntervalTimer =>", intervalApiTimer)
-    }, [intervalApiTimer, isConnected])
+    }, [intervalApiTimer])
 
     useEffect(() => {
         console.log("IsIdle =>", isIdle)

@@ -140,7 +140,7 @@ const TradeTabs = () => {
     if (isConnected == true) {
       ReAuthorization()
     }
-  }, [intervalApiTimer])
+  }, [intervalApiTimer, isConnected])
 
   useEffect(() => {
     const interval = setInterval(() => {
