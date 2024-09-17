@@ -93,6 +93,8 @@ export default function AddTpslModal({ positions }: TypePosition) {
       tpTriger: tp,
       slTriger: sl,
       size: size,
+      side1: positions.side == "long" ? 1 : 2,
+      side2: positions.side == "long" ? 1 : 2,
       index1: 0,
       index2: 0
     })

@@ -6,9 +6,6 @@ interface PercentType {
     percent: number,
 }
 const RectProgressBar = ({ percent }: PercentType) => {
-    useEffect(() => {
-        console.log("% =>", percent / 20)
-    }, [percent])
     return (
         <div className="w-[50px] h-[20px] flex justify-center items-center gap-1">
             <div className={`w-[2px] rounded-xl h-[15px] ${percent / 20 >= 1 ? "bg-semantic-success" : "bg-[#b4b3b5]"}`}></div>
@@ -19,5 +16,4 @@ const RectProgressBar = ({ percent }: PercentType) => {
         </div>
     )
 }
-
 export default RectProgressBar

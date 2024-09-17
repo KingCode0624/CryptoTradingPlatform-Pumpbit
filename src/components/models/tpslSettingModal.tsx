@@ -4,6 +4,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useUtilContext, useWeb3 } from "@/hooks";
 import { toInt } from "@/utils/etcfunction";
 import { useToast } from "../ui/toast/use-toast";
+import { PostionTable } from "../earnPageTabs/postionTable";
 
 interface TpslSettingProps {
   setIsModalOpen: (config: boolean) => void;
@@ -139,10 +140,14 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
       const size = toInt(tpSlOrders[2 * i + 1].sizeDelta, chainId)
       const index1 = tpSlOrders[2 * i + 1].index
       const index2 = tpSlOrders[2 * i].index
+      const side1 = tpSlOrders[2 * i + 1].side
+      const side2 = tpSlOrders[2 * i].side
       _newTpSlOrders.push({
         tpTriger: tpTriger,
         slTriger: slTriger,
         size: size,
+        side1: side1,
+        side2: side2,
         index1: index1,
         index2: index2
       })
@@ -152,6 +157,7 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
   }, [tpSlOrders])
 
   useEffect(() => {
+    console.log("Global =>", tpslGlobalList)
     setNewTpSlTriggers(tpslGlobalList)
   }, [tpslGlobalList])
 
@@ -168,7 +174,6 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
       const minExecutionFee = await orderBookContract.methods.minExecutionFee().call()
       const gasPrice = await web3.eth.getGasPrice()
       let tpslIndexList: number[] = []
-      console.log("Cancel All =>", newTpSlTriggers)
       for (let i = 0; i < newTpSlTriggers.length; i++) {
         tpslIndexList.push(Number(newTpSlTriggers[i].index1))
         tpslIndexList.push(Number(newTpSlTriggers[i].index2))
@@ -262,11 +267,14 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
           </div>
         </div>
         {
-          newTpSlTriggers.map((itx: any, idx: any) => (
-            <TpSlLists newTpSlTriggers={itx} key={idx} />
-          ))
+          positions.side == "long" ?
+            newTpSlTriggers.filter((itx: any) => Number(itx.side1) == 1 && Number(itx.side2) == 1).map((itx: any, idx: any) => (
+              <TpSlLists newTpSlTriggers={itx} key={idx} />
+            )) :
+            newTpSlTriggers.filter((itx: any) => Number(itx.side1) == 2 && Number(itx.side2) == 2).map((itx: any, idx: any) => (
+              <TpSlLists newTpSlTriggers={itx} key={idx} />
+            ))
         }
-
       </DialogContent>
     </div>
   );
