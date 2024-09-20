@@ -160,7 +160,8 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
       const marginDelta = BigInt(toWei(orderInitPay, chainId))
       const sizeDelta = BigInt(toWei(estimatedEth, chainId))
       const triggerMarketPrice = BigInt(ToPriceX96(entryPrice))
-      const triggerAbove = selectedOrderType === strMarket ? true : false
+      const triggerAbove = true
+      // const triggerAbove = selectedOrderType === strMarket ? true : false
       // const acceptablePrice = side == 1 ?
       //   toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId) :
       //   toWei(currentEthPrice * (1 - acceptabelRate / 100), chainId)
