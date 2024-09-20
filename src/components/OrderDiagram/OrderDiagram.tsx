@@ -152,22 +152,29 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
 
   const CreateIncreaseOrderBook = async () => {
     try {
-
       // this means 10%
       const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
-      let minExecuteFee = getMinexecuteFee()
-
+      // let minExecuteFee = BigInt(Number(getMinexecuteFee()) * 2)
+      let minExecuteFee = await orderBookContract.methods.minExecutionFee().call()
       const side: number = selectedSide === strLong ? 1 : 2
       const marginDelta = BigInt(toWei(orderInitPay, chainId))
       const sizeDelta = BigInt(toWei(estimatedEth, chainId))
       const triggerMarketPrice = BigInt(ToPriceX96(entryPrice))
-      const triggerAbove = selectedSide === strLong ? false : true
+      const triggerAbove = selectedOrderType === strMarket ? true : false
+      // const acceptablePrice = side == 1 ?
+      //   toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId) :
+      //   toWei(currentEthPrice * (1 - acceptabelRate / 100), chainId)
+
       const acceptablePrice = side == 1 ?
-        toWei(currentEthPrice * (1 + acceptabelRate / 100), chainId) :
-        toWei(currentEthPrice * (1 - acceptabelRate / 100), chainId)
+        BigInt(ToPriceX96(currentEthPrice * (1 + acceptabelRate / 100))) :
+        BigInt(ToPriceX96(currentEthPrice * (1 - acceptabelRate / 100)))
 
       const gasPrice = await web3.eth.getGasPrice()
-
+      console.log("Margin =>", marginDelta)
+      console.log("SizeDelta =>", sizeDelta)
+      console.log("triggerMarketPlace =>", triggerMarketPrice)
+      console.log("Acceptable Price =>", acceptablePrice)
+      console.log("Trigger Aboe =>", triggerAbove)
       await orderBookContract.methods.createIncreaseOrder(
         market,
         side,
@@ -294,6 +301,8 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
     } catch (err) {
     }
   }
+
+
 
   useEffect(() => {
     if (isWeb3Loading) getTokenBalance()
