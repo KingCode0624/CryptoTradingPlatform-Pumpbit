@@ -19,7 +19,6 @@ export default function PositionHistoryCard({ liquidityData, index }: any) {
 
     if (liquidityData === undefined) return
 
-    console.log("Prop => ", liquidityData)
     setMargin(toInt(Number(liquidityData.marginDelta), chainId))
     setLiquidity(toInt(Number(liquidityData.liquidityDelta), chainId))
     setLiquidityAccount(String(liquidityData.account))

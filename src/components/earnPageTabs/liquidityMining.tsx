@@ -10,7 +10,7 @@ import { useUtilContext } from "@/hooks";
 import { Lang_Add } from "@/constants/language";
 import { useWeb3 } from "@/hooks";
 import { toInt } from "@/utils/etcfunction";
-
+import Loading from "../ui/loading";
 type TableRowProps = {
   pool: string;
   maxAPR: number;
@@ -48,7 +48,7 @@ export const TableRow = (props: TableRowType) => {
   const [myLiquidity, setMyLiquidity] = useState<number>(0)
   const [totalLiquidity, setTotalLiquidity] = useState<number>(0)
   const [isVisibleModel, setIsVisibleModal] = useState<boolean>(false)
-
+  const [isLiquidityDataLoading, setIsLiquidityDataLoading] = useState<boolean>(false)
   useEffect(() => {
     setIsLoading(false)
   }, [language])
@@ -60,25 +60,22 @@ export const TableRow = (props: TableRowType) => {
       let _result: any[] = []
       let _totalPoolLiquidity: number = 0
       let _myPoolLiquidity: number = 0
-      console.log("idx =>", liquidityIndex)
-
-      for (let i = 0; i < liquidityIndex; i++) {
+      await setIsLiquidityDataLoading(true)
+      for (let i = liquidityIndex; i >= 30; i--) {
         const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
-        console.log("Result =>", i, " =>", result)
         _totalPoolLiquidity = _totalPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
 
         if (account === result.account) {
           _myPoolLiquidity = _myPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
-          
+
           if (result.liquidityDelta != 0)
             _result.push(result)
         }
-
-
       }
-      setLiquidityData(_result)
-      setMyLiquidity(_myPoolLiquidity)
-      setTotalLiquidity(_totalPoolLiquidity)
+      await setLiquidityData(_result)
+      await setMyLiquidity(_myPoolLiquidity)
+      await setTotalLiquidity(_totalPoolLiquidity)
+      await setIsLiquidityDataLoading(false)
     } catch (err) {
 
     }
@@ -112,8 +109,10 @@ export const TableRow = (props: TableRowType) => {
           <p>Coming soon</p>
         </td>
         <td align="center">Coming soon</td>
-        <td align="center">{totalLiquidity} USDC</td>
-        <td align="center">{myLiquidity} USDC</td>
+        <td align="center">
+          {isLiquidityDataLoading ? <Loading /> : totalLiquidity + " USDC"}
+        </td>
+        <td align="center">{isLiquidityDataLoading ? <Loading /> : myLiquidity + " USDC"} </td>
 
         <td align="center">
           <button className="px-2 py-1" onClick={() => {
@@ -136,7 +135,6 @@ export const TableRow = (props: TableRowType) => {
               </button>
             </DialogTrigger>
             <AddLiquidityModal />
-
           </Dialog>
         </td>
       </tr>
@@ -148,9 +146,6 @@ export const TableRow = (props: TableRowType) => {
               "max-h-0 ": !expanded,
             })}
           >
-            {/* <PositionHistoryCard
-              liquidityData={liquidityData}
-            /> */}
             {
               liquidityData.map((item, idx) => (
                 <PositionHistoryCard

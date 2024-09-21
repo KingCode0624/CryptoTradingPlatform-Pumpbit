@@ -71,19 +71,13 @@ export default function AddLiquidityModal() {
     const gasPrice = await web3.eth.getGasPrice()
     setAnimation(true)
 
-    const acceptableRate = 10
+    const acceptableRate = 30
     let minExecuteFee = getMinexecuteFee()
     const market = await marketDescriptorDeployerContract.methods.descriptors("BTC").call()
-    const acceptablePrice = margin * (1 + acceptableRate / 100)
-
-    console.log("Market =>", market)
-    console.log("Margin =>", margin)
-    console.log("Liquidity =>", liquidity)
-    console.log("Accet+>", acceptablePrice)
+    const acceptablePrice = margin * (1 - acceptableRate / 100)
 
     let positionRouterAddr: string = ""
     let routerAddr: string = ""
-    console.log("Chain ID =>", chainId)
 
     if (chainId == b2testnetChainId) {
       console.log("Chain is => b2", chainId, " ", b2testnetChainId)
@@ -113,9 +107,7 @@ export default function AddLiquidityModal() {
 
       }
 
-
     const isApproved = await routerContract.methods.isPluginApproved(account, positionRouterAddr).call()
-    console.log("Is Approved =>", isApproved)
     if (isApproved === false) {
       try {
         await routerContract.methods.approvePlugin(positionRouterAddr).send({ from: account, gasPrice: gasPrice })
@@ -123,12 +115,6 @@ export default function AddLiquidityModal() {
 
       }
     }
-
-    console.log("Approved")
-
-    console.log("Margin =>", margin)
-    console.log("Liquidity =>", liquidity)
-    console.log("accepPrice =>", acceptablePrice)
 
     try {
       await positionRouterContract.methods.createIncreaseLiquidityPosition(

@@ -31,7 +31,6 @@ const EarnTabs = () => {
     }
   ])
 
-
   useEffect(() => {
     let pair: string = ""
     const _pair = localStorage.getItem('pair')
@@ -48,7 +47,6 @@ const EarnTabs = () => {
     ])
   }, [marketPair])
 
-
   useEffect(() => {
     setIsLoading(false)
   }, [language])
@@ -59,8 +57,6 @@ const EarnTabs = () => {
       Loading ...
     </div>
   )
-
-
 
   const PositionMiningTitle = [
     {
@@ -86,7 +82,6 @@ const EarnTabs = () => {
       Loading ...
     </div>
   )
-
 
   return (
     <div>
