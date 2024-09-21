@@ -457,7 +457,7 @@ export default function OrderDiagram({ selectedPair }: OrderDiagramProps) {
             <p className="mr-auto text-p-light">
               {language === "EN" ? Lang_EntryPrice.en : Lang_EntryPrice.ch}
             </p>
-            <p>{entryPrice}</p>
+            <p>{entryPrice.toFixed(5)}</p>
           </div>
           <div className="flex flex-row">
             <p className="mr-auto text-p-light">

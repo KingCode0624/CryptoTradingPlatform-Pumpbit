@@ -41,7 +41,7 @@ const TradeTabs = () => {
   const [isApiIdle, setIsApiIdle] = useState<boolean>(false)
 
   const getTpSlLists = async () => {
-    console.log("Blockchain Data Loading ....")
+    console.log("Blockchain Liquidity Data Loading ....")
     const index = await orderBookContract.methods.ordersIndexNext().call()
 
     let _tpslOrders: any = []
@@ -63,7 +63,7 @@ const TradeTabs = () => {
         })
       }
     }
-    console.log("Blockchain Data Loaing is finished")
+    console.log("Blockchain Liquidity Data finished !!!")
     await setIsTpSlDataSync(false)
     await setTpSlOrders(_tpslOrders)
   }
