@@ -29,7 +29,7 @@ const TradeTabs = () => {
     isAuthorization,
     istpslDataSync,
     setIsTpSlDataSync,
-    isIdle
+    isIdle,
   } = useUtilContext()
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [positions, setPositions] = useState<any>([])

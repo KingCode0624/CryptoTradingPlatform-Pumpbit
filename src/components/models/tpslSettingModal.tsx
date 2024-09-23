@@ -268,10 +268,10 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
         </div>
         {
           positions.side == "long" ?
-            newTpSlTriggers.filter((itx: any) => Number(itx.side1) == 1 && Number(itx.side2) == 1).map((itx: any, idx: any) => (
+            newTpSlTriggers.filter((itx: any) => Number(itx.side1) == 1 && Number(itx.side2) == 1 && Number(Math.abs(itx.index1 - itx.index2)) == 1).map((itx: any, idx: any) => (
               <TpSlLists newTpSlTriggers={itx} key={idx} />
             )) :
-            newTpSlTriggers.filter((itx: any) => Number(itx.side1) == 2 && Number(itx.side2) == 2).map((itx: any, idx: any) => (
+            newTpSlTriggers.filter((itx: any) => Number(itx.side1) == 2 && Number(itx.side2) == 2 && Number(Math.abs(itx.index1 - itx.index2)) == 1).map((itx: any, idx: any) => (
               <TpSlLists newTpSlTriggers={itx} key={idx} />
             ))
         }
