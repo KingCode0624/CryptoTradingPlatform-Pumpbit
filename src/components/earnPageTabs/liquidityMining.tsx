@@ -14,6 +14,7 @@ import Loading from "../ui/loading";
 import { getLiquidityPosition, getPool } from "@/services/markets";
 import { chain, market } from "@/constants/index"
 import { GiCardKingClubs } from "react-icons/gi";
+import { Authorization, Refresh } from "@/authorization"
 
 type TableRowProps = {
   pool: string;
@@ -70,43 +71,101 @@ export const TableRow = (props: TableRowType) => {
       }
     ]
   }
+  const { web3, account, isConnected, orderBookContract, isWeb3Loading } = useWeb3()
+  const {
+    language,
+    intervalApiTimer,
+    setIntervalApiTimer,
+    setIsAuthorization,
+    isAuthorization,
+    istpslDataSync,
+    setIsTpSlDataSync,
+    isIdle,
+  } = useUtilContext()
 
-  const { language, intervalApiTimer } = useUtilContext()
-  const { positionRouterContract, account, chainId } = useWeb3()
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [expanded, setExpanded] = useState<boolean>(false)
   const [liquidityData, setLiquidityData] = useState<any>([]);
   const [myTotalLiquidity, setMyTotalLiquidity] = useState<number>(0)
   const [myLiquidityPosition, setMyLiquidityPosition] = useState<any>()
   const [publicPool, setPublicPool] = useState<PublicPoolType>()
+  const [isTimer, setTimer] = useState<boolean>(false)
 
   useEffect(() => {
     setIsLoading(false)
   }, [language])
 
-  const GetLiquidityPosition = async () => {
+  const initAuthorization = async () => {
+    if (account === undefined) return
+    const result = await Authorization(account, web3)
+    await localStorage.setItem("accessToken", result.access_token)
+    await localStorage.setItem("refreshToken", result.refresh_token)
+  }
+
+  const reFreshAuthorization = async (refreshToken: string) => {
+    const result: any = await Refresh(refreshToken)
+    await localStorage.setItem("accessToken", result.access_token)
+  }
+
+  const ReAuthorization = async () => {
+    await setTimer(true)
+    await setIsAuthorization(false)
+    if (account === undefined) return
+
     const accessToken: string = localStorage.getItem("accessToken") as string
-    const poolResult = await getPool(accessToken, market, chain)
-    await setPublicPool(poolResult.data)
+    const refreshToken: string = localStorage.getItem("refreshToken") as string
 
-    const _myLiquidityPosition = await getLiquidityPosition(accessToken, market, chain)
-    await setMyLiquidityPosition(_myLiquidityPosition.data)
-
-    let total_sum = 0
-    for (let i = 0; i < length; i++) {
-      total_sum += Number(_myLiquidityPosition.data.liquidity_positions[i].liquidity)
+    if (refreshToken == null || refreshToken == "undefined") {
+      await initAuthorization()
+      await setTimer(false)
     }
+    else {
+      try {
+        await reFreshAuthorization(refreshToken)
+        await setTimer(false)
+      } catch (error) {
+        await initAuthorization()
+      }
+    }
+    console.log("Authorization is finished", intervalApiTimer)
+    await setIntervalApiTimer(1000)
+    await setIsLoading(false)
+    await setIsAuthorization(true)
+  }
 
-    await setMyTotalLiquidity(Number(total_sum))
 
-    await setLiquidityData(_myLiquidityPosition.data.liquidity_positions)
+  const GetLiquidityPosition = async () => {
+    try {
+      console.log("Liquidity is Loading")
+      const accessToken: string = localStorage.getItem("accessToken") as string
+      const poolResult = await getPool(accessToken, market, chain)
+      await setPublicPool(poolResult.data)
+
+      const _myLiquidityPosition = await getLiquidityPosition(accessToken, market, chain)
+      await setMyLiquidityPosition(_myLiquidityPosition.data)
+
+      let total_sum = 0
+      for (let i = 0; i < length; i++) {
+        total_sum += Number(_myLiquidityPosition.data.liquidity_positions[i].liquidity)
+      }
+
+      await setMyTotalLiquidity(Number(total_sum))
+
+      await setLiquidityData(_myLiquidityPosition.data.liquidity_positions)
+    } catch (err) {
+      ReAuthorization()
+    }
   }
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      await GetLiquidityPosition()
+      if (isTimer == false)
+        await GetLiquidityPosition()
     }, 4000)
+    return () => clearInterval(interval)
   }, [])
+
+
 
   if (isLoading)
     return (
