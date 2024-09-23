@@ -20,7 +20,7 @@ import { Authorization, Refresh } from "@/authorization"
 import { SetOrdersDataProcess } from "@/utils/etcfunction";
 
 const TradeTabs = () => {
-  const { web3, account, isConnected, orderBookContract, isWeb3Loading } = useWeb3()
+  const { web3, account, isConnected, orderBookContract, isWeb3Loading, positionRouterContract } = useWeb3()
   const {
     language,
     intervalApiTimer,
@@ -112,7 +112,13 @@ const TradeTabs = () => {
     await setIsLoading(false)
     await setIsAuthorization(true)
   }
-  
+
+  const getPositiosFromBlockchain = async () => {
+    const index = await positionRouterContract.methods.decreasePositionIndex().call()
+    const index1 = await positionRouterContract.methods.decreasePositionIndexNext().call()
+    console.log("position index1 =>", index1)
+  }
+
   const getDatas = async () => {
     if (isApiIdle == true) return
     console.log("Back-End Loading ...")
