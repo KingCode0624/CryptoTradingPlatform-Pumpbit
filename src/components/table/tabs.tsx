@@ -41,11 +41,11 @@ const TradeTabs = () => {
   const [isApiIdle, setIsApiIdle] = useState<boolean>(false)
 
   const getTpSlLists = async () => {
-    console.log("Blockchain Liquidity Data Loading ....")
     const index = await orderBookContract.methods.ordersIndexNext().call()
+    console.log("Blockchain Tp/Sl Data Loading ....", index)
 
     let _tpslOrders: any = []
-    for (let i = Number(index) - 1; i > 2040; i--) {
+    for (let i = Number(index) - 1; i > 3230; i--) {
       const __tpslOrder = await orderBookContract.methods.decreaseOrders(i).call()
       if (__tpslOrder.receiver == account) {
         _tpslOrders.push({
@@ -64,6 +64,7 @@ const TradeTabs = () => {
       }
     }
     console.log("Blockchain Liquidity Data finished !!!")
+    console.log("Tp/Sl =>", _tpslOrders)
     await setIsTpSlDataSync(false)
     await setTpSlOrders(_tpslOrders)
   }

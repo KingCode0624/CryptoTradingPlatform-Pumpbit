@@ -134,7 +134,7 @@ export default function TpslSettingModal({ setIsModalOpen, positions, tpSlOrders
     if (tpSlOrders.length == 0) return
     console.log("TpSl Trigger Price is loaded!")
     let _newTpSlOrders: any = []
-    for (let i = 0; i < tpSlOrders.length / 2; i++) {
+    for (let i = 0; i < tpSlOrders.length / 2 - 1; i++) {
       const tpTriger = toInt(tpSlOrders[2 * i + 1].triggerMarketPriceX96, chainId)
       const slTriger = toInt(tpSlOrders[2 * i].triggerMarketPriceX96, chainId)
       const size = toInt(tpSlOrders[2 * i + 1].sizeDelta, chainId)
