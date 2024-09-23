@@ -87,9 +87,9 @@ const EarnTabs = () => {
     <div>
       <div className="rounded-3xl backdrop-blur-lg/2 bg-card border border-border ">
         <Tabs defaultValue="Position Mining">
-          <TabsList className="py-5 lg:px-7  px-3 lg:overflow-hidden overflow-x-scroll flex justify-between items-center border-b border-border rounded-none">
-            <div className="flex justify-center items-center gap-x-3 lg:gap-x-5">
-              {/* <TabsTrigger value="Staking">Staking</TabsTrigger> */}
+          <TabsList
+            className="custom-scrollbar px-3 lg:overflow-hidden overflow-x-scroll flex flex-col justify-between items-center border-border rounded-none">
+            <div className="flex w-[100%] py-5 lg:px-7  justify-start items-center gap-x-3 lg:gap-x-5">
               <TabsTrigger value="Position Mining">
                 {language === 'EN' ? Lang_PositionMining.en : Lang_PositionMining.ch}
               </TabsTrigger>
@@ -99,29 +99,29 @@ const EarnTabs = () => {
                 }
               </TabsTrigger>
             </div>
-            <div>
-              <div className="hidden lg:flex justify-end  items-center w-full font-bold text-xl">
-              </div>
-            </div>
+
+            <TabsContent
+              className="w-[100%] mt-[-40px]"
+              value="Position Mining"          >
+              {
+                PositionMiningTitle.map((it, idx) => (
+                  <PositionMiningCard
+                    key={idx}
+                    title={PositionMiningTitle}
+                    data={positionMiningData} />
+                ))
+              }
+            </TabsContent>
+
+            <TabsContent
+              className="w-full mt-[-40px] "
+              value="Liquidity Mining">
+              <LMiningAndPFiler
+                title={Titles}
+                data={liquidityData}
+              />
+            </TabsContent>
           </TabsList>
-
-          <TabsContent value="Position Mining">
-            {
-              PositionMiningTitle.map((it, idx) => (
-                <PositionMiningCard
-                  key={idx}
-                  title={PositionMiningTitle}
-                  data={positionMiningData} />
-              ))
-            }
-          </TabsContent>
-          <TabsContent value="Liquidity Mining">
-            <LMiningAndPFiler
-              title={Titles}
-              data={liquidityData}
-            />
-          </TabsContent>
-
         </Tabs>
       </div>
     </div>

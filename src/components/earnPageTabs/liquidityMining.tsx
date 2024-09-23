@@ -90,6 +90,7 @@ export const TableRow = (props: TableRowType) => {
   const [myLiquidityPosition, setMyLiquidityPosition] = useState<any>()
   const [publicPool, setPublicPool] = useState<PublicPoolType>()
   const [isTimer, setTimer] = useState<boolean>(false)
+  const [isApiIdle, setIsApiIdle] = useState<boolean>(false)
 
   useEffect(() => {
     setIsLoading(false)
@@ -149,23 +150,40 @@ export const TableRow = (props: TableRowType) => {
         total_sum += Number(_myLiquidityPosition.data.liquidity_positions[i].liquidity)
       }
 
+      await setLiquidityData(_myLiquidityPosition.data.liquidity_positions)
       await setMyTotalLiquidity(Number(total_sum))
 
-      await setLiquidityData(_myLiquidityPosition.data.liquidity_positions)
     } catch (err) {
-      ReAuthorization()
     }
   }
 
+  // useEffect(() => {
+  //   const interval = setInterval(async () => {
+  //     if (isTimer == false)
+  //       await GetLiquidityPosition()
+  //   }, 4000)
+  //   return () => clearInterval(interval)
+  // }, [])
+
   useEffect(() => {
-    const interval = setInterval(async () => {
-      if (isTimer == false)
-        await GetLiquidityPosition()
-    }, 4000)
+    if (isConnected == true) {
+      ReAuthorization()
+    }
+  }, [intervalApiTimer, isConnected])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isAuthorization == true) {
+        GetLiquidityPosition()
+      }
+    }, intervalApiTimer)
+
     return () => clearInterval(interval)
-  }, [])
+  }, [intervalApiTimer, isAuthorization, isApiIdle])
 
-
+  useEffect(() => {
+    setIsApiIdle(isIdle)
+  }, [isIdle])
 
   if (isLoading)
     return (
@@ -192,18 +210,26 @@ export const TableRow = (props: TableRowType) => {
           </p>
         </td>
         <td align="center">
-          {
-            publicPool && publicPool.pools.length > 0
-              ? `${publicPool.pools[0].fee_income}`
-              : "Loading"
-          }
+          <p className="w-[150px]">
+            {
+              publicPool && publicPool.pools.length > 0
+                ? `${publicPool.pools[0].fee_income}`
+                : "Loading"
+            }
+          </p>
         </td>
         <td align="center">
-          {publicPool && publicPool.pools.length > 0
-            ? `${publicPool.pools[0].liquidity} USDC`
-            : "Loading"}
+          <p className="w-[150px]">
+            {publicPool && publicPool.pools.length > 0
+              ? `${publicPool.pools[0].liquidity} USDC`
+              : "Loading"}
+          </p>
         </td>
-        <td align="center">{myTotalLiquidity + "USDC"} </td>
+        <td align="center">
+          <p className="w-[150px]">
+            {myTotalLiquidity + " USDC"}
+          </p>
+        </td>
 
         <td align="center">
           <button className="px-2 py-1" onClick={() => {
@@ -228,7 +254,7 @@ export const TableRow = (props: TableRowType) => {
             <AddLiquidityModal />
           </Dialog>
         </td>
-      </tr>
+      </tr >
       <tr>
         <td colSpan={9}>
           <div

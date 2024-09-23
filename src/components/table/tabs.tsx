@@ -112,6 +112,7 @@ const TradeTabs = () => {
     await setIsLoading(false)
     await setIsAuthorization(true)
   }
+  
   const getDatas = async () => {
     if (isApiIdle == true) return
     console.log("Back-End Loading ...")
