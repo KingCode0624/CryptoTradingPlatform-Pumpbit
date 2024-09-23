@@ -47,7 +47,6 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [isAuthorization, setIsAuthorization] = useState<boolean>(false)
     const [tpslGlobalList, setTpslGlobalList] = useState<any>([])
     const [istpslDataSync, setIsTpSlDataSync] = useState<boolean>(true)
-
     const setExpiryTime = () => {
         const idleTime = 3 // Set expiry time to 5 minutes from now 
         const expiryTime = Date.now() + idleTime * 60 * 1000;
@@ -126,7 +125,7 @@ export const UtilContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         setIntervalApiTimer,
         setIsAuthorization,
         setTpslGlobalList,
-        setIsTpSlDataSync
+        setIsTpSlDataSync,
     ])
 
     useEffect(() => {

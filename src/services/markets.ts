@@ -1,5 +1,5 @@
 import client, { tickets } from "./client";
-
+import axios from "axios";
 export async function getPublicMarket(market: string, chain: string) {
   try {
     const response = await client.get("/public/market", {
@@ -83,9 +83,6 @@ export async function getOrders(accessToken: string, market: string, chain: stri
 
   try {
     const orders = await client.get(`/orders/`, {
-      // headers: {
-      //   'Authorization': `${accessToken}` // Use the provided accessToken
-      // },
       headers: {
         "X-CMC_PRO_API_KEY": process.env.REACT_APP_MARKET_CAP_KEY,
         "Authorization": accessToken
@@ -107,9 +104,6 @@ export async function getHistories(accessToken: string, market: string, chain: s
 
   try {
     const histories = await client.get(`/position/histories`, {
-      // headers: {
-      //   'Authorization': `${accessToken}` // Use the provided accessToken
-      // },
       headers: {
         "X-CMC_PRO_API_KEY": process.env.REACT_APP_MARKET_CAP_KEY,
         "Authorization": accessToken
@@ -124,5 +118,42 @@ export async function getHistories(accessToken: string, market: string, chain: s
 
   } catch (err) {
     console.log("Error => ", err)
+  }
+}
+
+export async function getPool(accessToken: string, market: string, chain: string) {
+  try {
+    const pool = await client.get("/public/pools", {
+      headers: {
+        "X-CMC_PRO_API_KEY": process.env.REACT_APP_MARKET_CAP_KEY,
+        "Authorization": accessToken
+      },
+      params: {
+        chain: chain,
+        market: market
+      }
+    }
+    )
+    return pool.data
+  } catch (err) {
+    console.log("Error =>", err)
+  }
+}
+
+export async function getLiquidityPosition(accessToken: string, market: string, chain: string) {
+  try {
+    const liquidityPosition = await client.get(`/liquidity-positions`,
+      {
+        headers: {
+          'Authorization': accessToken
+        },
+        params: {
+          chain: "b_square_testnet",
+          market: "btcusdt"
+        }
+      })
+    return liquidityPosition.data
+  } catch (err) {
+    console.log("Error =>", err)
   }
 }

@@ -11,6 +11,10 @@ import { Lang_Add } from "@/constants/language";
 import { useWeb3 } from "@/hooks";
 import { toInt } from "@/utils/etcfunction";
 import Loading from "../ui/loading";
+import { getLiquidityPosition, getPool } from "@/services/markets";
+import { chain, market } from "@/constants/index"
+import { GiCardKingClubs } from "react-icons/gi";
+
 type TableRowProps = {
   pool: string;
   maxAPR: number;
@@ -23,7 +27,6 @@ type TableRowProps = {
   isOpen: boolean;
   toggleAccordion: (index: number) => void;
 };
-
 
 type TableRowType = {
   pool: string;
@@ -40,55 +43,70 @@ type TableRowType = {
 };
 
 export const TableRow = (props: TableRowType) => {
-  const { language } = useUtilContext()
+  type PublicPoolType = {
+    chain: '',
+    pools: [
+      {
+        market: '',
+        market_display: '',
+        max_apr: '',
+        fee_income: '',
+        liquidity: '',
+        balance_rate: ''
+      }
+    ]
+  }
+
+  type MyLiquidityPositionType = {
+    chain: '',
+    liquidity_positions: [
+      {
+        market: '',
+        market_display: '',
+        margin: '',
+        liquidity: '',
+        leverage: '',
+        unrealized_pnl: ''
+      }
+    ]
+  }
+
+  const { language, intervalApiTimer } = useUtilContext()
   const { positionRouterContract, account, chainId } = useWeb3()
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [expanded, setExpanded] = useState<boolean>(false);
-  const [liquidityData, setLiquidityData] = useState<any[]>([])
-  const [myLiquidity, setMyLiquidity] = useState<number>(0)
-  const [totalLiquidity, setTotalLiquidity] = useState<number>(0)
-  const [isVisibleModel, setIsVisibleModal] = useState<boolean>(false)
-  const [isLiquidityDataLoading, setIsLiquidityDataLoading] = useState<boolean>(false)
+  const [expanded, setExpanded] = useState<boolean>(false)
+  const [liquidityData, setLiquidityData] = useState<any>([]);
+  const [myTotalLiquidity, setMyTotalLiquidity] = useState<number>(0)
+  const [myLiquidityPosition, setMyLiquidityPosition] = useState<any>()
+  const [publicPool, setPublicPool] = useState<PublicPoolType>()
+
   useEffect(() => {
     setIsLoading(false)
   }, [language])
 
   const GetLiquidityPosition = async () => {
-    try {
-      const liquidityIndex = await positionRouterContract.methods.increaseLiquidityPositionIndexNext().call()
+    const accessToken: string = localStorage.getItem("accessToken") as string
+    const poolResult = await getPool(accessToken, market, chain)
+    await setPublicPool(poolResult.data)
 
-      let _result: any[] = []
-      let _totalPoolLiquidity: number = 0
-      let _myPoolLiquidity: number = 0
-      await setIsLiquidityDataLoading(true)
-      for (let i = liquidityIndex; i >= 30; i--) {
-        const result = await positionRouterContract.methods.increaseLiquidityPositionRequests(i).call()
-        _totalPoolLiquidity = _totalPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
+    const _myLiquidityPosition = await getLiquidityPosition(accessToken, market, chain)
+    await setMyLiquidityPosition(_myLiquidityPosition.data)
 
-        if (account === result.account) {
-          _myPoolLiquidity = _myPoolLiquidity + toInt(Number(result.liquidityDelta), chainId)
-
-          if (result.liquidityDelta != 0)
-            _result.push(result)
-        }
-      }
-      await setLiquidityData(_result)
-      await setMyLiquidity(_myPoolLiquidity)
-      await setTotalLiquidity(_totalPoolLiquidity)
-      await setIsLiquidityDataLoading(false)
-    } catch (err) {
-
+    let total_sum = 0
+    for (let i = 0; i < length; i++) {
+      total_sum += Number(_myLiquidityPosition.data.liquidity_positions[i].liquidity)
     }
 
+    await setMyTotalLiquidity(Number(total_sum))
+
+    await setLiquidityData(_myLiquidityPosition.data.liquidity_positions)
   }
 
   useEffect(() => {
-    GetLiquidityPosition()
+    const interval = setInterval(async () => {
+      await GetLiquidityPosition()
+    }, 4000)
   }, [])
-
-  useEffect(() => {
-    console.log("Visible =>", isVisibleModel)
-  }, [isVisibleModel])
 
   if (isLoading)
     return (
@@ -106,13 +124,27 @@ export const TableRow = (props: TableRowType) => {
           }
         </td>
         <td align="center" className="text-semantic-success">
-          <p>Coming soon</p>
+          <p>
+            {
+              publicPool && publicPool.pools.length > 0
+                ? `${publicPool.pools[0].max_apr}`
+                : "Loading"
+            }
+          </p>
         </td>
-        <td align="center">Coming soon</td>
         <td align="center">
-          {isLiquidityDataLoading ? <Loading /> : totalLiquidity + " USDC"}
+          {
+            publicPool && publicPool.pools.length > 0
+              ? `${publicPool.pools[0].fee_income}`
+              : "Loading"
+          }
         </td>
-        <td align="center">{isLiquidityDataLoading ? <Loading /> : myLiquidity + " USDC"} </td>
+        <td align="center">
+          {publicPool && publicPool.pools.length > 0
+            ? `${publicPool.pools[0].liquidity} USDC`
+            : "Loading"}
+        </td>
+        <td align="center">{myTotalLiquidity + "USDC"} </td>
 
         <td align="center">
           <button className="px-2 py-1" onClick={() => {
@@ -147,7 +179,7 @@ export const TableRow = (props: TableRowType) => {
             })}
           >
             {
-              liquidityData.map((item, idx) => (
+              liquidityData.map((item: any, idx: number) => (
                 <PositionHistoryCard
                   key={idx}
                   liquidityData={liquidityData[idx]}

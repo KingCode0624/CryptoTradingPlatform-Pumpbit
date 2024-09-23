@@ -11,25 +11,24 @@ export default function PositionHistoryCard({ liquidityData, index }: any) {
 
   const { toast } = useToast()
   const { account, positionRouterContract, web3, chainId } = useWeb3()
-  const [liquidity, setLiquidity] = useState<any>(0)
-  const [margin, setMargin] = useState<any>(0)
+  const [liquidity, setLiquidity] = useState<number>(0)
+  const [margin, setMargin] = useState<number>(0)
+  const [unrealizedPnl, setUnrealizedPnl] = useState<number>(0)
+  const [leverage, setLeverage] = useState<number>(0)
   const [liquidityAccount, setLiquidityAccount] = useState<string>("")
 
-  useEffect(() => {
-
+  const setDataLiquidity = async () => {
     if (liquidityData === undefined) return
-
-    setMargin(toInt(Number(liquidityData.marginDelta), chainId))
-    setLiquidity(toInt(Number(liquidityData.liquidityDelta), chainId))
-    setLiquidityAccount(String(liquidityData.account))
-
-  }, [liquidityData])
+    await setMargin(Number(liquidityData.margin))
+    await setLiquidity(Number(liquidityData.liquidity))
+    await setUnrealizedPnl(Number(liquidityData.unrealized_pnl))
+    await setLeverage(Number(liquidityData.leverage))
+    // await setLiquidityAccount(String(liquidityData.account))
+  }
 
   useEffect(() => {
-    console.log("Margin =>", margin);
-    console.log("Liquidity =>", liquidity);
-    console.log("LiquidityAcc =>", liquidityAccount);
-  }, [margin, liquidity, liquidityAccount])
+    setDataLiquidity()
+  }, [liquidityData])
 
   const cancelLiquidityPosition = async () => {
     console.log("Index1 =>", index)
@@ -62,28 +61,28 @@ export default function PositionHistoryCard({ liquidityData, index }: any) {
         <div>
           <div className="">Liquidity</div>
           {
-            liquidityAccount === account &&
+            // liquidityAccount === account &&
             <div className="text-white pt-3">{liquidity}</div>
           }
         </div>
         <div>
           <div className="">Leverage</div>
           {
-            liquidityAccount === account &&
-            <div className="text-white pt-3">{liquidity / margin}x</div>
+            // liquidityAccount === account &&
+            <div className="text-white pt-3">{leverage.toFixed(2)}x</div>
           }
         </div>
         <div>
           <div className="">Unrealized PnL</div>
           {
-            liquidityAccount === account &&
-            <div className="text-semantic-success pt-3">120.20</div>
+            // liquidityAccount === account &&
+            <div className="text-semantic-success pt-3">{unrealizedPnl.toFixed(2)}</div>
           }
         </div>
         <div>
           <div className="text-gray-500">Risk</div>
           {
-            liquidityAccount === account &&
+            // liquidityAccount === account &&
             <div className="flex items-center justify-center pt-3 text-white">
               93.95%
             </div>
@@ -92,14 +91,14 @@ export default function PositionHistoryCard({ liquidityData, index }: any) {
         <div>
           <div className="text-gray-500">Margin</div>
           {
-            liquidityAccount === account &&
+            // liquidityAccount === account &&
             <div className="text-white pt-3">{margin} USDC</div>
           }
         </div>
         <div className="flex items-center justify-center">
 
           {
-            liquidityAccount === account &&
+            // liquidityAccount === account &&
             <button className={`${account === liquidityAccount ? "text-[white]" : ""} px-5 py-2 border rounded-lg`}
               disabled={account === liquidityAccount ? false : true}
               onClick={() => cancelLiquidityPosition()}

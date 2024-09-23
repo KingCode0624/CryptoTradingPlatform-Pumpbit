@@ -18,6 +18,8 @@ import {
 } from "@/constants";
 import { useToast } from "../ui/toast/use-toast";
 import "./style/index.css"
+import { getPool } from "@/services/markets";
+import { chain, market } from "@/constants/index"
 
 export default function AddLiquidityModal() {
 
@@ -27,6 +29,17 @@ export default function AddLiquidityModal() {
   const [accountBalance, setAccountBalance] = useState<number>(0)
   const [margin, setMargin] = useState<number>(0)
   const [liquidity, setLiquidity] = useState<number>(0)
+  type PoolType = {
+    market: '',
+    market_display: '',
+    max_apr: '',
+    fee_income: '',
+    liquidity: '',
+    balance_rate: ''
+  }
+  const [pool, setPool] = useState<PoolType>()
+
+
   const [slider, setSlider] = useState<number[]>([1])
   const [isAnimation, setAnimation] = useState<boolean>(false)
   const btnRef = useRef<HTMLButtonElement | null>(null);
@@ -37,6 +50,10 @@ export default function AddLiquidityModal() {
     try {
       const _accountBalance = await usdcTokenContract.methods.balanceOf(account).call()
       setAccountBalance(toInt(Number(_accountBalance), chainId))
+
+      const accessToken: string = localStorage.getItem("accessToken") as string
+      const poolResult = await getPool(accessToken, market, chain)
+      setPool(poolResult.data.pools[0])
     } catch (err) {
 
     }
@@ -160,20 +177,20 @@ export default function AddLiquidityModal() {
               <p className="text-text-secondary">
                 Max APR
                 <span className="block text-semantic-success text-sm pt-2">
-                  Coming soon
+                  {pool?.max_apr}
                 </span>
               </p>
             </div>
             <div className="flex-1">
               <p className="text-text-secondary text-sm">
                 Total Liquidity
-                <span className="block text-white text-sm pt-2">12.41M</span>
+                <span className="block text-white text-sm pt-2">{pool?.liquidity}</span>
               </p>
             </div>
             <div className="flex-1">
               <p className="text-text-secondary text-base">
                 24h Fee Income
-                <span className="block text-white text-sm pt-2">coming soon</span>
+                <span className="block text-white text-sm pt-2">{pool?.fee_income}</span>
               </p>
             </div>
           </div>
