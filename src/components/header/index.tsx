@@ -76,7 +76,7 @@ export const MoreButton = ({ chain, currentAccount }: MoreButtonType) => {
         More
       </button>
       <div className={`${isHidden ? "w-[200px]" : "w-[0px]"} h-[100px] duration-200
-        block lg:hidden bg-[#0A0027] absolute top-0 left-0 flex flex-col gap-2 justify-center items-center
+        block lg:hidden bg-[#0A0027] absolute top-0 right-0 flex flex-col gap-2 justify-center items-center
         rounded-md z-[10]
         `}>
         <button
