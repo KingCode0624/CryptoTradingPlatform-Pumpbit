@@ -29,6 +29,147 @@ import {
   ailayertestnetChainId,
   bevmtestnetChainId
 } from "@/constants";
+import { Dialog, DialogTrigger } from "../models";
+
+type MoreButtonType = {
+  chain: string,
+  currentAccount: string
+}
+const CustomWalletButton = () => {
+  return (
+    <ConnectButton
+      accountStatus={{
+        largeScreen: 'full',  // Show full account status on large screens
+        smallScreen: 'avatar' // Show avatar on small screens
+      }}
+
+      label="My Wallet"
+      showBalance={{
+        largeScreen: false,
+        smallScreen: true
+      }}
+    />
+  );
+};
+
+
+export const MoreButton = ({ chain, currentAccount }: MoreButtonType) => {
+  const { chainId, faucetContract, account, web3 } = useWeb3()
+  const [isHidden, setIsHidden] = useState<boolean>(false);
+
+
+  const airDropToken = async () => {
+    try {
+      const gasPrice = await web3.eth.getGasPrice()
+      await faucetContract.methods.claimTokens().send({ from: account, gasPrice: gasPrice })
+      console.log("Airdrop is success")
+    } catch (err) {
+      console.log("Airdopr is failed", err)
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-1 lg:flex-row">
+      <button className="bg-[#3d3a5d] w-[100px] h-[40px] rounded-[60px] flex justify-center items-center lg:hidden"
+        onClick={() => setIsHidden(!isHidden)}
+      >
+        More
+      </button>
+      <div className={`${isHidden ? "w-[200px]" : "w-[0px]"} h-[100px] duration-200
+        block lg:hidden bg-[#0A0027] absolute top-0 left-0 flex flex-col gap-2 justify-center items-center
+        rounded-md z-[10]
+        `}>
+        <button
+          className={` ${!isHidden ? "hidden" : ""}
+          ${chain === "ailayer" ? "hidden" : ""}   
+          ${currentAccount === undefined ? "hidden" : "block"} 
+          flex justify-start pl-3 items-center rounded-md w-[200px] h-[40px] text-[17px] hover:bg-[#3d3a5d] gap-7`
+          }
+          onClick={() => {
+            let faucetUrl: string = ""
+            console.log("Chain =>", chain)
+            if (chain === 'b2')
+              faucetUrl = "https://www.bsquared.network/faucet/"
+            else if (chain === "BEVM")
+              faucetUrl = "https://bevm-testnet-faucet-alpha.vercel.app/"
+            window.open(faucetUrl, '_blank');
+          }}
+        >
+          <Image
+            src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" :
+              chain === "b2" ? "/assets/icons/b2.svg" : "/assets/bevm.png"
+              }`}
+            width={30}
+            height={30}
+            alt="FaucetLogo" />
+          Faucet
+        </button>
+
+        <button
+          className={`${!isHidden ? "hidden" : ""}
+          ${currentAccount === undefined ? "hidden" : "block"}
+            flex justify-start pl-3 items-center rounded-md w-[200px] h-[40px] text-[17px] hover:bg-[#3d3a5d] gap-7`
+          }
+          onClick={() => airDropToken()}
+        >
+          <Image
+            src={`${"/assets/Btc.png"}`}
+            width={30}
+            height={30}
+            alt="FaucetLogo" />
+          Faucet
+        </button>
+      </div>
+
+
+
+      {
+        <div className={`gap-1 hidden lg:flex`}>
+          <button
+            className={`
+          ${chain === "ailayer" ? "hidden" : ""}   
+          ${currentAccount === undefined ? "hidden" : "block"} 
+          flex justify-center items-center rounded-[60px] w-[120px] h-[40px] text-[17px] bg-[#3d3a5d] gap-3`
+            }
+            onClick={() => {
+              let faucetUrl: string = ""
+              console.log("Chain =>", chain)
+              if (chain === 'b2')
+                faucetUrl = "https://www.bsquared.network/faucet/"
+              else if (chain === "BEVM")
+                faucetUrl = "https://bevm-testnet-faucet-alpha.vercel.app/"
+              window.open(faucetUrl, '_blank');
+            }}
+          >
+            <Image
+              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" :
+                chain === "b2" ? "/assets/icons/b2.svg" : "/assets/bevm.png"
+                }`}
+              width={30}
+              height={30}
+              alt="FaucetLogo" />
+            Faucet
+          </button>
+
+          <button
+            className={`
+          ${currentAccount === undefined ? "hidden" : "block"}
+           flex justify-center items-center rounded-[60px] w-[120px] h-[40px] text-[17px] bg-[#3d3a5d] gap-3`
+            }
+            onClick={() => airDropToken()}
+          >
+            <Image
+              src={`${"/assets/Btc.png"}`}
+              width={30}
+              height={30}
+              alt="FaucetLogo" />
+            Faucet
+          </button>
+        </div>
+      }
+    </div>
+  )
+}
 
 export default function Header() {
   const pathname = usePathname();
@@ -86,20 +227,20 @@ export default function Header() {
   }
 
   return (
-    <section className="w-full fixed top-0 left-0">
+    <section className="w-full fixed top-0 left-0  ">
       <div className="flex gap-x-10 md:gap-x-3 items-center relative  md:justify-between   py-4 md:px-10 pl-2">
         <div
-          className="cursor-pointer flex items-center     "
+          className="cursor-pointer flex items-center justify-between w-full"
         >
           <Image
-            className="w-36 lg:w-44"
+            className="w-[120px] hidden min-[540px]:block"
             src={"/assets/Logo_White.png"}
-            width={300}
+            width={120}
             height={60}
             alt="logo"
           />
 
-          <div className=" py-6 md:flex md:pl-4 lg:pl-48 hidden ">
+          <div className="py-6 md:flex hidden  w-full justify-center items-center gap-3 lg:gap-10">
             {paths.map((path: any) => (
               <div key={path.name}>
                 <div className="  text-[#b1b6be] active:text-white   visited:text-white  flex justify-between  gap-y-2 px-3 text-xl   ">
@@ -137,11 +278,10 @@ export default function Header() {
                 </PopoverClose>
               </div>
               <hr className=" mt-6" />
-              <div className=" my-8 flex flex-col md:flex-row gap-y-4">
+              <div className="py-6 md:flex hidden  w-full justify-center items-center gap-3 lg:gap-10">
                 {paths.map((path: any) => (
                   <div key={path.name}>
                     <div className=" flex justify-between gap-y-2 px-3 text-xl  ">
-                      {" "}
                       <a
                         href={path.link}
                         className={`${pathname === path.link
@@ -151,7 +291,7 @@ export default function Header() {
                       >
                         {path.name}
                       </a>
-                      <AiFillCaretRight className=" md:hidden" />
+                      <AiFillCaretRight className="md:hidden" />
                     </div>
                   </div>
                 ))}
@@ -170,46 +310,12 @@ export default function Header() {
           </PopoverContent>
         </Popover>
         <div className=" flex gap-x-2 ">
-
-          <button
-            className={`${currentAccount === undefined ? "hidden" : "block"} flex justify-center items-center rounded-[60px] w-[150px] h-[45px] text-[20px] bg-[#3d3a5d] gap-3`}
-            onClick={() => airDropToken()}
-          >
-            <Image
-              src={`${"/assets/Btc.png"}`}
-              width={30}
-              height={30}
-              alt="FaucetLogo" />
-            Faucet
-          </button>
-
-          <button
-            className={`${chain === "ailayer" ? "hidden" : ""}   ${currentAccount === undefined ? "hidden" : "block"} flex justify-center items-center rounded-[60px] w-[150px] h-[45px] text-[20px] bg-[#3d3a5d] gap-3`}
-            onClick={() => {
-              let faucetUrl: string = ""
-              console.log("Chain =>", chain)
-              if (chain === 'b2')
-                faucetUrl = "https://www.bsquared.network/faucet/"
-              else if (chain === "BEVM")
-                faucetUrl = "https://bevm-testnet-faucet-alpha.vercel.app/"
-              window.open(faucetUrl, '_blank');
-            }}
-          >
-            <Image
-              src={`${chain === "ailayer" ? "/assets/icons/ailayer.svg" :
-                chain === "b2" ? "/assets/icons/b2.svg" : "/assets/bevm.png"
-                }`}
-              width={30}
-              height={30}
-              alt="FaucetLogo" />
-            Faucet
-          </button>
-          <div className="flex gap-x-2 items-center pr-10 md:flex-row-reverse">
+          <div className="flex gap-x-2 items-center pr-10 md:pr-4">
             {/* <ChainMenu /> */}
-
-            <ConnectButton />
+            <MoreButton chain={chain} currentAccount={currentAccount} />
+            <CustomWalletButton />
           </div>
-          <div className="hidden md:flex gap-x-4 items-center ">
+          <div className="hidden md:flex gap-x-4 items-center">
             <LanguageMenu />
             <MenuMore />
           </div>
