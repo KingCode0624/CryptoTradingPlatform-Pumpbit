@@ -242,7 +242,7 @@ export default function CandleStickChart({ selectedPair }: PriceDiagramProps) {
         </div>
       </div>
       <div className="mt-5 flex flex-col gap-y-5 px-6">
-        <div className="flex flex-row gap-x-5">
+        <div className="flex flex-wrap flex-row gap-x-5">
           <p>{selectedPair.market.toUpperCase()}</p>
           <p className="flex gap-x-1">
             O:

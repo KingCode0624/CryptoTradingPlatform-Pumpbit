@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header";
-import bg from "../../public/assets/bg.png";
 import { Providers } from "./provider";
 import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/toast/toaster";
 import HeaderSelector from "@/components/headerSelector";
-import Head from "next/head";
-import { useUtilContext } from "@/hooks";
-import { useEffect, useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
