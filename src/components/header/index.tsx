@@ -233,9 +233,9 @@ export default function Header() {
           className="cursor-pointer flex items-center justify-between w-full"
         >
           <Image
-            className="w-[120px] hidden min-[540px]:block"
+            className="w-[130px] hidden min-[540px]:block"
             src={"/assets/Logo_White.png"}
-            width={120}
+            width={100}
             height={60}
             alt="logo"
           />
@@ -278,10 +278,11 @@ export default function Header() {
                 </PopoverClose>
               </div>
               <hr className=" mt-6" />
-              <div className="py-6 md:flex hidden  w-full justify-center items-center gap-3 lg:gap-10">
+              {/* <div className="py-6 flex-col md:flex-row hidden  justify-center items-center gap-3 lg:gap-10"> */}
+              <div className="flex flex-col md:flex-row gap-y-4 my-4 mb-4">
                 {paths.map((path: any) => (
                   <div key={path.name}>
-                    <div className=" flex justify-between gap-y-2 px-3 text-xl  ">
+                    <div className=" flex justify-between gap-y-2 px-1 text-xl  ">
                       <a
                         href={path.link}
                         className={`${pathname === path.link
@@ -299,7 +300,6 @@ export default function Header() {
 
               <hr className="md:hidden" />
               <div className="md:hidden ">
-
                 <SettingMobileMenu />
               </div>
 
