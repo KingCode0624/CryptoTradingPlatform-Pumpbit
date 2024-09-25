@@ -43,7 +43,7 @@ const CustomWalletButton = () => {
         smallScreen: 'avatar' // Show avatar on small screens
       }}
 
-      label="My Wallet"
+      label="Connect Wallet"
       showBalance={{
         largeScreen: false,
         smallScreen: true
@@ -313,7 +313,9 @@ export default function Header() {
           <div className="flex gap-x-2 items-center pr-10 md:pr-4">
             {/* <ChainMenu /> */}
             <MoreButton chain={chain} currentAccount={currentAccount} />
-            <CustomWalletButton />
+            <div className="w-[180px]">
+              <CustomWalletButton />
+            </div>
           </div>
           <div className="hidden md:flex gap-x-4 items-center">
             <LanguageMenu />
