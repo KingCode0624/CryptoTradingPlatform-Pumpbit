@@ -55,14 +55,8 @@ export default function AddTpslModal({ positions }: TypePosition) {
   const handleSetTp = (e: any) => {
     const inputValue = e.target.value;
     if (positions.side == "") return
-
     if (!isNaN(Number(inputValue))) {
       setTp(inputValue);
-      if (positions.side == "long") {
-        setTpPricePnL(tp - Number(positions.entry_price) * Number(positions.size))
-      } else {
-        setTpPricePnL(Number(positions.entry_price) - tp * Number(positions.size))
-      }
     } else {
       setTp(0);
     }
@@ -71,18 +65,25 @@ export default function AddTpslModal({ positions }: TypePosition) {
   const handleSetSl = (e: any) => {
     const inputValue = e.target.value;
     if (positions.side == "") return
-
     if (!isNaN(Number(inputValue))) {
       setSl(inputValue);
-      if (positions.side == "long") {
-        setSlPricePnL(sl - Number(positions.entry_price) * Number(positions.size))
-      } else {
-        setSlPricePnL(Number(positions.entry_price) - sl * Number(positions.size))
-      }
     } else {
       setTp(0);
     }
   }
+
+  useEffect(() => {
+    console.log("Tp =>", tp)
+    console.log("Sl =>", sl)
+    console.log("Size =>", size)
+    if (positions.side == "long") {
+      setTpPricePnL(tp - Number(positions.entry_price) * Number(size / 100))
+      setSlPricePnL(sl - Number(positions.entry_price) * Number(size / 100))
+    } else {
+      setTpPricePnL(Number(positions.entry_price) - tp * Number(size / 100))
+      setSlPricePnL(Number(positions.entry_price) - sl * Number(size / 100))
+    }
+  }, [size, tp, sl])
 
   const TpSlDataSync = async () => {
     let newTpSlList: any = []
